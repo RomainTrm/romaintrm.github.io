@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LE MUTATION TESTING · Blog: Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="static/favicon.png">
+
+
+<body>
+    <header><h2>
+  
+    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
+  
+</h2>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>LE MUTATION TESTING</h1>
+            </div>
+            <div class="date"><h5>Jul 26, 2016</h5></div>
+        </div>
+        <article class="content">
+            <p>J’ai récemment lu un <a href="http://blog.cleancoder.com/uncle-bob/2016/06/10/MutationTesting.html" target="_blank">article</a> de l’<a href="https://twitter.com/unclebobmartin" target="_blank">oncle Bob Martin</a>, il y expose sa découverte du <em>mutation testing</em> et semble très enthousiaste à ce sujet. J’ai donc décidé d’essayer un outil pour mieux comprendre cette démarche.</p>
+<h2 id="le-principe">LE PRINCIPE</h2>
+<p>Aujourd’hui, beaucoup de projets sont réalisés en appliquant le TDD. Développer en appliquant le <em>test first</em> permet d’être sûr que l’on écrit uniquement le code nécessaire pour rendre un test valide.</p>
+<p>Cependant, certains reprochent à cette méthode de mettre en évidence la présence de bugs, et non de démontrer l’absence de bug : un test qui échoue montre qu’il y a une anomalie, mais une anomalie peut exister sans qu’il n’y ait de test pour le montrer.</p>
+<p>L’idée du <em>mutation testing</em> est de créer des mutations sur le code testé. Un outil analyse le code couvert par les tests puis génère des mutants : Mes tests sont-ils toujours vrais si je modifie cette condition ? Et si je ne fais pas d’appel à cette fonction ? Un mutant peut avoir deux états : mort ou vivant.</p>
+<p>Les mutations peuvent prendre diverses formes : la modification d’une limite conditionnelle (&lt; devient &lt;=), l’inversion d’une condition (== devient !=), la suppression d’un appel à une méthode, etc.</p>
+<p>Un mutant mort montre qu’au moins un test échoue si l’on modifie le code, on peut donc en déduire que les tests protègent bien le code contre les régressions. Un mutant vivant montre que tous les tests passent malgré une modification du code. Le <em>mutation testing</em> peut ainsi révéler que le code est mal protégé contre les régressions, il peut s’agir d’un problème de design ou alors c’est la qualité des tests qui peut être remise en cause.</p>
+<h2 id="exemple">EXEMPLE</h2>
+<p>Pour mon exemple, j’utilise VisualMutator qui s’intègre directement dans visual studio.</p>
+<h3 id="cas-initial">CAS INITIAL</h3>
+<p>Ici, je teste de manière laxiste une simple méthode qui me dit si mon objet Sequence contient un seul élément. Voici une première solution :</p>
+<p><img src="1.png" alt="Code sous tests"></p>
+<p><img src="2.png" alt="Code de tests"></p>
+<h2 id="mutations">MUTATIONS</h2>
+<p>Après une première session de mutation sur mon code on constate des faiblesses dans mes tests :</p>
+<p><img src="3.png" alt="Test runner avec un mutant vivant"></p>
+<p>Le mutant <code>LessThanOrEqual</code> me montre que je peux modifier ma condition tout en gardant mes tests valides. Je le constate bien si j’applique cette modification (&lt; 2 devient &lt;= 2).</p>
+<p><img src="4.png" alt="Code sous tests muté"></p>
+<p>Je peux ici rejeter la faute à mon dernier test qui fournit une liste de trois objets. Une fois corrigé je peux relancer un test par mutation :</p>
+<p><img src="5.png" alt="Code de test corrigé"></p>
+<p><img src="6.png" alt="Test runner avec un nouveau mutant vivant"></p>
+<p>On constate bien cette fois que la mutation <code>LessThanOrEqual</code> n’est plus vivante. Mais cette fois ci le mutant <code>NotEquality</code> reste vivant, il me manque donc clairement un test.</p>
+<p><img src="7.png" alt="Code de test avec le test manquant"></p>
+<p>Cette fois ci je constate que mes mutants <code>LessThanOrEqual</code> et <code>NotEquality</code> sont tous les deux tués par mes tests.</p>
+<p><img src="8.png" alt="Test runner sans mutant vivant"></p>
+<h2 id="lutilité">L’UTILITÉ</h2>
+<p>Cette approche est clairement faite pour tester la robustesse des tests plus que le code en lui même. Elle permet de mettre en évidence les limites de notre jeu de tests, et ainsi la présence de potentielles anomalies non identifiées. En d’autres termes : Est-ce que je peux faire confiance à mes tests ?</p>
+<p>Je ne suis donc pas convaincu que le <em>mutation testing</em> apporte une grande plus-value si le TDD est appliqué avec rigueur. J’avoue ne pas avoir su produire de mutant vivant sur un premier exemple écrit de cette manière.</p>
+<p>Cette approche est donc beaucoup plus intéressante pour la gestion de legacy. Avant d’y apporter des modifications, mieux vaut écrire des tests pour se protéger contre les régressions. N’importe quel développeur ayant réalisé cet exercice sait qu’il s’agit d’une tâche complexe et qu’il est parfois difficile d’identifier tous les cas gérés. Utiliser le <em>mutation testing</em> peut facilement mettre en évidence ces cas non identifiés.</p>
+<h2 id="linconvénient">L’INCONVÉNIENT</h2>
+<p>Il faut tout de même avoir conscience que cette méthode se révèle extrêmement coûteuse comparée à de simples tests unitaires. Il faut considérer le temps passé à l’analyse du code, à la génération des mutants, ainsi qu’à l’exécution des tests pour chaque mutant, ce qui peut prendre plusieurs heures sur un projet conséquent.</p>
+<p>De manière grossière, imaginons un projet de 200 classes avec en moyenne 5 mutants par classe et un jeu de tests complet qui est exécuté en 30 secondes. On obtient :</p>
+<p><strong>200 * 5 * 0.5 = 8h20 (500 minutes)</strong></p>
+<p>Les tests utilisant la mutation ne peuvent donc pas être joués de manière systématique comme le sont les TUs. Il est selon moi beaucoup plus intéressant de l’appliquer de manière ponctuelle sur des régions ciblées du code.</p>
+<p>Merci à <a href="https://twitter.com/nadegerouelle" target="_blank">Nadège</a> pour sa relecture.</p>
+
+        </article>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content">Software developer, *DD and F# enthusiast
+
+
+  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+        target="_blank" 
+       
+      >Github</a><a href="https://twitter.com/RomainTrm"
+        target="_blank" 
+       
+      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+        target="_blank" 
+       
+      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+        target="_blank" 
+       
+      >LinkedIn</a></p>
+
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>

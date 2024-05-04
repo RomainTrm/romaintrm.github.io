@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>UN CODE MÉTIER PUR · Blog: Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="static/favicon.png">
+
+
+<body>
+    <header><h2>
+  
+    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
+  
+</h2>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>UN CODE MÉTIER PUR</h1>
+            </div>
+            <div class="date"><h5>Feb 04, 2020</h5></div>
+        </div>
+        <article class="content">
+            <p>Il y a quelques jours, au cours d’une discussion, on m’a demandé quelles sont les pratiques que je pousse dans une équipe dans le but d’améliorer la qualité de code. Bon nombre de pratiques comme TDD, clean code ou encore DDD et ses bounded-contexts ayant déjà été cités, j’ai donc répondu : un code métier pur, parfois appelé <a href="https://thinkbeforecoding.com/post/2018/01/25/functional-core" target="_blank">functional core</a>.</p>
+<p>Dans cet article, je pars du principe que vous faite une distinction et séparation forte entre le code métier qui répond à une logique business, et le code infra qui répond aux problématiques techniques.</p>
+<h2 id="quels-intérêts-">QUELS INTÉRÊTS ?</h2>
+<p>Un code que l’on peut qualifier de pur a deux caractéristiques :</p>
+<ul>
+<li>Celui-ci retourne toujours le même résultat pour les mêmes entrées. Il ne dépend donc d’aucun état interne ni d’appels à des dépendances (base de données, heure système, etc.)</li>
+<li>Il ne modifie aucun état visible du système.</li>
+</ul>
+<p>Les raisons pour lesquelles je pousse ce genre de pratiques sont extrêmement simples. Il m’est très facile de raisonner sur ce code puisque son comportement est à la fois prédictible et répétable.</p>
+<p>Il est également très simple de rédiger des tests pour ce genre de code. Vous pouvez donc décrire tous vos cas métiers sous cette forme : “mon système est dans cet état, je lance cette action, alors j’obtiens ce résultat”.</p>
+<p>Par exemple, un scénario pour la réservation d’un parking :</p>
+<ul>
+<li>J’ai renseigné mes dates et heures d’arrivée et de départ.</li>
+<li>Je valide ma réservation.</li>
+<li>Ma réservation est acceptée pour les dates.</li>
+</ul>
+<p>Si l’on peut parfois considérer les problèmes de charge comme inhérents au métier, on a tout de même envie de les traiter comme des problématiques techniques. Gérer l’accès à un état partagé sur lequel on souhaite écrire se révèle vite complexe (usage de lock, de transactions par exemple) et empêche un code scaler. Nous ne voulons donc pas polluer de la logique métier avec ce genre de problématiques : garder le code pur est une façon simple de s’en assurer.</p>
+<h2 id="la-raison-dêtre-dun-logiciel">LA RAISON D’ÊTRE D’UN LOGICIEL</h2>
+<p>Cependant, si nous écrivons des logiciels, c’est souvent pour produire ce que nous qualifions jusqu’à maintenant d’effet de bords : écrire en base de données, envoyer un mail, une notification, etc. Nous devons donc être capable de passer d’un code pur à impure et inversement.</p>
+<p>Une façon (peut-être simpliste) de voir un logiciel est une succession de transformations de données. Je veux lire une donnée sur mon disque dur (imprédictible), puis la transformer (prédictible) et enfin écrire le résultat sur mon disque (imprédictible).</p>
+<h2 id="comment-faire-vivre-les-deux-">COMMENT FAIRE VIVRE LES DEUX ?</h2>
+<p>Nous avons vu jusqu’ici qu’il doit y avoir une distinction claire entre, le code métier que l’on veut pure, et le code infra qui lui est nécessairement impure puisque sa responsabilité est de traiter avec des appels réseaux et système.</p>
+<p>Pour faire cohabiter ces deux mondes, il nous faut donc un bout de code dont la seule responsabilité est :</p>
+<ol>
+<li>De récupérer les données nécessaires à une opération métier.</li>
+<li>Appeler le code métier.</li>
+<li>Envoyer le résultat à la couche d’infrastructure.</li>
+</ol>
+<p>Répondre à cette problématique de séparation métier/infra est la principale motivation derrière l’<a href="https://medium.com/publicis-sapient-france" target="_blank">architecture hexagonale</a>. Dans cette architecture, nos services portent cette responsabilité :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Csharp" data-lang="Csharp"><span style="display:flex;"><span><span style="color:#00a8c8">public</span> <span style="color:#00a8c8">class</span> <span style="color:#75af00">MyService</span> 
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">private</span> <span style="color:#00a8c8">readonly</span> <span style="color:#111">IRepository</span> <span style="color:#111">_repository</span><span style="color:#111">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#111">MyService</span><span style="color:#111">(</span><span style="color:#111">IRepository</span> <span style="color:#111">repository</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">_repository</span> <span style="color:#111">=</span> <span style="color:#111">repository</span><span style="color:#111">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#00a8c8">async</span> <span style="color:#111">Task</span> <span style="color:#111">DoSomething</span><span style="color:#111">(</span><span style="color:#00a8c8">int</span> <span style="color:#111">id</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">var</span> <span style="color:#111">data</span> <span style="color:#111">=</span> <span style="color:#00a8c8">await</span> <span style="color:#111">_repository</span><span style="color:#111">.</span><span style="color:#111">Load</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">var</span> <span style="color:#111">result</span> <span style="color:#111">=</span> <span style="color:#111">Business</span><span style="color:#111">.</span><span style="color:#111">Function</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">await</span> <span style="color:#111">_repository</span><span style="color:#111">.</span><span style="color:#111">Save</span><span style="color:#111">(</span><span style="color:#111">result</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">}</span>
+</span></span></code></pre></div><p>Avec une architecture CQRS ou CQRS/ES, ce rôle est porté par le commandHandler.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Csharp" data-lang="Csharp"><span style="display:flex;"><span><span style="color:#00a8c8">public</span> <span style="color:#00a8c8">class</span> <span style="color:#75af00">MyCommandHandler</span> <span style="color:#111">:</span> <span style="color:#111">ICommandHandler</span><span style="color:#111">&lt;</span><span style="color:#111">MyCommand</span><span style="color:#111">&gt;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">private</span> <span style="color:#00a8c8">readonly</span> <span style="color:#111">IRepository</span> <span style="color:#111">_repository</span><span style="color:#111">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#111">MyCommandHandler</span><span style="color:#111">(</span><span style="color:#111">IRepository</span> <span style="color:#111">repository</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">_repository</span> <span style="color:#111">=</span> <span style="color:#111">repository</span><span style="color:#111">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#00a8c8">async</span> <span style="color:#111">Task</span> <span style="color:#111">Handle</span><span style="color:#111">(</span><span style="color:#111">MyCommand</span> <span style="color:#111">cmd</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">var</span> <span style="color:#111">aggregate</span> <span style="color:#111">=</span> <span style="color:#00a8c8">await</span> <span style="color:#111">_repository</span><span style="color:#111">.</span><span style="color:#111">Load</span><span style="color:#111">(</span><span style="color:#111">cmd</span><span style="color:#111">.</span><span style="color:#111">Id</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">var</span> <span style="color:#111">events</span> <span style="color:#111">=</span> <span style="color:#111">aggregate</span><span style="color:#111">.</span><span style="color:#111">RunLogic</span><span style="color:#111">(</span><span style="color:#111">cmd</span><span style="color:#111">.</span><span style="color:#111">arg1</span><span style="color:#111">,</span> <span style="color:#111">cmd</span><span style="color:#111">.</span><span style="color:#111">arg2</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">await</span> <span style="color:#111">_repository</span><span style="color:#111">.</span><span style="color:#111">Save</span><span style="color:#111">(</span><span style="color:#111">events</span><span style="color:#111">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">}</span>
+</span></span></code></pre></div><p>Notez que la structure du code reste inchangée, seuls les types changent.</p>
+<p>Ce pattern demande une certaine rigueur de la part des développeurs, il est en effet facile d’introduire des effets de bords dans le code métier. Pour cette raison la stratégie adoptée par Haskell consiste à encapsuler les effets de bord dans des <code>IO</code>  monade.</p>
+<p>Je ne vais pas m’aventurer ici à définir ce qu’est une monade, mais si vous n’êtes pas familier avec ce concept, voici une image très grossière : Une monade est comme une boîte contenant de la donnée, pour manipuler cette donnée, vous devez fournir à la monade la fonction à appliquer. Une liste est par exemple une monade, l’<code>IO</code> monade en Haskell représente un effet de bord.</p>
+<p>Dans cet exemple, j’ouvre le fichier <code>input.txt</code>, j’applique la fonction <code>toUpperString</code> puis j’écris le résultat dans le fichier <code>output.txt</code>. J’ai fait l’effort ici de décomposer les fonctions afin de voir les signatures.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Haskell" data-lang="Haskell"><span style="display:flex;"><span><span style="color:#00a8c8">import</span> <span style="color:#111">Data.Char</span><span style="color:#111">(</span><span style="color:#111">toUpper</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">import</span> <span style="color:#111">Data.Functor</span><span style="color:#111">((</span><span style="color:#f92672">&lt;&amp;&gt;</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#00a8c8">Lowercase</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">String</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#00a8c8">Uppercase</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">String</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Code infra : impure</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">readInput</span> <span style="color:#f92672">::</span> <span style="color:#00a8c8">IO</span> <span style="color:#00a8c8">Lowercase</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">readInput</span> <span style="color:#f92672">=</span> <span style="color:#111">readFile</span> <span style="color:#d88200">&#34;input.txt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Code métier : pure</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">toUpperString</span> <span style="color:#f92672">::</span> <span style="color:#00a8c8">Lowercase</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">Uppercase</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">toUpperString</span> <span style="color:#f92672">::</span> <span style="color:#111">map</span> <span style="color:#111">toUpper</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- Code infra : impure</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">writeOutput</span> <span style="color:#f92672">::</span> <span style="color:#00a8c8">Uppercase</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">IO</span> <span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">writeOutput</span> <span style="color:#f92672">=</span> <span style="color:#111">writeFile</span> <span style="color:#d88200">&#34;output.txt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">main</span> <span style="color:#f92672">::</span> <span style="color:#00a8c8">IO</span> <span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">main</span> <span style="color:#f92672">=</span> <span style="color:#111">readInput</span> <span style="color:#f92672">&lt;&amp;&gt;</span> <span style="color:#111">toUpperString</span> <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#111">writeOutput</span>
+</span></span></code></pre></div><p>La transition du monde de l’<code>IO</code> vers du code pur se fait grâce à une fonction appelée <code>fmap</code>, ici appelée via l’opérateur <code>&lt;&amp;&gt;</code>. <code>fmap</code> prend une fonction pure et l’applique un contenu d’une <code>IO</code> pour produire une nouvelle <code>IO</code>. On obtient ici un <code>IO Uppercase</code>.</p>
+<p>Enfin, pour écrire le résultat, on applique la fonction <code>writeOutput</code> via la méthode <code>bind</code> (opérateur <code>&gt;&gt;=</code>). <code>bind</code> nous permet d’appliquer une fonction retournant une <code>IO</code> au contenu d’une <code>IO</code>.</p>
+<h2 id="out-of-the-tar-pit">OUT OF THE TAR PIT</h2>
+<p>Si cet article vu a plu et que vous souhaitez approfondir le sujet, je vous encourage à lire le papier <a href="https://curtclifton.net/papers/MoseleyMarks06a.pdf" target="_blank">Out of the Tar Pit</a> qui traite de la complexité logiciel, et qui propose un découpage similaire du code. J’ai découvert ce papier grâce à un <a href="https://www.youtube.com/watch?v=lFiB-a3aqbE" target="_blank">talk</a> explicatif de <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Moura</a>.</p>
+
+        </article>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content">Software developer, *DD and F# enthusiast
+
+
+  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+        target="_blank" 
+       
+      >Github</a><a href="https://twitter.com/RomainTrm"
+        target="_blank" 
+       
+      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+        target="_blank" 
+       
+      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+        target="_blank" 
+       
+      >LinkedIn</a></p>
+
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>

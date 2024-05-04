@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ENSEIGNER LE TDD · Blog: Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="static/favicon.png">
+
+
+<body>
+    <header><h2>
+  
+    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
+  
+</h2>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>ENSEIGNER LE TDD</h1>
+            </div>
+            <div class="date"><h5>Apr 27, 2016</h5></div>
+        </div>
+        <article class="content">
+            <p>Cela fait maintenant un an que je travaille comme prestataire pour un grand groupe. Ma mission y est des plus critique. Elle consiste à développer et maintenir l’ensemble des projets utilisés pour la programmation d’objets connectés nécessaires à l’activité de l’entreprise.</p>
+<p>Mon équipe est constituée de plusieurs profils : des développeurs, un product owner ainsi qu’un recetteur. Pour répondre à un fort besoin de qualité, les tests, et notamment les tests unitaires, constituent une composante majeure de notre travail. Les développements se font donc systématiquement avec une approche TDD / BDD. Ces pratiques ont été mises en place par l’équipe qui est complètement libre d’un point de vue opérationnel.</p>
+<p>Au cours de cette mission, j’ai à deux reprises animé des ateliers d’initiation au TDD. La première était destinée à notre recetteur qui souhaitait participer au développement de ses outils de test. La seconde concernait un nouveau développeur ayant déjà reçu une courte formation, mais qu’il n’a jamais pu (su ?) appliquer par la suite. Ces deux profils étant très différents, les problématiques rencontrées n’ont donc pas été les mêmes, ce qui a rendu l’exercice extrêmement intéressant.</p>
+<h2 id="certains-pré-requis">CERTAINS PRÉ-REQUIS</h2>
+<p>Après plus d’un an passé à l’appliquer sur tous mes projets, le TDD est devenu une habitude pour moi, l’appliquer me semblait simple. Dans un premier temps, j’ai donc pensé qu’il serait simple de l’inculquer. Que nenni !</p>
+<p>Lors de mon premier atelier avec notre recetteur, la principale problématique que j’ai rencontré était liée à des questions de design. En effet, celui-ci n’avait jamais reçu de véritable formation, ses connaissances se résumant à ce qu’il avait appris sur le tas. Comme tout débutant (moi le premier à mes débuts), son code souffrait d’un véritable manque d’organisation, il était fortement couplé. Selon mon expérience, le premier pré-requis consiste donc en un minimum de compétences en terme de conception (le sujet porte à <a href="http://codurance.com/2015/05/12/does-tdd-lead-to-good-design/" target="_blank">débat</a>), ceci pour que le développeur puisse isoler les différentes responsabilités de son code.</p>
+<p>Toujours sur des problématiques de design, nous avons ensuite travaillé sur la façon dont les éléments de notre code interagissent entre eux. Je lui ai donc expliqué l’utilisation de l’injection de dépendance. Cela consiste à expliciter ce que va utiliser le code (une fonction, une classe) en injectant les dépendances nécessaires pour son fonctionnement. De plus, pour réduire le couplage, les dépendances sont abstraites grâce à des interfaces (ou des classes de bases). Cette pratique répond au L, au I et au D de <a href="https://fr.wikipedia.org/wiki/SOLID_%28informatique%29" target="_blank">SOLID</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Csharp" data-lang="Csharp"><span style="display:flex;"><span><span style="color:#00a8c8">public</span> <span style="color:#00a8c8">class</span> <span style="color:#75af00">CashRegister</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#00a8c8">int</span> <span style="color:#111">ComputePrice</span><span style="color:#111">(</span><span style="color:#111">IBasket</span> <span style="color:#111">basket</span><span style="color:#111">)</span> <span style="color:#111">[...]</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">}</span>
+</span></span></code></pre></div><p>Dans mon exemple, j’explicite que pour calculer un prix, ma classe <code>CashRegister</code> a besoin d’un objet qui respecte le contrat d’interface <code>IBasket</code>. L’usage d’une interface réduisant le couplage, il est facile d’injecter des comportements spécifiques lors de mes tests sans dépendre d’une fonctionnalité annexe.</p>
+<p>Une fois que le développeur maîtrise ces concepts, il lui devient possible d’apprendre à écrire des tests unitaires. Dans le cas contraire, il aura du mal à percevoir le fonctionnement du TDD car il aura beaucoup trop de problématiques annexes à gérer.</p>
+<h2 id="donner-du-sens-aux-tests--une-approche-métier">DONNER DU SENS AUX TESTS : UNE APPROCHE MÉTIER</h2>
+<p>Pour l’apprentissage du TDD en lui même, les difficultés ont été plus grandes pour notre nouveau développeur. En effet, ayant plus d’expérience, il lui a été plus difficile de sortir d’une de ses habitudes : essayer d’apporter une réponse technique à un besoin métier. Que l’on ne se méprenne pas, je parle ici d’un problème de méthodologie.</p>
+<p>Très concrètement, lors d’un atelier, j’exprime successivement des besoins métiers en aidant le développeur à appliquer le TDD pour les implémenter. Les besoins évoluent de sorte que le code nécessite un refactoring au cours de l’exercice. A ce moment survient un problème récurent : <em>“Comment vais je coder ça ?”</em>. Le développeur n’est pas capable d’écrire son test si il ne sait comment va être écrit son code. C’est là que j’explique l’importance des concepts métiers dans les tests.</p>
+<p>Un avantage des tests unitaires est qu’ils documentent le code. Un test spécifie le comportement qu’il valide. Mais ce test n’a finalement pas de réel valeur si il n’explicite pas l’utilité de ce comportement. Par exemple : <code>WhenComputePriceThenReturnValue</code> n’est pas un intitulé très clair. Je calcule un prix, très bien, mais le prix de quoi ? Comment est-il calculé ?</p>
+<p>Le même test avec pour nom <code>WhenComputePriceThenReturnSumOfArticlesPriceOfBasket</code> exprime mieux la règle métier testée. Personnellement j’utilise le formalisme proposé par <a href="https://twitter.com/sandromancuso" target="_blank">Sandro Mancuso</a> : le nom de la classe et de la méthode de test se lisent comme une phrase.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Csharp" data-lang="Csharp"><span style="display:flex;"><span><span style="color:#75af00">[TestFixture]</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">public</span> <span style="color:#00a8c8">class</span> <span style="color:#75af00">CashRegisterShould</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">    [Test]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">public</span> <span style="color:#00a8c8">void</span> <span style="color:#111">ReturnSumOfArticlesPriceWhenComputePriceOfBasket</span><span style="color:#111">()</span> <span style="color:#111">[...]</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">}</span>
+</span></span></code></pre></div><p>Si votre élève commence à se questionner sur la façon dont il peut implémenter, coupez court et recentrez son attention sur la rédaction d’un test explicite.</p>
+<p>Maintenant que le test est écrit, le développeur peut réfléchir à comment implémenter. Le test décrit les éléments nécessaires ainsi que leurs interactions, c’est donc la façon dont le code doit être écrit. Au cours de l’exercice, il est donc important de faire attention aux termes que vous allez employer quand vous formulerez un nouveau besoin.</p>
+<h2 id="faire-passer-un-cap">FAIRE PASSER UN CAP</h2>
+<p>Bien entendu, la maîtrise de cette méthodologie ne s’acquière pas en un simple atelier, seule la pratique le permet. Généralement, il arrive un moment où apprendre le TDD peut devenir décourageant pour le développeur. Parce que cela change ses vieilles habitudes. Parce que c’est une façon de réfléchir qui est fatigante, qui n’est pas encore naturelle, ce qui la rend difficile. Il est donc important d’accompagner le développeur jusqu’à ce que celui-ci soit familier avec le TDD. L’essentiel est de le suivre et de rester disponible pour l’aider quand il en ressent le besoin. Pour cela, des revues de son code (et ses tests) ainsi que des séances de pair programming peuvent être des bons moyens pour l’aider à progresser.</p>
+<p>Lors de travail en pair programming avec mon équipe, il nous arrive d’appliquer le <a href="http://c2.com/cgi/wiki?PairProgrammingPingPongPattern" target="_blank">ping-pong programming</a>. Nous procédons de la manière suivante : un développeur écrit un test, le second le fait passer puis écrit le test suivant, et ainsi de suite. Cela nous permet de nous challenger et ainsi d’améliorer le niveau de chacun. C’est sans doute la meilleure technique que je peux conseiller pour un travail dans la durée.</p>
+<h2 id="conclusion">CONCLUSION</h2>
+<p>L’apprentissage du TDD est un travail quotidien qui nécessite une implication du développeur et un accompagnement pour débuter.</p>
+<p>Merci à mes reviewers <a href="https://twitter.com/Ouarzy" target="_blank">Ouarzy</a> et <a href="https://twitter.com/nadegerouelle" target="_blank">Nadège</a>.</p>
+
+        </article>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content">Software developer, *DD and F# enthusiast
+
+
+  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+        target="_blank" 
+       
+      >Github</a><a href="https://twitter.com/RomainTrm"
+        target="_blank" 
+       
+      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+        target="_blank" 
+       
+      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+        target="_blank" 
+       
+      >LinkedIn</a></p>
+
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>

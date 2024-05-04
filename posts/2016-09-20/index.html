@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LES DÉVELOPPEURS ET LE BESOIN MÉTIER · Blog: Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="static/favicon.png">
+
+
+<body>
+    <header><h2>
+  
+    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
+  
+</h2>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>LES DÉVELOPPEURS ET LE BESOIN MÉTIER</h1>
+            </div>
+            <div class="date"><h5>Sep 20, 2016</h5></div>
+        </div>
+        <article class="content">
+            <p>Développer est une tâche complexe, maintenir et faire évoluer un projet existant l’est aussi.</p>
+<p>Une mauvaise qualité de code a de nombreux impacts négatifs : un nombre d’anomalies et de régressions affolantes, des coûts et délais exponentiels à chaque évolution, un manque de performances, voir une solution qui ne répond pas aux besoins. Le tout en sapant progressivement le moral des développeurs qui ont le malheur de travailler dans ces conditions.</p>
+<h2 id="un-problème-de-code">UN PROBLÈME DE CODE</h2>
+<p>Le mauvais code peut prendre de très nombreuses formes, mais on retrouve souvent certaines caractéristiques :</p>
+<ul>
+<li>Redondance</li>
+<li>Faible consistance et absence de norme</li>
+<li>Forte complexité cyclomatique</li>
+<li>Fortes dépendances</li>
+<li>Design chaotique</li>
+<li>Ne révèle pas les intentions métier</li>
+</ul>
+<p>Toutes ces caractéristiques rendent le code extrêmement difficile à lire et à comprendre. Comment déterminer ce que fait le programme en lisant le code ? Comment localiser une fonctionnalité ?</p>
+<p>Un autre problème majeur est le turnover parmi les développeurs qui peut générer d’importantes pertes de connaissances s’il est mal anticipé : vous êtes parfaitement incapables de faire un lien clair entre un besoin, une fonctionnalité et son implémentation.</p>
+<p>Dès lors, la moindre modification se fait à taton avec son lot de souffrance : effets de bords, incompréhension du code, régressions, etc…</p>
+<h2 id="documenter-spécifier-recommencer">DOCUMENTER, SPÉCIFIER, RECOMMENCER</h2>
+<p>Une solution envisagée est de produire d’importantes quantités de documentation et de spécifications. C’est par exemple le parti pris des projets réalisés en cycle en V. L’idée est d’analyser le besoin et conceptualiser la solution à produire avant les développements.</p>
+<p><img src="1.png" alt="Schema explicatif du cycle en V"></p>
+<p>Le premier problème est que plus une erreur est introduite tôt dans ce processus de documentation, plus les documents qui en découlent sont erronés.</p>
+<ul>
+<li>Le périmètre doit donc être figé, sinon :
+<ul>
+<li>Les documentations sont très coûteuses à maintenir.</li>
+<li>Les documentations deviennent rapidement obsolètes.</li>
+</ul>
+</li>
+<li>Les spécifications doivent êtres :
+<ul>
+<li>complètes</li>
+<li>cohérentes</li>
+<li>correctes</li>
+<li>sans ambiguïté</li>
+<li>réalisables</li>
+</ul>
+</li>
+</ul>
+<p>En principe, les développeurs ne réalisent que la conception détaillée, cette solution comporte plusieurs inconvénients majeurs :</p>
+<ul>
+<li>L’architecture est imposée aux développeurs, et peut ne pas être adaptée.</li>
+<li>Les développeurs sont focalisés sur les aspects techniques de l’application.</li>
+</ul>
+<p>Le développement logiciel est une activité non-déterministe, par conséquent dans la très grande majorité des cas les développeurs rencontreront ces difficultés : aucune spécification ne peut être parfaite, il faut donc savoir improviser. Étant limités à une vision purement technique du projet, ils ne savent y répondre que par des solutions techniques sans aucun sens. Au fil du projet, ceci pollue de plus en plus le code et génère des deltas qui invalident progressivement les documents de référence. Un code illisible, une spécification qui ne correspond pas : vous avez de nouveau perdu les connaissances sur votre projet.</p>
+<h2 id="le-code-la-seule-vérité">LE CODE, LA SEULE VÉRITÉ</h2>
+<p>S’il existe une vérité, c’est bien celle du code. Peu importe ce qui est écrit dans votre spécification, votre ordinateur appliquera ce que votre code lui dicte : le code fait foi, il est lui même la spécification la plus détaillée et la plus précise de votre programme.</p>
+<p>Alors pourquoi ne pas l’utiliser comme tel ? Pourquoi ne pas s’efforcer à produire du code facilement compréhensible, facilement modifiable ? C’est pourtant ceci qui caractérise un code propre. Si celui-ci est expressif, alors n’importe qui (même une personne qui n’est pas développeur) peut le lire et comprendre les actions réalisées. Il est généralement accompagné d’un ensemble de tests unitaires qui expriment chaque cas géré.</p>
+<p><img src="2.png" alt="Plance de &ldquo;Commit strip&rdquo;: le code est de la spécification"></p>
+<p>On peut voir le métier de développeur de beaucoup de manières différentes, il est souvent comparé à celui d’artisan (software craftsman), je le vois également comme un rôle de traducteur. Quand j’écris du code, je traduis dans un langage compréhensible pour ma machine un besoin qui m’a été exprimé dans un langage qu’elle ne comprend pas.</p>
+<p>Mais expliquer quelque chose que l’on ne comprend pas soi-même est insensé. Il est donc primordial que les développeurs comprennent ce qu’ils développent, d’un point de vue technique, mais aussi d’un point de vue métier.</p>
+<h2 id="améliorer-la-qualité">AMÉLIORER LA QUALITÉ</h2>
+<p>Pour écrire du code de qualité, il faut faire attention aux comportements, ne pas se contenter de quelque chose qui marche :</p>
+<p><em>“How it is done is as important as getting it done.”</em> – <a href="https://twitter.com/sandromancuso" target="_blank">Sandro Mancuso</a></p>
+<p>Il est donc nécessaires de maîtriser et appliquer avec rigueur certaines pratiques et principes : <a href="https://en.wikipedia.org/wiki/Test-driven_development" target="_blank">TDD</a>, <a href="https://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">SOLID</a>, <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle" target="_blank">SRP</a>, <a href="https://en.wikipedia.org/wiki/KISS_principle" target="_blank">KISS</a>, etc. Lire des livres tels que <a href="https://www.amazon.fr/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882" target="_blank">Clean Code</a> de <a href="https://twitter.com/unclebobmartin" target="_blank">Robert C. Martin</a> sont une bonne façon de les aborder.</p>
+<p>Il faut ensuite travailler sur l’expressivité du code, du design. Est-ce que ma classe représente une notion métier ? Est-ce que ma méthode exprime une action métier ou technique ? Bien entendu, certaines problématiques restent purement techniques, mais elles doivent être les plus discrètes possibles dans le code en étant masquées derrière des interfaces dédiées.</p>
+<p>Pour être expressif, encore faut-il savoir quoi exprimer. La meilleure façon est de s’intéresser au métier du logiciel. Discutez, même de façon informelle, avec l’utilisateur final, avec le product owner, avec l’expert métier : N’importe quelle personne pouvant vous aider à comprendre le problème auquel vous apportez une solution.</p>
+<p><img src="3.png" alt="Un caméléon"></p>
+<p>Une fois que vous aurez compris le métier de vos interlocuteurs, vous serez capables d’échanger facilement avec eux, de challenger leurs besoins. Vous pourrez retranscrire les connaissances acquises dans votre code, celui-ci deviendra alors plus compréhensible, ses intentions seront beaucoup plus claires. En cas de doute, vous saurez également vers qui vous tourner pour répondre à vos questions.</p>
+<h2 id="quelques-méthodes">QUELQUES MÉTHODES</h2>
+<p>Il existe divers pratiques pour améliorer la compréhension métier des développeurs, et ainsi la qualité du code produit.</p>
+<p>Adopter un fonctionnement agile est le premier pas. Ces méthodologies permettent de rapprocher développeurs et clients dans le but de faciliter dialogues et feedbacks. Mettre en place ce fonctionnement est un pré-requis à un certain nombre de méthodes de conception et de développement.</p>
+<p>Le <a href="https://fr.wikipedia.org/wiki/Behavior_driven_development" target="_blank">BDD</a> (<em>Behavior Driven Development</em>) est une pratique intéressante à mettre en place. Il s’agit d’une variante du TDD qui met en avant le langage naturel et les interactions métier au travers de features découpées en scénarios d’utilisation. Idéalement, la rédaction de ces scénarios doit se faire avec un expert métier ou un product owner. Le développeur comprend alors clairement ce qu’il développe, et peut s’appuyer sur les notions, le vocabulaire employé dans ces features pour désigner son code. Cette pratique permet également l’émergence de l’<em>Ubiquitous Language</em>.</p>
+<p>Enfin, le <a href="https://en.wikipedia.org/wiki/Domain-driven_design" target="_blank">Domain-Driven Design</a>. Il a été formalisé pour la première fois par <a href="https://twitter.com/ericevans0" target="_blank">Eric Evans</a> dans son <a href="https://www.amazon.fr/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215" target="_blank">blue book</a> qui présente un ensemble de patterns tactiques et techniques. Ces patterns couvrent l’ensemble du cycle de vie d’un projet : des méthodologies pour comprendre et représenter un métier, des choix d’architecture, de design, etc. L’idée est de produire une architecture qui présente de manière pratique plus que purement exhaustive les différents composants et interactions d’un domaine. Les points de complexité d’un logiciel doivent alors êtres des points de complexité métier et non techniques. L’arrivée de nouvelles pratiques comme l’event storming, ou d’architectures logiciel comme CQRS/ES découlent directement du DDD.</p>
+<h2 id="pour-quels-résultats">POUR QUELS RÉSULTATS</h2>
+<p>Dans mon équipe actuelle, nous nous efforçons chaque jour d’appliquer ces principes et ces méthodes avec rigueur. Les bénéfices de ce travail se ressentent petit à petit.</p>
+<p>La qualité de notre code augmente, le nombre d’anomalies est quasiment nulle. Étant bien découplé, et ainsi ne souffrant pas d’une forte complexité, notre code est également évolutif et peut subir rapidement des modifications qui peuvent être majeures.</p>
+<p>Notre code fait foi : en cas d’un doute sur une question métier, le réflexe de tous (même celui du product owner) est de regarder le code. Nos documentations ne servent qu’à formaliser les futurs développements, et dans de rares cas à s’assurer qu’un morceau de code est bien conforme.</p>
+<p>Merci à <a href="https://twitter.com/Ouarzy" target="_blank">Ouarzy</a> et <a href="https://twitter.com/nadegerouelle" target="_blank">Nadège</a> pour leurs retours.</p>
+
+        </article>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content">Software developer, *DD and F# enthusiast
+
+
+  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+        target="_blank" 
+       
+      >Github</a><a href="https://twitter.com/RomainTrm"
+        target="_blank" 
+       
+      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+        target="_blank" 
+       
+      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+        target="_blank" 
+       
+      >LinkedIn</a></p>
+
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>

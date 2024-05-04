@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOUS N’ÊTES PAS MAÎTRE DE VOTRE CODE · Blog: Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="static/favicon.png">
+
+
+<body>
+    <header><h2>
+  
+    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
+  
+</h2>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>VOUS N’ÊTES PAS MAÎTRE DE VOTRE CODE</h1>
+            </div>
+            <div class="date"><h5>May 24, 2017</h5></div>
+        </div>
+        <article class="content">
+            <p>J’ai récemment pu participer à un atelier animé par <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Mourra</a> lors des <a href="https://twitter.com/ncraftsConf" target="_blank">NCrafts</a>. Pas de technique ici, le but était de mettre en lumière des problèmes d’ordres systémiques. Pour cela, nous avons fait un <a href="https://github.com/ldez/kebab-kata" target="_blank">Kebab Kata</a> sous forme d’itérations aux-cours desquelles Romeu jouait le rôle du client, puis également de l’architecte. Son but était de nous faire échouer en usant de différents comportements toxiques que l’on retrouve fréquemment dans de vraies missions.</p>
+<blockquote class="twitter-tweet"><p lang="in" dir="ltr"><a href="https://twitter.com/hashtag/nCrafts?src=hash&amp;ref_src=twsrc%5Etfw">#nCrafts</a> doing the kebab kata <a href="https://t.co/GpWZM03T0T">pic.twitter.com/GpWZM03T0T</a></p>&mdash; @romeu@mastodon.social (@malk_zameth) <a href="https://twitter.com/malk_zameth/status/865131834673434624?ref_src=twsrc%5Etfw">May 18, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<h2 id="objectif-rempli">OBJECTIF REMPLI</h2>
+<p>L’atelier s’est déroulé de la façon suivante :</p>
+<ul>
+<li>à chaque itération le client donne un périmètre et un budget (du temps) pour le réaliser.</li>
+<li>pendant les itérations, le client répond aux sollicitations des équipes et va voir spontanément en tentant de les influencer.</li>
+<li>à la fin de chaque itération, le client attend une démonstration.</li>
+<li>pendant qu’une équipe réalise sa démonstration, les autres équipes ont le droit de “tricher” en continuant à coder.</li>
+<li>une courte revue de code auto-organisée avec les autres équipes est mise en place après les démonstrations, il est interdit de coder durant cette période.</li>
+<li>au bout de trois sprints, nous sommes “virés” puis recrutés en tant que nouvelle équipe. Il nous faut alors réaliser un audit et énoncer des actions à prendre sur le code.</li>
+<li>un architecte, appuyé par le client, apporte alors des directives de conception en parallèle de notre audit.</li>
+</ul>
+<p>Comme prévu, nous avons tous échoué : à l’issue de l’atelier, toutes les équipes ont considéré leur code comme étant du legacy.</p>
+<p>DES RESPONSABILITÉS PARTAGÉES</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Good ways to fail your project with <a href="https://twitter.com/malk_zameth?ref_src=twsrc%5Etfw">@malk_zameth</a> , as expected we failed ! <a href="https://twitter.com/hashtag/NCrafts?src=hash&amp;ref_src=twsrc%5Etfw">#NCrafts</a> <a href="https://t.co/qP12zIqDg2">pic.twitter.com/qP12zIqDg2</a></p>&mdash; Romain Berthon (@RomainTrm) <a href="https://twitter.com/RomainTrm/status/865158052818952192?ref_src=twsrc%5Etfw">May 18, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>Il en ressort clairement que les développeurs ne sont pas les seuls responsables de la qualité finale du code. De façon synthétique et non exhaustive :</p>
+<p>La contrainte la plus évidente est le temps sur un périmètre donné : les délais sont très courts et incitent à prendre des “raccourcis” comme ne pas utiliser de tests unitaires. Le client n’hésite pas à demander s’ils sont nécessaires. Il écoute les rares équipes qui tentent de négocier les délais mais cela n’aboutit à rien d’autre qu’à un moyen pour les développeurs d’exprimer leur frustration.</p>
+<p>Les demandes du client ne sont pas claires ni priorisées : “si vous avez le temps, j’aimerais aussi cette feature”. Ce comportement ne fournit aucune visibilité à l’équipe, elle ne connaît pas la finalité du logiciel, ni le véritable besoin.</p>
+<p>Tout comme le droit de “tricher” pendant les démonstrations, ce manque de visibilité incite les développeurs à constamment coder pour rattraper leur retard, ce qui a plusieurs effets pervers :</p>
+<ul>
+<li>Aucun temps n’est alors accordé à la prise de recul, à la remise en question du code et de sa conception : l’équipe est constamment maintenue occupée au détriment de la qualité.</li>
+<li>Le client n’a pas besoin d’exercer la moindre forme de management, les développeurs sont livrés à eux mêmes et subissent la situation.</li>
+<li>L’équipe ne communique pas avec les autres pour échanger sur les solutions possibles. De plus, les temps accordés aux revues de codes sont inutiles car bien trop courts (et désorganisés) pour être constructifs : il n’est pas possible de faire émerger de réels axes d’amélioration</li>
+</ul>
+<p>Enfin, les équipes subissent des pressions sur leurs choix techniques. Le client fait part des retours fait par l’équipe front end (dont l’existence n’avait d’ailleurs jamais été évoquée avant !) et des difficultés qu’elle rencontre lors de l’intégration. L’architecte impose, appuyé par le client qui “le paie très chère”, une architecture basée sur le <em>design pattern composit</em>. Il s’avère que cette solution répond bien au problème de conception de ce kata, mais ne reflète pas du tout la façon dont le métier du client peut évoluer, ce qui rend toute évolution encore plus coûteuse.</p>
+<h2 id="prisonniers-et-gardiens-dun-système">PRISONNIERS ET GARDIENS D’UN SYSTÈME</h2>
+<p>Avec tous ces éléments, les développeurs se sentent isolés puisque considérés comme de simples exécutants de décisions qu’ils ne comprennent pas et pour lesquelles ils n’ont pas été consultés. Il n’existe aucune confiance entre l’équipe de développement et ses interlocuteurs.</p>
+<p><a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> décrit le système dans lequel sont pris les développeurs comme étant un <a href="https://fr.wikipedia.org/wiki/Panoptique" target="_blank">panoptique</a>. La majeure partie des comportements observés lors de l’exercice peuvent être associés à trois piliers qu’il a identifiés :</p>
+<ul>
+<li>le manque / l’absence de communication entre les équipes</li>
+<li>la bonne visibilité du management sur les équipes</li>
+<li>l’opacité du management pour les équipes</li>
+</ul>
+<p>Une fois pris dans un tel système, les développeurs ont l’impression d’être constamment surveillés et ne se sentent plus libres de leurs manières de travailler. Ils s’imposent alors un mode de fonctionnement qu’ils finissent, à terme, par trouver normal. Malgré des lacunes plus ou moins évidentes de sa part, le système n’est alors plus remis en question.</p>
+<p>C’est ainsi que ces mêmes développeurs peuvent se montrer hostiles à l’introduction de nouvelles pratiques comme le TDD ou le pair programming. Parce que cela ne leurs semble pas concevable et qu’ils craignent que le système rejette cela.</p>
+<h2 id="tenter-et-innover">TENTER ET INNOVER</h2>
+<p>Bien que fréquents, les comportements évoqués plus haut ne sont pas adoptés pour sciemment nuire au projet. Il est tout de même important de savoir les identifier, les remettre en cause et initier des changements de méthode, de comportement.</p>
+<p>Parmi les pratiques à mettre en place, <a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> proposait les suivantes :</p>
+<ul>
+<li>Le <a href="https://rberthon.wordpress.com/2016/06/22/a-whole-team-approach/" target="_blank">mob programming</a> pour rassembler les gens, les pousser à communiquer, comprendre ce qu’ils développent et pourquoi cela est nécessaire.</li>
+<li>Supprimer la double contrainte temps / périmètre en appliquant notamment le <a href="https://blog.goood.pro/2014/07/25/developper-sans-faire-destimation-le-mouvement-noestimates/" target="_blank">no estimate</a>. Un comportement qui peut être adopté serait de dire “Ok, je te livrerai uniquement ce qui sera prêt à cette date là” tout en ayant une vision claire des prioritées métier. Ce discours est parfaitement entendable contrairement à ce que l’on a tendance à penser.</li>
+<li>Ne plus travailler à flux tendu : une équipe de développement est souvent perçue comme une source de coût, encore plus si elle n’est pas occupée. Les managers et clients cherchent donc à constamment les alimenter en tâches. Il est important de dégager du temps pour des activités annexes : refactoring, automatisation, veille technique, etc… Aujourd’hui, de plus en plus d’entreprises ont un jour par semaine dédié à ces activités.</li>
+</ul>
+<p>Essayer de convaincre les gens avant de tenter quoi que ce soit est généralement un effort vain. Il ne faut donc pas avoir peur de prendre des initiatives, les résultats sont souvent plus parlant que les débats.</p>
+<p>Merci à <a href="https://twitter.com/Ouarzy" target="_blank">Ouarzy</a> et Léna pour leurs retours, merci à <a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> pour cet atelier très instructif.</p>
+
+        </article>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content">Software developer, *DD and F# enthusiast
+
+
+  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+        target="_blank" 
+       
+      >Github</a><a href="https://twitter.com/RomainTrm"
+        target="_blank" 
+       
+      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+        target="_blank" 
+       
+      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+        target="_blank" 
+       
+      >LinkedIn</a></p>
+
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>
