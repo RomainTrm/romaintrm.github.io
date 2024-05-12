@@ -28,36 +28,36 @@
         </div>
         <article class="content">
             <p>Je suis un développeur convaincu par les bénéfices du TDD, je l’applique au quotidien sur les projets que me confient mes clients. Cela me permet de rapidement valider que mon code a bien le comportement attendu, de le “documenter” et décrivant un cas d’usage et de m’assurer par la suite que je n’introduis aucune régression si je modifie le code testé.</p>
-<p>Je fais tout ceci en sachant que je choisis des cas de test qui me semblent représentatifs de l’usage de la fonction, on parle parfois d’Example Based Tests. Si cette méthode est souvent suffisante, il m’arrive parfois de me poser les questions suivantes : Puis-je être sûr que ma fonction est correctement développée si je ne suis pas capable d’identifier un cas qui est représentatif ? Ai-je bien identifié tous les cas limites ?</p>
+<p>Je fais tout ceci en sachant que je choisis des cas de test qui me semblent représentatifs de l’usage de la fonction, on parle parfois d’Example Based Tests. Si cette méthode est souvent suffisante, il m’arrive parfois de me poser les questions suivantes : Puis-je être sûr que ma fonction est correctement développée si je ne suis pas capable d’identifier un cas qui est représentatif ? Ai-je bien identifié tous les cas limites ?</p>
 <p>C’est là qu’il devient intéressant de se pencher sur le property based testing.</p>
-<h2 id="cest-quoi-le-property-based-testing-pbt-">C’EST QUOI LE PROPERTY BASED TESTING (PBT) ?</h2>
-<p>L’idée est simple : identifier et tester des invariants. Comprenez quelque chose qui sera toujours vrai, quelles que soient les données que vous fournissez à votre algorithme.</p>
+<h2 id="cest-quoi-le-property-based-testing-pbtnbsp">C’EST QUOI LE PROPERTY BASED TESTING (PBT) ?</h2>
+<p>L’idée est simple : identifier et tester des invariants. Comprenez quelque chose qui sera toujours vrai, quelles que soient les données que vous fournissez à votre algorithme.</p>
 <p>Pour cela, il faut utiliser un framework qui va générer des données aléatoires et vérifier si l’invariant reste vrai. À chaque exécution de votre suite de tests, celui-ci va tester différentes combinaisons (généralement une centaine). Il est important de noter qu’un test de PBT en succès ne signifie pas que l’implémentation est correcte, il veut juste dire que le framework n’a pas su mettre en défaut l’implémentation. Il est tout à fait possible que celui-ci trouve un cas limite après plusieurs heures, jours, semaines, mois…</p>
-<h2 id="ok-et-si-un-test-échoue-">OK, ET SI UN TEST ÉCHOUE ?</h2>
-<p>Si le framework arrive finalement à trouver un cas limite, il existe trois possibilités :</p>
+<h2 id="ok-et-si-un-test-échouenbsp">OK, ET SI UN TEST ÉCHOUE ?</h2>
+<p>Si le framework arrive finalement à trouver un cas limite, il existe trois possibilités :</p>
 <ul>
 <li>le code de production n’est pas correct</li>
 <li>la façon dont l’invariant est testé n’est pas correcte</li>
 <li>la compréhension et définition de l’invariant ne sont pas correctes</li>
 </ul>
 <p>Il est important d’avoir cette réflexion dès qu’un cas est identifié. Quoi qu’il en soit, le framework est capable de vous donner les données utilisées pour mettre à mal votre code, vous pouvez donc facilement écrire un TU classique pour reproduire le cas.</p>
-<p>Un bon framework de PBT est capable de faire du shrinking. Une fois le cas limite identifié, celui-ci va travailler sur les données utilisées pour essayer de les simplifier au maximum tout en reproduisant l’erreur. Ceci nous facilite l’effort d’analyse : imaginez une fonction qui prend une liste en argument, est-ce ma liste de 250 éléments ou juste un élément qui plante mon code ? S’il s’agit d’un élément, le shrinking peut l’isoler.</p>
-<h2 id="cest-quoi-un-invariant--un-exemple-">C’EST QUOI UN INVARIANT ? UN EXEMPLE ?</h2>
+<p>Un bon framework de PBT est capable de faire du shrinking. Une fois le cas limite identifié, celui-ci va travailler sur les données utilisées pour essayer de les simplifier au maximum tout en reproduisant l’erreur. Ceci nous facilite l’effort d’analyse : imaginez une fonction qui prend une liste en argument, est-ce ma liste de 250 éléments ou juste un élément qui plante mon code ? S’il s’agit d’un élément, le shrinking peut l’isoler.</p>
+<h2 id="cest-quoi-un-invariantnbsp-un-exemplenbsp">C’EST QUOI UN INVARIANT ? UN EXEMPLE ?</h2>
 <p>C’est à la fois tout l’intérêt de cette méthode de test, mais aussi toute sa difficulté. Il faut être capable de raisonner sur le métier de son application pour pouvoir en faire émerger des règles.</p>
-<p>Un des premiers exemples que l’on peut rencontrer est celui de l’addition. Celle-ci a trois propriétés :</p>
+<p>Un des premiers exemples que l’on peut rencontrer est celui de l’addition. Celle-ci a trois propriétés :</p>
 <ul>
-<li>L’identité : x + 0 = x avec 0 comme élément neutre</li>
-<li>L’associativité : (a + b) + c = a + (b + c)</li>
-<li>La commutativité : a + b = b + a</li>
+<li>L’identité : x + 0 = x avec 0 comme élément neutre</li>
+<li>L’associativité : (a + b) + c = a + (b + c)</li>
+<li>La commutativité : a + b = b + a</li>
 </ul>
 <p>Vous retrouvez également ces propriétés avec la multiplication, seul l’élément neutre change. Ces exemples sont très mathématiques (et peu intéressants), mais ce n’est pas le cas de toutes les propriétés, celles-ci peuvent prendre diverses formes.</p>
 <p>Petite appartée, les exemples qui suivent sont écrits en F# avec FsCheck. J’ai volontairement  choisi un “mauvais” exemple métier puisqu’il est envisageable de tester tous les cas de manière unitaires, mais il me paraît très adapté pour illustrer ce qu’est un invariant.</p>
-<p>Pour cet exemple, j’ai décidé d’écrire un petit programme qui doit me dire quelle est la main gagnante entre deux mains de deux cartes. Il s’agit d’une version simplifiée du Poker, si vous ne les connaissez pas, voici les règles :</p>
+<p>Pour cet exemple, j’ai décidé d’écrire un petit programme qui doit me dire quelle est la main gagnante entre deux mains de deux cartes. Il s’agit d’une version simplifiée du Poker, si vous ne les connaissez pas, voici les règles :</p>
 <ul>
 <li>si les deux mains sont équivalentes, alors il y a égalité</li>
 <li>une paire gagne sur une main mixte (main avec deux cartes différentes)</li>
 <li>s’il y a deux paires, la paire avec la meilleure carte gagne</li>
-<li>s’il y a deux mains mixtes :
+<li>s’il y a deux mains mixtes :
 <ul>
 <li>on compare la carte la plus forte de chaque main</li>
 <li>si les cartes les plus fortes sont identiques, on compare les cartes les moins fortes</li>
@@ -66,12 +66,12 @@
 <li>l’As est la meilleure carte et le deux la moins bonne</li>
 </ul>
 <p>Je vous laisse quelques secondes pour trouver des invariants…</p>
-<p>Vous avez trouvé ? Il s’agit tout simplement de la liste de règles que je viens d’énoncer : celles-ci sont toujours vraies.</p>
-<p>Ok, prenons la première règle : “si deux mains sont équivalentes, alors il y a égalité”. Pour cela, je laisse le framework me générer deux cartes aléatoires (seule la valeur de la carte importe ici) qui constituent les deux mains :</p>
+<p>Vous avez trouvé ? Il s’agit tout simplement de la liste de règles que je viens d’énoncer : celles-ci sont toujours vraies.</p>
+<p>Ok, prenons la première règle : “si deux mains sont équivalentes, alors il y a égalité”. Pour cela, je laisse le framework me générer deux cartes aléatoires (seule la valeur de la carte importe ici) qui constituent les deux mains :</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Fsharp" data-lang="Fsharp"><span style="display:flex;"><span><span style="color:#f92672">[&lt;</span><span style="color:#111">Property</span><span style="color:#f92672">&gt;]</span>
 </span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">``Return draw when hands are equals``</span> <span style="color:#111">card1</span> <span style="color:#111">card2</span> <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#111">getBestHand</span> <span style="color:#f92672">(</span><span style="color:#111">card1</span><span style="color:#f92672">,</span> <span style="color:#111">card2</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">card2</span><span style="color:#f92672">,</span> <span style="color:#111">card1</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#111">Draw</span>
-</span></span></code></pre></div><p>On peut aussi tester qu’une paire est toujours meilleure qu’une main mixte. Dans ce cas, on doit s’assurer que les cartes générées par le framework sont différentes. Pour cela, il est possible de poser des conditions qui, si elles sont respectées, permettent l’exécution du cas de test :</p>
+</span></span></code></pre></div><p>On peut aussi tester qu’une paire est toujours meilleure qu’une main mixte. Dans ce cas, on doit s’assurer que les cartes générées par le framework sont différentes. Pour cela, il est possible de poser des conditions qui, si elles sont respectées, permettent l’exécution du cas de test :</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Fsharp" data-lang="Fsharp"><span style="display:flex;"><span><span style="color:#f92672">[&lt;</span><span style="color:#111">Property</span><span style="color:#f92672">&gt;]</span>
 </span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">``Pair is always better than random hand``</span> <span style="color:#111">card1</span> <span style="color:#111">card2</span> <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#111">card1</span> <span style="color:#f92672">&lt;&gt;</span> <span style="color:#111">card2</span> <span style="color:#f92672">==&gt;</span> <span style="color:#00a8c8">lazy</span>
@@ -80,13 +80,13 @@
 </span></span></code></pre></div><p>Je ne vais pas détailler l’ensemble des cas de test sur cet article, vous pouvez tenter de le refaire de votre côté. Vous pourrez trouver une solution possible sur mon <a href="https://github.com/RomainTrm/KataPokerHands/blob/master/KataPokerHands_FSharp/PokerHand_PropertyBase.fs" target="_blank">github</a>.</p>
 <p>CERTAINES IMPRÉCISIONS
 Contrairement à un TU, il n’est pas toujours possible de spécifier le résultat exact que l’on attend à l’issue d’un test de PBT. Pour répondre à ceci, j’aime beaucoup la définition proposée par <a href="https://twitter.com/jessitron" target="_blank">Jessica Kerr</a>.</p>
-<p>Un test de PBT défini un cadre métier dont on ne doit pas sortir :</p>
+<p>Un test de PBT défini un cadre métier dont on ne doit pas sortir :</p>
 <p><img src="1.png" alt="Un nuage de points avec certains dans le cadre, d&rsquo;autres à l&rsquo;extérieur"></p>
 <p>L’idée est d’être moins spécifique sur le résultat, l’important est de s’assurer que les impératifs métiers sont validés. Cela présente l’avantage de laisser une plus grande liberté dans l’implémentation puisque son couplage avec le test est moins important.</p>
 <p>Si l’on souhaite tout de même tester un résultat de manière exacte, alors il faudra revenir à un test unitaire avec un résultat hard-codé.</p>
 <h2 id="pour-conclure">POUR CONCLURE</h2>
 <p>On peut trouver certains inconvénients au PBT, comme des temps d’exécution un peu plus longs que des tests unitaires classiques, ou encore une plus grande difficulté à écrire ces tests.</p>
-<p>Mais vous l’aurez compris, le PBT améliore notre compréhension de l’application puisqu’il pousse à raisonner à des niveaux d’abstraction plus élevés que ce que nous incite à faire des tests unitaires classiques : “une paire est meilleure qu’une main mixte” est à un niveau d’abstraction supérieur à “une paire de 5 est meilleure que la main avec le 8 et le roi”.</p>
+<p>Mais vous l’aurez compris, le PBT améliore notre compréhension de l’application puisqu’il pousse à raisonner à des niveaux d’abstraction plus élevés que ce que nous incite à faire des tests unitaires classiques : “une paire est meilleure qu’une main mixte” est à un niveau d’abstraction supérieur à “une paire de 5 est meilleure que la main avec le 8 et le roi”.</p>
 <p>Enfin, parce que le code est validé par un grand nombre de cas différents, le PBT améliore également la qualité de notre code ainsi que la confiance que nous avons dans celui-ci.</p>
 <p>Si après la lecture de cet article le PBT vous intéresse, vous pouvez également regarder ce <a href="https://youtu.be/shngiiBfD80" target="_blank">talk</a> de <a href="https://twitter.com/jessitron" target="_blank">Jessica Kerr</a> ou encore <a href="https://youtu.be/5pwv3cuo3Qk" target="_blank">celui</a> de <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Mourra</a> qui sont pour moi des références sur ce sujet.</p>
 
