@@ -6,8 +6,15 @@
     <description>Recent content on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 05 May 2024 13:28:55 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 20 Nov 2024 13:02:48 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>STATE-BASED AND EVENT-BASED APPROACH</title>
+      <link>https://romaintrm.github.io/posts/2024-11-20/</link>
+      <pubDate>Wed, 20 Nov 2024 13:02:48 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-11-20/</guid>
+      <description>I&amp;rsquo;ve recently gave a talk with my friend Aurélien about the heuristics we&amp;rsquo;ve developed after using CQRS/ES for several years.&#xA;After our talk, we had a chat with some developers. We concluded that choosing a state-based oriented approach (like CRUD) seems to be the default solution, such choice seems to remain unchallenged. On the opposite side, choosing an event-based systems (event sourced or event driven) will very often be heavily challenged.</description>
+    </item>
     <item>
       <title>L&#39;AGC : RETOUR SUR L&#39;ORDINATEUR QUI A AMENÉ L&#39;HUMANITÉ SUR LA LUNE</title>
       <link>https://romaintrm.github.io/posts/2024-05-05/</link>
