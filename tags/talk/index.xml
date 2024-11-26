@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Talk on Blog: Romain Berthon</title>
+    <link>https://romaintrm.github.io/tags/talk/</link>
+    <description>Recent content in Talk on Blog: Romain Berthon</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 26 Nov 2024 13:28:55 +0200</lastBuildDate>
+    <atom:link href="https://romaintrm.github.io/tags/talk/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CQRS / ES : nos heuristiques après plusieurs années de production</title>
+      <link>https://romaintrm.github.io/posts/2024-11-26/</link>
+      <pubDate>Tue, 26 Nov 2024 13:28:55 +0200</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-11-26/</guid>
+      <description>Nouvelle présentation, nouveau co-spreaker ! Cette fois-ci, c&amp;rsquo;est Aurélien BOUDOUX qui m&amp;rsquo;accompagne pour vous proposer un retour d&amp;rsquo;expérience sur nos années avec le pattern CQRS/ES.&#xA;Fun fact : nous avons eu l&amp;rsquo;idée de ce talk parce que nos pratiques semblaient converger malgré des expériences très différentes. En construisant ce talk, nous avons découvert qu&amp;rsquo;en réalité nous avons des pratiques très différentes, et que celles-ci sont en grande partie issues de nos contextes respectifs.</description>
+    </item>
+    <item>
+      <title>L&#39;AGC : RETOUR SUR L&#39;ORDINATEUR QUI A AMENÉ L&#39;HUMANITÉ SUR LA LUNE</title>
+      <link>https://romaintrm.github.io/posts/2024-05-05/</link>
+      <pubDate>Sun, 05 May 2024 13:28:55 +0200</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-05-05/</guid>
+      <description>Clap de fin pour cette présentation, nous avons donné notre dernière session le vendredi 26 avril à MixIT. J&amp;rsquo;ai eu grand plaisir à présenter ce sujet si particulier avec mon co-speaker Olivier PONCET.&#xA;Abstract Lundi 21 juillet 1969, l’humanité posait pour la première fois le pied sur la Lune. Cet exploit est le fruit de nombreuses avancées techniques et technologiques, notamment en électronique et dans le domaine de l’informatique alors naissant.</description>
+    </item>
+  </channel>
+</rss>

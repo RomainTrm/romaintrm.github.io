@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 Nov 2024 13:02:48 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 26 Nov 2024 13:28:55 +0200</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CQRS / ES : nos heuristiques après plusieurs années de production</title>
+      <link>https://romaintrm.github.io/posts/2024-11-26/</link>
+      <pubDate>Tue, 26 Nov 2024 13:28:55 +0200</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-11-26/</guid>
+      <description>Nouvelle présentation, nouveau co-spreaker ! Cette fois-ci, c&amp;rsquo;est Aurélien BOUDOUX qui m&amp;rsquo;accompagne pour vous proposer un retour d&amp;rsquo;expérience sur nos années avec le pattern CQRS/ES.&#xA;Fun fact : nous avons eu l&amp;rsquo;idée de ce talk parce que nos pratiques semblaient converger malgré des expériences très différentes. En construisant ce talk, nous avons découvert qu&amp;rsquo;en réalité nous avons des pratiques très différentes, et que celles-ci sont en grande partie issues de nos contextes respectifs.</description>
+    </item>
     <item>
       <title>STATE-BASED AND EVENT-BASED APPROACHES</title>
       <link>https://romaintrm.github.io/posts/2024-11-20/</link>
