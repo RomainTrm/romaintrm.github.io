@@ -6,8 +6,15 @@
     <description>Recent content in Post on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 Nov 2024 13:02:48 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 04 Dec 2024 09:13:43 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/tags/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ZERO DOWNTIME DATABASE MIGRATION</title>
+      <link>https://romaintrm.github.io/posts/2024-12-04/</link>
+      <pubDate>Wed, 04 Dec 2024 09:13:43 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-12-04/</guid>
+      <description>Nowadays, most of the services we&amp;rsquo;re using are online and available 24/7. If, like me, you&amp;rsquo;re working on a company that provide this kind of service, you&amp;rsquo;re probably aiming for such availability. As I&amp;rsquo;ve already highlighted it, it has a huge influence on how you should code and deploy your software. Indeed, to maximize availability, you&amp;rsquo;re probably aiming for a zero downtime deployment.&#xA;Zero downtime deployment includes several topics. Today I want to focus on how to achieve a database migration without service interruption.</description>
+    </item>
     <item>
       <title>STATE-BASED AND EVENT-BASED APPROACHES</title>
       <link>https://romaintrm.github.io/posts/2024-11-20/</link>
