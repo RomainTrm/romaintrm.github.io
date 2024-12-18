@@ -6,8 +6,15 @@
     <description>Recent content in En on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Dec 2024 09:13:43 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 18 Dec 2024 09:00:00 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/tags/en/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CQRS/ES: HOW TO ACHIEVE A GOOD EVENT GRANULARITY?</title>
+      <link>https://romaintrm.github.io/posts/2024-12-18/</link>
+      <pubDate>Wed, 18 Dec 2024 09:00:00 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/2024-12-18/</guid>
+      <description>If you&amp;rsquo;ve already developed a software using the event sourcing pattern, you&amp;rsquo;ve probably faced difficulty: How-to design good events? What is a good event granularity?&#xA;Indeed it&amp;rsquo;s difficult to produce good events that will not harm our design. As a seasoned developer with event sourcing, I&amp;rsquo;m still struggling with this, even if I&amp;rsquo;ve developed several heuristics over time.&#xA;In this blog post, I will share with you these heuristics. But keep in mind this is not some kind of best practices.</description>
+    </item>
     <item>
       <title>ZERO DOWNTIME DATABASE MIGRATION</title>
       <link>https://romaintrm.github.io/posts/2024-12-04/</link>
