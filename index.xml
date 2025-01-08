@@ -6,8 +6,15 @@
     <description>Recent content on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Dec 2024 09:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 08 Jan 2025 09:00:00 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>USING PROCESSES FOR BETTER RESILIENCE</title>
+      <link>https://romaintrm.github.io/posts/2025-01-08/</link>
+      <pubDate>Wed, 08 Jan 2025 09:00:00 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/2025-01-08/</guid>
+      <description>In early 2020, I&amp;rsquo;ve read the book Programming Elixir 1.6. At that time I had one goal: to have an introduction to the actor model with a language that supports it by design, in this case Elixir. I think it was a good read and I achieved my goal, even though I didn&amp;rsquo;t feel able to design a complete system using this pattern.&#xA;However, I realized I&amp;rsquo;m using some actor model concepts for a few years now.</description>
+    </item>
     <item>
       <title>CQRS/ES: HOW TO ACHIEVE A GOOD EVENT GRANULARITY?</title>
       <link>https://romaintrm.github.io/posts/2024-12-18/</link>
