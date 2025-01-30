@@ -1,94 +1,10 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>LA COMPLEXITÉ MÉTIER · Blog: Romain Berthon</title>
-
-
-
-<link rel="stylesheet" href="/css/rocinante.css" />
-<link rel="shortcut icon" href="favicon.ico">
-
-
-<body>
-    <header><h2>
-  
-    <a href="https://romaintrm.github.io/">‹ Blog: Romain Berthon</a>
-  
-</h2>
-</header>
-    <main>
-
-    <div class="post">
-        <div class="title-group">
-            <div class="title">
-                <h1>LA COMPLEXITÉ MÉTIER</h1>
-            </div>
-            <div class="date"><h5>Feb 07, 2017</h5></div>
-        </div>
-        <article class="content">
-            <p>Dans mon <a href="/posts/2016-12-20/">précédent article</a>, j’ai évoqué les raisons pour lesquelles il faut s’orienter ou non vers une architecture de type CQRS. Parmi ces raisons, la première que j’ai évoqué était le niveau de complexité du métier : plus le métier est complexe, plus CQRS devient pertinent.</p>
-<p>Seulement, comment définir et évaluer la complexité métier de son application ?</p>
-<h2 id="la-complexité-cest-quoinbsp">LA COMPLEXITÉ, C’EST QUOI ?</h2>
-<p><em>“Complexité, n.f. : Caractère de ce qui est complexe, qui comporte des éléments divers qu’il est difficile de démêler”</em> : définition proposée par le <a href="http://www.larousse.fr/dictionnaires/francais/complexit%C3%A9/17700" target="_blank">Larousse</a>.</p>
-<p>Cette définition met clairement en évidence une première notion, elle implique de fortes dépendances entre plusieurs éléments.</p>
-<p><img src="1.png" alt="Chaines"></p>
-<p>J’ai récemment pu assister au talk “<a href="https://www.youtube.com/watch?v=RugUTW-BPuE" target="_blank">Out The Tar Pit Vulgarized</a>” de <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Moura</a> où il est justement question de complexité logiciel. Il commence par y définir les termes simple et complexe :</p>
-<ul>
-<li>Simple : Qui n’est pas composé, c’est à dire, qui ne fait l’objet d’aucune dépendance et d’aucune récursivité.</li>
-<li>Complexe : Qui est composé, c’est à dire, qui fait l’objet de dépendances et / ou de récursivités.</li>
-</ul>
-<p>Dans le monde de la finance, les <a href="http://www.mathematiquesfaciles.com/interets-simples-et-composes_2_109876.htm" target="_blank">intérêts simples et composés</a> retranscrivent bien ces notions.</p>
-<h2 id="le-métier-et-sa-complexité">LE MÉTIER ET SA COMPLEXITÉ</h2>
-<p>On peut définir le métier d’une application par l’ensemble des règles fonctionnelles qu’elle doit savoir gérer. C’est la partie essentielle d’un logiciel, la raison pour laquelle il est développé. C’est également ces règles qui permettent d’évaluer la complexité métier d’une application : sont-elles composées ?</p>
-<p><img src="2.png" alt="Tampon &ldquo;Know The Rules&rdquo;"></p>
-<p>Cependant il est important de ne pas confondre le métier tel qu’il existe dans la vraie vie avec le métier tel qu’il doit être traité dans l’application. Si vous appliquez le <a href="https://en.wikipedia.org/wiki/Domain-driven_design" target="_blank">Domain Driven Design</a>, vous allez vouloir expliciter dans votre code le métier et ses règles, notamment au travers de <em>bounded contexts</em> et leurs <em>ubiquitous language</em> respectifs. Cette démarche n’a pas pour but de refléter avec exactitude la réalité, au contraire, elle encourage à utiliser une abstraction adaptée au problème que l’on souhaite résoudre.</p>
-<p>J’aime beaucoup cette <a href="https://www.youtube.com/watch?v=iD_Vv3faUcQ&amp;app" target="_blank">courte vidéo</a> de <a href="https://twitter.com/ScottMillett" target="_blank">Scott Millett</a> qui explique très simplement ce qu’est l’abstraction d’un domain. Dans cet exemple, il montre qu’un plan de métro est une abstraction de la réalité (le réseau) adaptée pour un problème donné : savoir comment se déplacer d’un point A vers un point B.</p>
-<h2 id="une-autre-forme-de-complexité">UNE AUTRE FORME DE COMPLEXITÉ</h2>
-<p>La complexité métier ne reflète pas toujours la complexité du code source : l’usage de langages de programmation, de frameworks ainsi qu’un mauvais design ajoutent un niveau de complexité supplémentaire, la complexité accidentelle.</p>
-<p>Pour refaire le lien avec CQRS, l’intérêt est d’éliminer une trop forte complexité dans le code en utilisant des modèles de lectures et d’écritures adaptés aux besoins. Ces modèles sont des abstractions qui ne comportent que les éléments nécessaires à l’exécution d’une fonction, d’une règle métier. Leurs niveaux de compositions sont donc réduits à leurs minimums.</p>
-<p>Une autre solution pour se protéger contre cette complexité accidentelle est l’<a href="http://blog.xebia.fr/2016/03/16/perennisez-votre-metier-avec-larchitecture-hexagonale/" target="_blank">architecture hexagonale</a>.</p>
-<h2 id="conclusion">CONCLUSION</h2>
-<p>La complexité métier est donc l’ensemble des règles métier et leurs dépendances. Plus il existe de dépendances entre ces règles, plus le métier peut être considéré comme étant complexe.</p>
-<p>Merci à <a href="https://twitter.com/Ouarzy" target="_blank">Ouarzy</a> pour ses retours.</p>
-
-        </article>
-        
-            <div class="tags">
-                <span title="Tags">🏷</span>
-                <div class="horizontal-links links">
-                    <a href="/tags/post/">Post</a><a href="/tags/fr/">Fr</a>
-                </div>
-            </div>
-        
-    </article>
-
-
-    </main>
-    <footer>
-  <div class="content-container">
-    <div class="content">Software developer, *DD and F# enthusiast
-
-
-  <p class="horizontal-links"><a href="https://github.com/RomainTrm"
-        target="_blank" 
-       
-      >Github</a><a href="https://twitter.com/RomainTrm"
-        target="_blank" 
-       
-      >Twitter</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
-        target="_blank" 
-       
-      >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
-        target="_blank" 
-       
-      >LinkedIn</a></p>
-
-</div>
-  </div>
-</footer>
-    
-    <script>
-      const emailId = atob("");
-    </script></body>
+<html lang="en-us">
+  <head>
+    <title>https://romaintrm.github.io/posts/la-complexite-metier/</title>
+    <link rel="canonical" href="https://romaintrm.github.io/posts/la-complexite-metier/">
+    <meta name="robots" content="noindex">
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0; url=https://romaintrm.github.io/posts/la-complexite-metier/">
+  </head>
 </html>

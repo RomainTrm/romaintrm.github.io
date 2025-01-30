@@ -10,121 +10,121 @@
     <atom:link href="https://romaintrm.github.io/tags/fr/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CQRS / ES : NOS HEURISTIQUES APRES PLUSIEURS ANNEES DE PRODUCTION</title>
-      <link>https://romaintrm.github.io/posts/2024-11-26/</link>
+      <link>https://romaintrm.github.io/posts/cqrs-es-nos-heuristiques-apres-plusieurs-annees-de-production/</link>
       <pubDate>Tue, 26 Nov 2024 13:28:55 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2024-11-26/</guid>
+      <guid>https://romaintrm.github.io/posts/cqrs-es-nos-heuristiques-apres-plusieurs-annees-de-production/</guid>
       <description>Nouvelle présentation, nouveau co-spreaker ! Cette fois-ci, c&amp;rsquo;est Aurélien BOUDOUX qui m&amp;rsquo;accompagne pour vous proposer un retour d&amp;rsquo;expérience sur nos années de développement avec le pattern CQRS/ES.&#xA;Fun fact : nous avons eu l&amp;rsquo;idée de ce talk parce que nos pratiques semblaient converger malgré des expériences très différentes. En construisant ce talk, nous avons découvert qu&amp;rsquo;en réalité nous avons des pratiques très différentes, et que celles-ci sont en grande partie issues de nos contextes respectifs.</description>
     </item>
     <item>
       <title>L&#39;AGC : RETOUR SUR L&#39;ORDINATEUR QUI A AMENÉ L&#39;HUMANITÉ SUR LA LUNE</title>
-      <link>https://romaintrm.github.io/posts/2024-05-05/</link>
+      <link>https://romaintrm.github.io/posts/l-agc-retour-sur-l-ordinateur-qui-a-amene-l-humanite-sur-la-lune/</link>
       <pubDate>Sun, 05 May 2024 13:28:55 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2024-05-05/</guid>
+      <guid>https://romaintrm.github.io/posts/l-agc-retour-sur-l-ordinateur-qui-a-amene-l-humanite-sur-la-lune/</guid>
       <description>Clap de fin pour cette présentation, nous avons donné notre dernière session le vendredi 26 avril à MixIT. J&amp;rsquo;ai eu grand plaisir à présenter ce sujet si particulier avec mon co-speaker Olivier PONCET.&#xA;ABSTRACT Lundi 21 juillet 1969, l’humanité posait pour la première fois le pied sur la Lune. Cet exploit est le fruit de nombreuses avancées techniques et technologiques, notamment en électronique et dans le domaine de l’informatique alors naissant.</description>
     </item>
     <item>
       <title>THEORIE DES CATEGORIES : VOUS LA CONNAISSEZ DEJA</title>
-      <link>https://romaintrm.github.io/posts/2022-04-20/</link>
+      <link>https://romaintrm.github.io/posts/theorie-des-categories-vous-la-connaissez-deja/</link>
       <pubDate>Wed, 20 Apr 2022 09:00:00 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2022-04-20/</guid>
+      <guid>https://romaintrm.github.io/posts/theorie-des-categories-vous-la-connaissez-deja/</guid>
       <description>Tout part d&amp;rsquo;un talk donné par Emilien PECOUL (aka Ouarzy). Durant ce talk, celui-ci a tenté de démontrer à son audience qu&amp;rsquo;elle connaissait déjà la plupart des concepts formulés dans la théorie des catégories. À mon sens, il y est parvenu même si ce sujet est bien trop vaste pour être abordé en seulement 45 minutes.&#xA;C&amp;rsquo;est pourquoi quelques années plus tard, il m&amp;rsquo;a proposé de le réadapter avec lui sur un format université (3 heures).</description>
     </item>
     <item>
       <title>UNIFORMISER LE CODE, BONNE IDÉE ?</title>
-      <link>https://romaintrm.github.io/posts/2021-09-01/</link>
+      <link>https://romaintrm.github.io/posts/uniformiser-le-code-une-bonne-idee/</link>
       <pubDate>Wed, 01 Sep 2021 21:03:32 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2021-09-01/</guid>
+      <guid>https://romaintrm.github.io/posts/uniformiser-le-code-une-bonne-idee/</guid>
       <description>Au cours de ma carrière, j’ai été confronté à plusieurs reprises à des clients et/ou des acteurs internes qui souhaitent assurer un haut niveau d’uniformisation sur le code des applications. Cela se traduit par des conventions de style, de nommage, et parfois même des choix plus impactant comme des frameworks ou des architectures spécifiques. Dans les cas extrêmes, les propos de ces personnes laissaient entendre le refus d’un quelconque écart avec ces règles.</description>
     </item>
     <item>
       <title>DO(N’T) REPEAT YOURSELF</title>
-      <link>https://romaintrm.github.io/posts/2021-05-26/</link>
+      <link>https://romaintrm.github.io/posts/don-t-repeat-yourself/</link>
       <pubDate>Wed, 26 May 2021 21:18:59 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2021-05-26/</guid>
+      <guid>https://romaintrm.github.io/posts/don-t-repeat-yourself/</guid>
       <description>UN BIAIS COGNITIF ET UN USAGE ERRONÉ Les développeurs aiment bien les acronymes pour énoncer des “bonnes pratiques” (KISS, DRY, SOLID, etc…). Souvent, l’idée véhiculée par ceux-ci est très simple à appréhender.&#xA;Cependant, nous souffrons d’un biais cognitif énorme : plus une information est simple à intégrer, moins elle est remise en question / challengée. Et celle-ci est encore mieux intégrée si elle ne va pas en contradiction avec vos croyances.</description>
     </item>
     <item>
       <title>LE PIÈGE DES TESTS UNITAIRES</title>
-      <link>https://romaintrm.github.io/posts/2020-06-04/</link>
+      <link>https://romaintrm.github.io/posts/le-piege-des-tests-unitaires/</link>
       <pubDate>Thu, 04 Jun 2020 21:28:12 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2020-06-04/</guid>
+      <guid>https://romaintrm.github.io/posts/le-piege-des-tests-unitaires/</guid>
       <description>Voilà maintenant plus de 5 ans que j’applique une approche TDD (test-driven development) sur l’ensemble des projets sur lesquels j’interviens. Si j’utilise toujours cette méthode, c’est parce que la présence de tests me donne confiance dans le code que j’écris :&#xA;Je m’assure qu’il fait bien ce que je souhaite. J’améliore constamment son design par du refactoring. Les tests mettent en lumière la très grande majorité des régressions que je peux introduire lors d’un refactoring ou d’une évolution.</description>
     </item>
     <item>
       <title>UN CODE MÉTIER PUR</title>
-      <link>https://romaintrm.github.io/posts/2020-02-04/</link>
+      <link>https://romaintrm.github.io/posts/un-code-metier-pur/</link>
       <pubDate>Tue, 04 Feb 2020 12:46:38 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2020-02-04/</guid>
+      <guid>https://romaintrm.github.io/posts/un-code-metier-pur/</guid>
       <description>Il y a quelques jours, au cours d’une discussion, on m’a demandé quelles sont les pratiques que je pousse dans une équipe dans le but d’améliorer la qualité de code. Bon nombre de pratiques comme TDD, clean code ou encore DDD et ses bounded-contexts ayant déjà été cités, j’ai donc répondu : un code métier pur, parfois appelé functional core.&#xA;Dans cet article, je pars du principe que vous faite une distinction et séparation forte entre le code métier qui répond à une logique business, et le code infra qui répond aux problématiques techniques.</description>
     </item>
     <item>
       <title>À LA DÉCOUVERTE DU PROPERTY BASED TESTING</title>
-      <link>https://romaintrm.github.io/posts/2019-01-08/</link>
+      <link>https://romaintrm.github.io/posts/a-la-decouverte-du-property-based-testing/</link>
       <pubDate>Tue, 08 Jan 2019 13:17:17 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2019-01-08/</guid>
+      <guid>https://romaintrm.github.io/posts/a-la-decouverte-du-property-based-testing/</guid>
       <description>Je suis un développeur convaincu par les bénéfices du TDD, je l’applique au quotidien sur les projets que me confient mes clients. Cela me permet de rapidement valider que mon code a bien le comportement attendu, de le “documenter” et décrivant un cas d’usage et de m’assurer par la suite que je n’introduis aucune régression si je modifie le code testé.&#xA;Je fais tout ceci en sachant que je choisis des cas de test qui me semblent représentatifs de l’usage de la fonction, on parle parfois d’Example Based Tests.</description>
     </item>
     <item>
       <title>VOUS N’ÊTES PAS MAÎTRE DE VOTRE CODE</title>
-      <link>https://romaintrm.github.io/posts/2017-05-24/</link>
+      <link>https://romaintrm.github.io/posts/vous-n-etes-pas-maitre-de-votre-code/</link>
       <pubDate>Wed, 24 May 2017 13:30:19 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2017-05-24/</guid>
+      <guid>https://romaintrm.github.io/posts/vous-n-etes-pas-maitre-de-votre-code/</guid>
       <description>J’ai récemment pu participer à un atelier animé par Romeu Mourra lors des NCrafts. Pas de technique ici, le but était de mettre en lumière des problèmes d’ordres systémiques. Pour cela, nous avons fait un Kebab Kata sous forme d’itérations aux-cours desquelles Romeu jouait le rôle du client, puis également de l’architecte. Son but était de nous faire échouer en usant de différents comportements toxiques que l’on retrouve fréquemment dans de vraies missions.</description>
     </item>
     <item>
       <title>LA COMPLEXITÉ MÉTIER</title>
-      <link>https://romaintrm.github.io/posts/2017-02-07/</link>
+      <link>https://romaintrm.github.io/posts/la-complexite-metier/</link>
       <pubDate>Tue, 07 Feb 2017 12:41:44 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2017-02-07/</guid>
+      <guid>https://romaintrm.github.io/posts/la-complexite-metier/</guid>
       <description>Dans mon précédent article, j’ai évoqué les raisons pour lesquelles il faut s’orienter ou non vers une architecture de type CQRS. Parmi ces raisons, la première que j’ai évoqué était le niveau de complexité du métier : plus le métier est complexe, plus CQRS devient pertinent.&#xA;Seulement, comment définir et évaluer la complexité métier de son application ?&#xA;LA COMPLEXITÉ, C’EST QUOI ? “Complexité, n.f. : Caractère de ce qui est complexe, qui comporte des éléments divers qu’il est difficile de démêler” : définition proposée par le Larousse.</description>
     </item>
     <item>
       <title>POURQUOI UTILISER CQRS ET ES ?</title>
-      <link>https://romaintrm.github.io/posts/2016-12-20/</link>
+      <link>https://romaintrm.github.io/posts/pourquoi-utiliser-cqrs-et-es/</link>
       <pubDate>Tue, 20 Dec 2016 12:52:12 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-12-20/</guid>
+      <guid>https://romaintrm.github.io/posts/pourquoi-utiliser-cqrs-et-es/</guid>
       <description>Actuellement, j’entend de plus en plus parler de CQRS et CQRS/ES : par mes collègues autour de la machine à café, lors d’entretiens techniques, sur Twitter, les blogs, etc.&#xA;Le principe du Command and Query Responsability Segregation (CQRS) est de séparer modèles d’écriture et modèles de lecture. L’Event Sourcing (ES) quant à lui consiste à sauvegarder des événements au lieu d’entités, pour reconstruire une entité il faut agréger des événements. Exprimés de cette façon, ces concepts semblent plutôt simples à comprendre, mais les aspects techniques peuvent vite les rendre complexes à appréhender et implémenter.</description>
     </item>
     <item>
       <title>LES DÉVELOPPEURS ET LE BESOIN MÉTIER</title>
-      <link>https://romaintrm.github.io/posts/2016-09-20/</link>
+      <link>https://romaintrm.github.io/posts/les-developpeurs-et-le-besoin-metier/</link>
       <pubDate>Tue, 20 Sep 2016 18:18:51 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-09-20/</guid>
+      <guid>https://romaintrm.github.io/posts/les-developpeurs-et-le-besoin-metier/</guid>
       <description>Développer est une tâche complexe, maintenir et faire évoluer un projet existant l’est aussi.&#xA;Une mauvaise qualité de code a de nombreux impacts négatifs : un nombre d’anomalies et de régressions affolantes, des coûts et délais exponentiels à chaque évolution, un manque de performances, voir une solution qui ne répond pas aux besoins. Le tout en sapant progressivement le moral des développeurs qui ont le malheur de travailler dans ces conditions.</description>
     </item>
     <item>
       <title>LE MUTATION TESTING</title>
-      <link>https://romaintrm.github.io/posts/2016-07-26/</link>
+      <link>https://romaintrm.github.io/posts/le-mutation-testing/</link>
       <pubDate>Tue, 26 Jul 2016 13:01:54 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-07-26/</guid>
+      <guid>https://romaintrm.github.io/posts/le-mutation-testing/</guid>
       <description>J’ai récemment lu un article de l’oncle Bob Martin, il y expose sa découverte du mutation testing et semble très enthousiaste à ce sujet. J’ai donc décidé d’essayer un outil pour mieux comprendre cette démarche.&#xA;LE PRINCIPE Aujourd’hui, beaucoup de projets sont réalisés en appliquant le TDD. Développer en appliquant le test first permet d’être sûr que l’on écrit uniquement le code nécessaire pour rendre un test valide.&#xA;Cependant, certains reprochent à cette méthode de mettre en évidence la présence de bugs, et non de démontrer l’absence de bug : un test qui échoue montre qu’il y a une anomalie, mais une anomalie peut exister sans qu’il n’y ait de test pour le montrer.</description>
     </item>
     <item>
       <title>A WHOLE TEAM APPROACH</title>
-      <link>https://romaintrm.github.io/posts/2016-06-22/</link>
+      <link>https://romaintrm.github.io/posts/a-whole-team-approach/</link>
       <pubDate>Wed, 22 Jun 2016 13:37:38 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-06-22/</guid>
+      <guid>https://romaintrm.github.io/posts/a-whole-team-approach/</guid>
       <description>Il y a quelques mois maintenant, j’ai eu l’occasion d’assister, grâce à un user group local, à une présentation de Sebastien Lambla. Celle-ci était intitulée Your Agile is Dead. J’avoue que je ne savais pas trop de quoi allait pouvoir traiter une présentation avec un tel nom, il s’agissait en réalité d’un retour expérience sur un projet réalisé en mob programming.&#xA;J’étais déjà convaincu par les bénéfices pour un projet d’appliquer le pair programming ainsi que les autres méthodes portées par l’Extreme Programming.</description>
     </item>
     <item>
       <title>LE CODE, C’EST MIEUX À DEUX</title>
-      <link>https://romaintrm.github.io/posts/2016-06-01/</link>
+      <link>https://romaintrm.github.io/posts/le-code-c-est-mieux-a-deux/</link>
       <pubDate>Wed, 01 Jun 2016 13:52:46 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-06-01/</guid>
+      <guid>https://romaintrm.github.io/posts/le-code-c-est-mieux-a-deux/</guid>
       <description>Parmi toutes les bonnes pratiques mises en place dans mon équipe actuelle, il y en a une que j’apprécie tout particulièrement : le pair programming. Nous l’utilisons pour plusieurs raisons :&#xA;traiter des tâches complexes faciliter les montées en compétence métier et technique des différents membres augmenter la qualité du code Je suis réellement convaincu par les avantages et les bénéfices qu’une équipe peut tirer du pair programming. Cependant, je constate que cette méthode n’est pas toujours bien comprise.</description>
     </item>
     <item>
       <title>LES TESTS, CONTRE VENTS ET MARÉES</title>
-      <link>https://romaintrm.github.io/posts/2016-05-04/</link>
+      <link>https://romaintrm.github.io/posts/les-tests-contre-vents-et-marees/</link>
       <pubDate>Wed, 04 May 2016 14:07:07 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-05-04/</guid>
+      <guid>https://romaintrm.github.io/posts/les-tests-contre-vents-et-marees/</guid>
       <description>Connaissez vous la bernache nonnette ?&#xA;Il s’agit d’une espèce d’oie vivant principalement dans les îles arctiques. La bernache est exclusivement végétarienne, et ce dès sa naissance. Le problème, c’est qu’elle a pour habitude de nicher au sommet d’une falaise pour se protéger elle et ses œufs des prédateurs terrestres. Les oisillons ne sachant pas voler avant l’âge de 40-45 jours, il faut que ceux-ci puissent descendre de la falaise pour se nourrir.</description>
     </item>
     <item>
       <title>ENSEIGNER LE TDD</title>
-      <link>https://romaintrm.github.io/posts/2016-04-27/</link>
+      <link>https://romaintrm.github.io/posts/enseigner-le-tdd/</link>
       <pubDate>Wed, 27 Apr 2016 14:19:48 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/2016-04-27/</guid>
+      <guid>https://romaintrm.github.io/posts/enseigner-le-tdd/</guid>
       <description>Cela fait maintenant un an que je travaille comme prestataire pour un grand groupe. Ma mission y est des plus critique. Elle consiste à développer et maintenir l’ensemble des projets utilisés pour la programmation d’objets connectés nécessaires à l’activité de l’entreprise.&#xA;Mon équipe est constituée de plusieurs profils : des développeurs, un product owner ainsi qu’un recetteur. Pour répondre à un fort besoin de qualité, les tests, et notamment les tests unitaires, constituent une composante majeure de notre travail.</description>
     </item>
   </channel>
