@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Feb 2025 09:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 19 Feb 2025 09:00:00 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>THE &#34;TECHNOLOGICAL ADULTHOOD&#34;</title>
+      <link>https://romaintrm.github.io/posts/the-technological-adulthood/</link>
+      <pubDate>Wed, 19 Feb 2025 09:00:00 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/the-technological-adulthood/</guid>
+      <description>Few months ago, I&amp;rsquo;ve read this article: How We Built a Self-Healing System to Survive a Terrifying Concurrency Bug At Netflix.&#xA;What I loved is how unconventional the solution was. However, unconventional doesn&amp;rsquo;t mean irrelevant, their solution kept the software running during the weekend, and this without any human intervention. The solution wasn&amp;rsquo;t perfect, but it was &amp;ldquo;good enough&amp;rdquo; and even more, respectful of people&amp;rsquo;s time.&#xA;By the end, it concludes with a concept that somehow inspired me: &amp;ldquo;technological adulthood&amp;rdquo;.</description>
+    </item>
     <item>
       <title>APPLYING THE &#39;/AI MANIFESTO&#39;</title>
       <link>https://romaintrm.github.io/posts/applying-the-ai-manifesto/</link>
