@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Blog: Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Feb 2025 09:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 12 Mar 2025 09:00:24 +0100</lastBuildDate>
     <atom:link href="https://romaintrm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>REFINING SOFTWARE ARCHITECTURES</title>
+      <link>https://romaintrm.github.io/posts/refining-software-architectures/</link>
+      <pubDate>Wed, 12 Mar 2025 09:00:24 +0100</pubDate>
+      <guid>https://romaintrm.github.io/posts/refining-software-architectures/</guid>
+      <description>To develop software, as developers we have to choose between several architectures. Our choice must be based on various constraints like the type of problem we&amp;rsquo;re trying to solve, but also the load or the level of reliability and resiliency targeted. We also have to consider the available skills in the team.&#xA;In this blog post, I want to iterate through several back-end architectures I&amp;rsquo;ve encountered and used during my career.</description>
+    </item>
     <item>
       <title>THE &#34;TECHNOLOGICAL ADULTHOOD&#34;</title>
       <link>https://romaintrm.github.io/posts/the-technological-adulthood/</link>
