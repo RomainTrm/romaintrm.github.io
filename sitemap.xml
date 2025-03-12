@@ -2,9 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://romaintrm.github.io/</loc>
-    <lastmod>2025-03-12T09:00:24+01:00</lastmod>
-  </url><url>
     <loc>https://romaintrm.github.io/tags/en/</loc>
     <lastmod>2025-03-12T09:00:24+01:00</lastmod>
   </url><url>
@@ -15,6 +12,9 @@
     <lastmod>2025-03-12T09:00:24+01:00</lastmod>
   </url><url>
     <loc>https://romaintrm.github.io/posts/refining-software-architectures/</loc>
+    <lastmod>2025-03-12T09:00:24+01:00</lastmod>
+  </url><url>
+    <loc>https://romaintrm.github.io/</loc>
     <lastmod>2025-03-12T09:00:24+01:00</lastmod>
   </url><url>
     <loc>https://romaintrm.github.io/tags/</loc>
@@ -97,6 +97,8 @@
   </url><url>
     <loc>https://romaintrm.github.io/posts/enseigner-le-tdd/</loc>
     <lastmod>2016-04-27T14:19:48+02:00</lastmod>
+  </url><url>
+    <loc>https://romaintrm.github.io/about-me/</loc>
   </url><url>
     <loc>https://romaintrm.github.io/categories/</loc>
   </url>

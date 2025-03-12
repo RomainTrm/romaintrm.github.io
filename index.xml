@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Blog: Romain Berthon</title>
+    <title>Romain Berthon</title>
     <link>https://romaintrm.github.io/</link>
-    <description>Recent content on Blog: Romain Berthon</description>
+    <description>Recent content on Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 12 Mar 2025 09:00:24 +0100</lastBuildDate>
@@ -182,6 +182,13 @@
       <pubDate>Wed, 27 Apr 2016 14:19:48 +0200</pubDate>
       <guid>https://romaintrm.github.io/posts/enseigner-le-tdd/</guid>
       <description>Cela fait maintenant un an que je travaille comme prestataire pour un grand groupe. Ma mission y est des plus critique. Elle consiste à développer et maintenir l’ensemble des projets utilisés pour la programmation d’objets connectés nécessaires à l’activité de l’entreprise.&#xA;Mon équipe est constituée de plusieurs profils : des développeurs, un product owner ainsi qu’un recetteur. Pour répondre à un fort besoin de qualité, les tests, et notamment les tests unitaires, constituent une composante majeure de notre travail.</description>
+    </item>
+    <item>
+      <title>ABOUT ME</title>
+      <link>https://romaintrm.github.io/about-me/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://romaintrm.github.io/about-me/</guid>
+      <description>About me</description>
     </item>
   </channel>
 </rss>
