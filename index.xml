@@ -183,5 +183,12 @@
       <guid>https://romaintrm.github.io/posts/enseigner-le-tdd/</guid>
       <description>Cela fait maintenant un an que je travaille comme prestataire pour un grand groupe. Ma mission y est des plus critique. Elle consiste à développer et maintenir l’ensemble des projets utilisés pour la programmation d’objets connectés nécessaires à l’activité de l’entreprise.&#xA;Mon équipe est constituée de plusieurs profils : des développeurs, un product owner ainsi qu’un recetteur. Pour répondre à un fort besoin de qualité, les tests, et notamment les tests unitaires, constituent une composante majeure de notre travail.</description>
     </item>
+    <item>
+      <title>ABOUT ME</title>
+      <link>https://romaintrm.github.io/about-me/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://romaintrm.github.io/about-me/</guid>
+      <description>Hi! My name is Romain BERTHON. Welcome to my personal tech blog.&#xA;I&amp;rsquo;m working as a professional software developer since I graduated in 2014. My main experience is on the back end side, but I also have some experience on the UI side, first with desktop clients (Windows Form, WPF then UWP) and now with web clients.&#xA;Early in my career, I&amp;rsquo;ve been introduced to craft practices and techniques like TDD, BDD, DDD or Extreme-Programming.</description>
+    </item>
   </channel>
 </rss>
