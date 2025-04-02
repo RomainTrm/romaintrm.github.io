@@ -10,9 +10,9 @@
     <atom:link href="https://romaintrm.github.io/tags/en/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>DESIGNING WITH TYPES</title>
-      <link>https://romaintrm.github.io/posts/desiging-with-types/</link>
+      <link>https://romaintrm.github.io/posts/designing-with-types/</link>
       <pubDate>Wed, 02 Apr 2025 09:00:00 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/desiging-with-types/</guid>
+      <guid>https://romaintrm.github.io/posts/designing-with-types/</guid>
       <description>When writing software, we&amp;rsquo;re using types to represent the information we&amp;rsquo;re manipulating. Values are express through primitive types like bool, int or string. We&amp;rsquo;re building complex data representation by composing these types. This composition is done by defining our own types, usually with classes or tuples.&#xA;Even if there are several ways to store and represent the same information, these ways are not all equivalent. Some are too permissive and allows states that should be considered as illegal regarding our business rules.</description>
     </item>
     <item>
