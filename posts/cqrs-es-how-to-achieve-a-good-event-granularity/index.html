@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CQRS/ES: HOW TO ACHIEVE A GOOD EVENT GRANULARITY? · Romain Berthon</title>
+<title>CQRS/ES: How to achieve a good event granularity? · Romain Berthon</title>
 
 
 
@@ -30,7 +30,7 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>CQRS/ES: HOW TO ACHIEVE A GOOD EVENT GRANULARITY?</h1>
+                <h1>CQRS/ES: How to achieve a good event granularity?</h1>
             </div>
             <div class="date"><h5>Dec 18, 2024</h5></div>
         </div>
@@ -38,7 +38,7 @@
             <p>If you&rsquo;ve already developed a software using the <em>event sourcing</em> pattern, you&rsquo;ve probably faced difficulty: How-to design good <em>events</em>? What is a good <em>event</em> granularity?</p>
 <p>Indeed it&rsquo;s difficult to produce good <em>events</em> that will not harm our design. As a seasoned developer with <em>event sourcing</em>, I&rsquo;m still struggling with this, even if I&rsquo;ve developed several heuristics over time.</p>
 <p>In this blog post, I will share with you these heuristics. But keep in mind this is not some kind of best practices. Best practices are useful for contexts where we can apply a method without any (major) form of adaptation, there&rsquo;s nothing that simple when developing a custom software for business. The following heuristics are rather a way to ask ourselves good questions and drive our thinking.</p>
-<h2 id="events-ownership">EVENTS OWNERSHIP</h2>
+<h2 id="events-ownership">Events ownership</h2>
 <p>I&rsquo;ve mentioned <em>event sourcing</em>, but what I&rsquo;m thinking of is a <em>CQRS/ES</em> implementation. <em>Event sourcing</em> is about persistence, but associated with <em>CQRS</em>, <em>events</em> have a double responsibility:</p>
 <ol>
 <li><em>Events</em> represent the decisions (and the associated information) we want to store.</li>
@@ -48,7 +48,7 @@
 <blockquote>
 <p>Tip: An <em>event</em> is an implementation detail in a given <em>context</em>, don&rsquo;t use them as a contract for cross-context communication, use dedicated messages instead.</p>
 </blockquote>
-<h2 id="defining-effects">DEFINING EFFECTS</h2>
+<h2 id="defining-effects">Defining effects</h2>
 <p>In a <em>CQRS/ES</em> implementation, we are emitting <em>events</em> to express decisions we made. By applying these decisions, we&rsquo;re producing <em>effects</em>. I can think of three categories of <em>effects</em>:</p>
 <ol>
 <li>update the state of the emitter <em>aggregate</em></li>
@@ -60,14 +60,14 @@
 <blockquote>
 <p>Tip: We&rsquo;re storing information in the <em>aggregate</em>&rsquo;s state for future decision-making. Sometimes we can replace a data provided by a <em>command</em> with a data stored in an <em>event</em> of the <em>aggregate</em>&rsquo;s history. Anticipating future <em>effects</em> (and associated information) can highly simplify our software.</p>
 </blockquote>
-<h2 id="autonomous-events">AUTONOMOUS EVENTS</h2>
+<h2 id="autonomous-events">Autonomous events</h2>
 <p>Good <em>events</em> are autonomous <em>events</em>. This means they carry all the data they need to apply an <em>effect</em> (ideally). In other words, when applying an <em>event</em> we&rsquo;re not supposed to compute any data, we should only do some mapping and aggregation logic. There is a good reason for this. By storing <em>events</em>, we&rsquo;re storing decisions over time, these decisions are associated with <em>business rules</em>. If we&rsquo;re missing some data in the <em>event</em>, applying a <em>business rules</em> to fill the gap is a potential issue because we&rsquo;re applying the actual version of this <em>rule</em>, not the one that was applied then the <em>event</em> was emitted.</p>
 <p>Here&rsquo;s an example: we&rsquo;re running a business and selling a service to our customers. When issuing an invoice, we chose to only store the amount without taxes. At first glance, this looks like a harmless design decision. But when it&rsquo;s time to pay taxes, we&rsquo;ll need to compute how much we&rsquo;ve perceived from our customers. Problem: the tax rate to apply have possibly changed over time, maybe only for customers of a specific region, etc. This can get complicated very quickly. That’s why we want to include the rate and amount of taxes in our <em>event</em>.</p>
 <p>I believe autonomous <em>events</em> can be achieved for my first two categories of <em>effects</em> (<em>aggregate</em>&rsquo;s state and <em>readmodels</em>), but it&rsquo;s not always possible for the third one (triggering new processes). Sometimes, the <em>effect</em> we&rsquo;re triggering need information from a larger scope than the scope controlled by the <em>aggregate</em>. In these cases, we read information from dedicated <em>readmodels</em>.</p>
 <blockquote>
 <p>Tip: It&rsquo;s OK to repeat the same information in several <em>events</em>.</p>
 </blockquote>
-<h2 id="business-intents">BUSINESS INTENTS</h2>
+<h2 id="business-intents">Business intents</h2>
 <p>So far, we&rsquo;ve talked about <em>effects</em> on the system. An <em>effect</em> is how the state of our system changes, it&rsquo;s a side effect. But observing an <em>effect</em> does not tell us why it occurs, for that we must capture <em>intents</em>. Indeed, there are several reasons for our system to send an email&hellip;</p>
 <p>An <em>effect</em> is <em>what</em> happened, the <em>intent</em> is <em>why</em> it happened. Our <em>events</em> are driving the <em>effects</em> but they&rsquo;re also responsible for describing the <em>intents</em> associated with them. The <em>why</em> carries a lot of value because it provides inputs to business people, it&rsquo;s a good way to support future business decisions beyond the software.</p>
 <blockquote>
@@ -78,7 +78,7 @@
 <blockquote>
 <p>Tip: Multiple <em>commands</em> can raise the same <em>event</em> as long as they share the same <em>intent</em>.</p>
 </blockquote>
-<h2 id="snapshots-and-lifecycles">SNAPSHOTS AND LIFECYCLES</h2>
+<h2 id="snapshots-and-lifecycles">Snapshots and lifecycles</h2>
 <p>One thing I remember from when I was learning about <em>CQRS/ES</em>: <em>snapshots</em> were a recurring topic.</p>
 <p>After several years, in all the code bases I&rsquo;ve worked with, I have never used <em>snapshots</em> and I have never encountered any use case that could justify using it. Today, I even tend to think <em>snapshots</em> can be considered as <em>code smell</em> for most use cases.</p>
 <p>When designing an <em>aggregate</em>, we want to control its lifecycle, how it starts, how and when it ends. With <em>event sourcing</em>, this means we must limit <em>event stream</em> length. Using <em>snapshots</em> potentially means our <em>stream</em> is not bounded because we&rsquo;ve not defined a clear end to the <em>aggregate</em>&rsquo;s lifecycle.</p>
@@ -86,16 +86,16 @@
 <p>To me, an <em>event stream</em> of 10 or 30 <em>events</em> looks normal depending on the <em>aggregate</em>&rsquo;s complexity, a 150-<em>events stream</em> is a big one but it doesn&rsquo;t require a <em>snapshot</em> yet. There&rsquo;s no hard limit, just be aware of the scales in your own systems.</p>
 </blockquote>
 <p>To bound an <em>event stream</em>, we have to define an end we will always encounter:</p>
-<h3 id="business-related-limit">BUSINESS RELATED LIMIT</h3>
+<h3 id="business-related-limit">Business related limit</h3>
 <p>Sometimes this emerges very naturally, for example an event <code>Issued</code> for an <code>Invoice</code>. Sometimes we have to define more arbitrary limits.</p>
 <p>One of my customers was running a business with several agencies in France for the purchase and sale of valuables. We had one software to track these valuables as they needed to be moved several times for expertise before being sold again. To avoid long <em>event stream</em> for these objects, the solution was to end the <em>aggregate</em>&rsquo;s lifecycle every time they leave a place (sold or transferred) and initiating a new <em>aggregate</em> when entering a new place (bought or transferred) with the previous valuable identity as a property.</p>
-<h3 id="time-related-limit">TIME RELATED LIMIT</h3>
+<h3 id="time-related-limit">Time related limit</h3>
 <p>Think how we can design a bank account with all its associated operations. A single <em>aggregate</em> isn&rsquo;t suitable because it can last for a very long time, maybe even longer than the lifetime of its owner. In this use case, we can place time-related limits, for example a month duration lifespan. At the beginning of each month, we&rsquo;re initiating a new <em>aggregate</em> with the last known balance of the bank account.</p>
-<h2 id="conclusion">CONCLUSION</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>To summarize, <em>events</em> are the central building block of a <em>CQRS/ES</em> implementation, they&rsquo;re used for data storage and for inner communication. When designing events, we need an overall view of our system to define <em>effects</em> and <em>intents</em>. I think this is the main reason why <em>CQRS/ES</em> is a complex pattern to use. We also have to carefully think how long an <em>aggregate</em> will be used.</p>
 <p>I hope you found these heuristics useful, it took me some time to structure my thoughts in order to formulate them.</p>
 <hr>
-<h2 id="comments">COMMENTS</h2>
+<h2 id="comments">Comments</h2>
 <!--Add your comment here-->
 <p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
 

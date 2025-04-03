@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VOUS N’ÊTES PAS MAÎTRE DE VOTRE CODE · Romain Berthon</title>
+<title>Vous n’êtes pas maître de votre code · Romain Berthon</title>
 
 
 
@@ -30,14 +30,14 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>VOUS N’ÊTES PAS MAÎTRE DE VOTRE CODE</h1>
+                <h1>Vous n’êtes pas maître de votre code</h1>
             </div>
             <div class="date"><h5>May 24, 2017</h5></div>
         </div>
         <article class="content">
             <p>J’ai récemment pu participer à un atelier animé par <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Mourra</a> lors des <a href="https://twitter.com/ncraftsConf" target="_blank">NCrafts</a>. Pas de technique ici, le but était de mettre en lumière des problèmes d’ordres systémiques. Pour cela, nous avons fait un <a href="https://github.com/ldez/kebab-kata" target="_blank">Kebab Kata</a> sous forme d’itérations aux-cours desquelles Romeu jouait le rôle du client, puis également de l’architecte. Son but était de nous faire échouer en usant de différents comportements toxiques que l’on retrouve fréquemment dans de vraies missions.</p>
 <blockquote class="twitter-tweet"><p lang="in" dir="ltr"><a href="https://twitter.com/hashtag/nCrafts?src=hash&amp;ref_src=twsrc%5Etfw">#nCrafts</a> doing the kebab kata <a href="https://t.co/GpWZM03T0T">pic.twitter.com/GpWZM03T0T</a></p>&mdash; @romeu@mastodon.social (@malk_zameth) <a href="https://twitter.com/malk_zameth/status/865131834673434624?ref_src=twsrc%5Etfw">May 18, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<h2 id="objectif-rempli">OBJECTIF REMPLI</h2>
+<h2 id="objectif-rempli">Objectif rempli</h2>
 <p>L’atelier s’est déroulé de la façon suivante :</p>
 <ul>
 <li>à chaque itération le client donne un périmètre et un budget (du temps) pour le réaliser.</li>
@@ -49,7 +49,7 @@
 <li>un architecte, appuyé par le client, apporte alors des directives de conception en parallèle de notre audit.</li>
 </ul>
 <p>Comme prévu, nous avons tous échoué : à l’issue de l’atelier, toutes les équipes ont considéré leur code comme étant du legacy.</p>
-<p>DES RESPONSABILITÉS PARTAGÉES</p>
+<h2 id="des-responsabilités-partagées">Des responsabilités partagées</h2>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Good ways to fail your project with <a href="https://twitter.com/malk_zameth?ref_src=twsrc%5Etfw">@malk_zameth</a> , as expected we failed ! <a href="https://twitter.com/hashtag/NCrafts?src=hash&amp;ref_src=twsrc%5Etfw">#NCrafts</a> <a href="https://t.co/qP12zIqDg2">pic.twitter.com/qP12zIqDg2</a></p>&mdash; Romain Berthon (@RomainTrm) <a href="https://twitter.com/RomainTrm/status/865158052818952192?ref_src=twsrc%5Etfw">May 18, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p>Il en ressort clairement que les développeurs ne sont pas les seuls responsables de la qualité finale du code. De façon synthétique et non exhaustive :</p>
 <p>La contrainte la plus évidente est le temps sur un périmètre donné : les délais sont très courts et incitent à prendre des “raccourcis” comme ne pas utiliser de tests unitaires. Le client n’hésite pas à demander s’ils sont nécessaires. Il écoute les rares équipes qui tentent de négocier les délais mais cela n’aboutit à rien d’autre qu’à un moyen pour les développeurs d’exprimer leur frustration.</p>
@@ -61,7 +61,7 @@
 <li>L’équipe ne communique pas avec les autres pour échanger sur les solutions possibles. De plus, les temps accordés aux revues de codes sont inutiles car bien trop courts (et désorganisés) pour être constructifs : il n’est pas possible de faire émerger de réels axes d’amélioration</li>
 </ul>
 <p>Enfin, les équipes subissent des pressions sur leurs choix techniques. Le client fait part des retours fait par l’équipe front end (dont l’existence n’avait d’ailleurs jamais été évoquée avant !) et des difficultés qu’elle rencontre lors de l’intégration. L’architecte impose, appuyé par le client qui “le paie très chère”, une architecture basée sur le <em>design pattern composit</em>. Il s’avère que cette solution répond bien au problème de conception de ce kata, mais ne reflète pas du tout la façon dont le métier du client peut évoluer, ce qui rend toute évolution encore plus coûteuse.</p>
-<h2 id="prisonniers-et-gardiens-dun-système">PRISONNIERS ET GARDIENS D’UN SYSTÈME</h2>
+<h2 id="prisonniers-et-gardiens-dun-système">Prisonniers et gardiens d’un système</h2>
 <p>Avec tous ces éléments, les développeurs se sentent isolés puisque considérés comme de simples exécutants de décisions qu’ils ne comprennent pas et pour lesquelles ils n’ont pas été consultés. Il n’existe aucune confiance entre l’équipe de développement et ses interlocuteurs.</p>
 <p><a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> décrit le système dans lequel sont pris les développeurs comme étant un <a href="https://fr.wikipedia.org/wiki/Panoptique" target="_blank">panoptique</a>. La majeure partie des comportements observés lors de l’exercice peuvent être associés à trois piliers qu’il a identifiés :</p>
 <ul>
@@ -71,7 +71,7 @@
 </ul>
 <p>Une fois pris dans un tel système, les développeurs ont l’impression d’être constamment surveillés et ne se sentent plus libres de leurs manières de travailler. Ils s’imposent alors un mode de fonctionnement qu’ils finissent, à terme, par trouver normal. Malgré des lacunes plus ou moins évidentes de sa part, le système n’est alors plus remis en question.</p>
 <p>C’est ainsi que ces mêmes développeurs peuvent se montrer hostiles à l’introduction de nouvelles pratiques comme le TDD ou le pair programming. Parce que cela ne leurs semble pas concevable et qu’ils craignent que le système rejette cela.</p>
-<h2 id="tenter-et-innover">TENTER ET INNOVER</h2>
+<h2 id="tenter-et-innover">Tenter et innover</h2>
 <p>Bien que fréquents, les comportements évoqués plus haut ne sont pas adoptés pour sciemment nuire au projet. Il est tout de même important de savoir les identifier, les remettre en cause et initier des changements de méthode, de comportement.</p>
 <p>Parmi les pratiques à mettre en place, <a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> proposait les suivantes :</p>
 <ul>
@@ -82,7 +82,7 @@
 <p>Essayer de convaincre les gens avant de tenter quoi que ce soit est généralement un effort vain. Il ne faut donc pas avoir peur de prendre des initiatives, les résultats sont souvent plus parlant que les débats.</p>
 <p>Merci à <a href="https://twitter.com/Ouarzy" target="_blank">Ouarzy</a> et Léna pour leurs retours, merci à <a href="https://twitter.com/malk_zameth" target="_blank">Romeu</a> pour cet atelier très instructif.</p>
 <hr>
-<h2 id="commentaires">COMMENTAIRES</h2>
+<h2 id="commentaires">Commentaires</h2>
 <!--Ajoutez votre commentaire ici-->
 <p>Envie de commenter ? S’il vous plaît, ajoutez votre commentaire en m&rsquo;<a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">envoyant une pull request</a>.</p>
 

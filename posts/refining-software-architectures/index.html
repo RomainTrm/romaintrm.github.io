@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>REFINING SOFTWARE ARCHITECTURES · Romain Berthon</title>
+<title>Refining software architectures · Romain Berthon</title>
 
 
 
@@ -30,14 +30,14 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>REFINING SOFTWARE ARCHITECTURES</h1>
+                <h1>Refining software architectures</h1>
             </div>
             <div class="date"><h5>Mar 12, 2025</h5></div>
         </div>
         <article class="content">
             <p>To develop software, as developers we have to choose between several architectures. Our choice must be based on various constraints like the type of problem we&rsquo;re trying to solve, but also the load or the level of reliability and resiliency targeted. We also have to consider the available skills in the team.</p>
 <p>In this blog post, I want to iterate through several back-end architectures I&rsquo;ve encountered and used during my career. For each of them, I&rsquo;ll be highlighting their limitations and then introducing an improvement. To do so, I&rsquo;ll start from the (in)famous &ldquo;CRUD app&rdquo;, the assumed simplest architecture, the one that will not give you one of your worst headache (until it does), and I&rsquo;ll finish with some advanced solutions.</p>
-<h2 id="defining-crud">DEFINING CRUD</h2>
+<h2 id="defining-crud">Defining CRUD</h2>
 <p>First thing first, what does <em>CRUD</em> means? This is the acronym for <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate and <strong>D</strong>elete. These are the four basic operations to manipulate data in a database. Sometimes you&rsquo;ll also find a fifth verb which is <strong>S</strong>earch, but to me it falls within the <strong>R</strong>ead concerns.</p>
 <p>So, if we try to define in a strict and naive way a &ldquo;CRUD application&rdquo;, this is basically a form that manipulates raw data from the database without any other form of business logic. Such solution may fit if our only concern is about storing and accessing the data.</p>
 <p>Having an application that just mimic the database schema is so trivial that many off-the-shelf solutions exist. I can think of <a href="https://www.adminer.org/" target="_blank">Adminer</a> that provides you a web interface, or code generators (like <a href="https://www.jhipster.tech/" target="_blank">JHipster</a>) that generates REST API on top of the database. These are easy to use solutions that can be implemented in a few hours without any specific skills.</p>
@@ -107,7 +107,7 @@
   
 </div>
 <p>Even if we can think of some valid use cases, those are rare. Let&rsquo;s face it! No one is paying a team of developers to only build a <em>CRUD</em> application, this is way too trivial to justify such a financial expense. There is always at least some validations/business rules on top of it.</p>
-<h2 id="making-useful-software-adding-logic">MAKING USEFUL SOFTWARE: ADDING LOGIC</h2>
+<h2 id="making-useful-software-adding-logic">Making useful software: adding logic</h2>
 <p>If I try to redefine our &ldquo;CRUD application&rdquo; with a broader definition: it&rsquo;s an application with a central data model and some business rules upon it. Now we have some reasons to hire a developer!</p>
 <p>Basically, we want to add an intermediate layer between our form and the database, this layer will handle the business logic. This is the emergence of a layered architecture.</p>
 
@@ -212,7 +212,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#111">}</span>
 </span></span></code></pre></div><p>Secondly, it reduces the coupling to the data model for the consumer. In the &ldquo;pure CRUD application&rdquo; solution, our data model was leaking to the outside world and clients had to conform to this model to manipulate the data. This is an issue because if we decide to change our data model, it will break our consumers. Now, we can expose some behaviors and abstractions and keep our data model internal (like in the previous code example). It can be beneficial for commands because we&rsquo;re now exposing only relevant fields for each use case and not the entire model.</p>
 <p>Finally, we can also choose to introduce a <em>rich model</em>: until now we were manipulating an <em>anemic model</em>. An <em>anemic model</em> is a basic POXO (like <em>Plain Old Java Object</em> or <em>Plain Old C# Object</em>) that only carries the data. This is often the data model stored in the database. We have to use a <em>service</em> to apply business rules (mutations) to this POXO. This separation between data and behavior is not an issue by itself, it&rsquo;s even very common in <em>functional programming</em>. The problem is that our business logic conform and works with the storage data model that may not fit well with business constraints. With a <em>rich model</em>, we&rsquo;re introducing a new model that is designed to fit with the business, that can possibly enforce some rules with strong typing and may regroup data and behaviors in the same place. Yes, it requires some two-direction mapping logic between these two models but this is a fair tradeoff.</p>
-<h2 id="driving-by-business-growing-in-complexity">DRIVING BY BUSINESS: GROWING IN COMPLEXITY</h2>
+<h2 id="driving-by-business-growing-in-complexity">Driving by business: growing in complexity</h2>
 <p>Until now, our architecture remained <em>data-centric</em>. What I mean here is that is we draw an arrow to represent the data flow, we&rsquo;ll realize that our data model is in the center of our application.</p>
 
 
@@ -462,7 +462,7 @@
   
 </div>
 <p>This was OK, but now our users are asking for new cool features that will introduce more complexity to our software, models will grow and we will have to heavily rely on automated tests to ensure there is no regression. This is where I think this <em>layered architecture</em> shows its limits.</p>
-<h3 id="testability">TESTABILITY</h3>
+<h3 id="testability">Testability</h3>
 <p>Let&rsquo;s address testability first. The layers are already testable but with a huge constraint: the higher is the layer we want to test, the more layers to include in our test. This means to test our <em>Domain layer</em>, where sits all our business logic (the main thing to test), we have to always include the <em>Data access layer</em> because we&rsquo;re depending on it. That is painful for several reasons: we have to set up data in the database to run a business test, this adds useless complexity and noise to the tests. This is even worse if the <em>Data access layer</em> is using an ORM that is mapping foreign keys as objects, in such case we may manipulate a complete object tree. Also, tests relying on the database are slower and more prone to side-effects (concurrent tests on the same model).</p>
 <p>The simplest move I see there is called the <em>&ldquo;sandwich pattern&rdquo;</em>. The idea is, inside the <em>Domain layer</em>, to split data access logic from business logic. This way, we&rsquo;ll be able to test our logic without worrying about other concerns. But if we also want to test this data access logic, we fallback to our tests with data set up in the database. If I apply this pattern to our previous pseudo-code example:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">// Isolated and easy to test logic</span>
@@ -495,7 +495,7 @@
 </span></span><span style="display:flex;"><span>  <span style="color:#111">dataLayer</span><span style="color:#111">.</span><span style="color:#111">save</span><span style="color:#111">(</span><span style="color:#111">updatedData</span><span style="color:#111">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#111">}</span>
 </span></span></code></pre></div><p>And <em>voilà</em>! We&rsquo;ve implemented a new architecture pattern called <a href="https://kennethlange.com/functional-core-imperative-shell/" target="_blank"><em>Functional core, Imperative shell</em></a>. In our previous example, the <em>functional core</em> is our <code>businessLogic</code> function, it&rsquo;s surrounded by the <em>imperative shell</em> defined by the <code>domainLayerFunction</code> method.</p>
-<h3 id="domain-centric">DOMAIN CENTRIC</h3>
+<h3 id="domain-centric">Domain centric</h3>
 <p>The <em>sandwich</em> trick is great but the architecture still remains <em>data-centric</em>. I want to go further!</p>
 <p>In my previous code example, I used an <em>anemic model</em> defined by the database schema. If I want to introduce my <em>rich model</em>, I must define the mapping inside the <em>Domain layer</em>: <em>Domain layer</em> defines the <em>rich model</em>, and depends on the <em>Data access layer</em>. So <em>Data access layer</em> is unaware of the <em>rich model</em> and then cannot do the mapping.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#00a8c8">void</span> <span style="color:#111">domainLayerFunction</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#00a8c8">value</span><span style="color:#111">)</span> <span style="color:#111">{</span>
@@ -871,12 +871,12 @@
 </blockquote>
 <p>Now, we&rsquo;re driving our design by the <em>Domain</em>. We can define, code and test our <em>rich model</em> without worrying about data persistence. Once done, we can move on and focus on implementing dependencies and their specific constraints.</p>
 <p>This is the core concept behind a whole family of architectures: <a href="https://en.wikipedia.org/wiki/Hexagonal_architecture_%28software%29" target="_blank"><em>hexagonal architecture</em></a> (aka <em>ports and adapters</em>), <em>onion architecture</em> and <em>clean architecture</em>. I will not take the time here to explain the differences between them, mostly because I tend to see them as <a href="https://en.wiktionary.org/wiki/bikeshedding" target="_blank">bikeshedding</a>.</p>
-<h2 id="data-consistency-should-we-refuse-inputs">DATA CONSISTENCY: SHOULD WE REFUSE INPUTS?</h2>
+<h2 id="data-consistency-should-we-refuse-inputs">Data consistency: should we refuse inputs?</h2>
 <p>I&rsquo;m doing a small interlude here on our architectures refinement to talk about data consistency. On the first versions we&rsquo;ve explored, the <em>data model</em> was central and therefore was carrying a huge responsibility on data consistency. This takes the form of several database mechanics like <em>foreign keys</em> and constraints like <code>NOT NULL</code> or <code>UNIQUE</code>. Now, we&rsquo;ve got a strong <em>domain model</em> responsible for business rules, we may consider more supple rules on the database side. Here&rsquo;s my point: should we refuse a command from the user because our <em>data model</em> says the operation is inconsistent? This question may seem weird, but sometimes there are good reasons to accept an input and assume our system is out of sync with reality. Here are two use cases:</p>
 <p>A few years ago, I was on a trip and I had few troubles on a connection between two flights. That day, the weather was bad, a lot of clouds and dense fog, which resulted in many delayed flights. My first plane landed late and we were rushing to catch our second flight. After a long run through the airport, we managed to arrive at the gate right on time, but our boarding passes were refused by the system, we didn&rsquo;t get onboard. Indeed the system had determined before the onboarding that we couldn&rsquo;t get there on time, so it automatically registered us in a flight later in the day. I don&rsquo;t know if the system reused our seats for other people, but if it didn&rsquo;t, this is a case where the system was out of sync with reality and have blocked users. Yet, our boarding passes could have been a good proof that we were there, ready to get on the plane.</p>
 <p>Now let&rsquo;s imagine we&rsquo;re working on a warehouse. Items are brought in, moved, stored on shelves and then loaded in trucks for delivery. To track items, each of them is marked with unique codes (barcodes, QR codes) that are normally scanned at each step. When loading a truck, we&rsquo;re scanning items until the system detect an inconsistency on one of them because it was supposed to be on a shelf. Do you think the system should prevent us from loading it into the truck? The barcode gives us a high confidence that this is the correct item we&rsquo;re trying to load.</p>
 <p>The way to solve these cases are businesses, not technical decisions. So we should be careful not to build systems that enforce this type of consistency without asking domain experts first.</p>
-<h2 id="distinct-use-cases-commands-and-queries">DISTINCT USE CASES: COMMANDS AND QUERIES</h2>
+<h2 id="distinct-use-cases-commands-and-queries">Distinct use cases: commands and queries</h2>
 <p>Our previous architecture is already pretty good, I think it&rsquo;s even becoming a standard in any team this some good crafting skills, but let&rsquo;s refine it more.</p>
 <p>In most software, reading and writing are not using the same representations of the data. The information displayed to the user is often an aggregation of entities. On the other side, the application of a command is generally more focus on individual entities, and can be easily abstracted with dedicated types containing only revelant values to execute the command. This is an issue as our model is torn by contradictory constraints, getting a model that satisfies both readings and writing will get more and more difficult.</p>
 <p>Also, you may have heard about the <a href="https://en.wikipedia.org/wiki/Pareto_principle" target="_blank">Pareto principle</a>: the famous &ldquo;80/20 rule&rdquo;. This is not a rule specific to software, but in the case of management software or e-commerce website, one way to formulate this principle is the read/write ratio: in such software, most accesses are for reading and the writing appears to be less frequent. This means, if we want to improve performances, we can easily target 80% of the use cases just by focusing on readings.</p>
@@ -1052,7 +1052,7 @@
   
 </div>
 <p>With <em>CQRS</em>, our data model may tend to become more specialized for writing as it becomes the <em>source of truth</em>. To fulfill reads requirements, we have several solutions: use <em>SQL views</em>, write some code to map the <em>readmodel</em> from the write model at runtime, or create and fill dedicated <em>SQL tables</em>. With all these solutions, this read/write separation becomes explicit in the code and we can evolve one part with a minimum impact on the other.</p>
-<h2 id="executing-side-effects-consistency-as-a-target">EXECUTING SIDE-EFFECTS: CONSISTENCY AS A TARGET</h2>
+<h2 id="executing-side-effects-consistency-as-a-target">Executing side-effects: consistency as a target</h2>
 <p>Now we have isolated our business logic and made a clean separation between reads and writes, we should focus on what makes software useful: side-effects.</p>
 <p>So far, I&rsquo;ve presented side-effects as something bad that must be pushed as far as we can from our domain, and there is good reason for that: by definition it&rsquo;s not deterministic, this means for the same input we will not always get the same output. Sometimes it&rsquo;s a different value, sometimes it can be more annoying like an error or a crash. Side-effects are difficult to test and it is hard to make sure our code is correct. But they&rsquo;re also necessary, they&rsquo;re the state changing in the database, the mail sent to the customer, or any other type of IO operations. Everything valuable produced by our software that is observable from the outside.</p>
 <p>When our software is making changes, we’re seeking consistency, we want to make sure everything works fine, making a correct transition from a state A to a state B. That’s why we’re implicitly making a decision and at the same time applying it in the form of one or many side-effects. But if one of the side-effect fails, we can put ourselves in some inconsistent situation and this can be an issue: we may display wrong information to users, corrupted data may influence future decision-making, generating even more bad data. Making sure our system is always in a consistent state can be very complex or simply unachievable.</p>
@@ -1284,7 +1284,7 @@
   
 </div>
 <p>With such solution, a compensation may not be necessary anymore as our system is becoming <em>eventual consistent</em>. If something fails, it can be fixed and retried until it works. By the end of the day, our system will be consistent. Also, as processes are now isolated, we&rsquo;ve added a level of protection against cascading failures in our software, making it more resilient. I made a more detailed <a href="/posts/using-processes-for-better-resilience/">post</a> on this specific topic.</p>
-<h2 id="explicit-decision-making">EXPLICIT DECISION-MAKING</h2>
+<h2 id="explicit-decision-making">Explicit decision-making</h2>
 <p>We&rsquo;re not done yet, I think we can go even further. As I&rsquo;ve already mentioned it in the previous section, we&rsquo;re implicitly making and applying decisions at the same time. This has a consequence, we may have made a valid decision but fail to apply it. In such case our decision has been rolled back and discarded. Now I want to change this behavior, making decisions explicit and not lose them if something else fails!</p>
 <p>From now on, I&rsquo;ll refer to <em>readmodels</em> updating and jobs enqueuing as <em>effects</em>.</p>
 <p>If we go back to our previous <em>CQRS</em> architecture, this means we should be able to update and save our write model. If it doesn&rsquo;t fail, then we can process our <em>effects</em>. With this, failing to run one of these <em>effects</em> doesn&rsquo;t cancel the decision made and should not affect other <em>effects</em> (to be applied or already applied).</p>
@@ -1609,7 +1609,7 @@
 <blockquote>
 <p>Hint: By default I apply all my <em>effects</em> synchronously. In case of long operations, I use a dedicated <em>readmodel</em> where I write &ldquo;processing&rdquo;, then I enqueue a job to run the process in an asynchronous way. This way I&rsquo;m not blocking the user and she has a feedback that the operation she asked is ongoing.</p>
 </blockquote>
-<h2 id="do-not-lose-data">DO NOT LOSE DATA</h2>
+<h2 id="do-not-lose-data">Do not lose data</h2>
 <p>Here&rsquo;s the final refinement I want to suggest. All our previous architectures suffer from the same flaw: our database model remained handled in a <em>CRUD</em> fashion. This can be an issue in the write model as we&rsquo;re implicitly losing data every time we&rsquo;re updating a value. Yes, Update is an implicit Delete as we lose the replaced value.</p>
 <p>New features may not be compatible with existing data. Missing data may also prevent us from correcting incorrect values due to bugs or mishandling by users. Analyzing the past is an opportunity to discover trends, doing statistics and improve future business decisions.</p>
 <p>To mitigate this issue, I want to move from an <em>event-driven CQRS</em> architecture to the <em>CQRS/Event-Sourcing</em> architecture. To do this, we &ldquo;just&rdquo; have to store our <em>events</em> instead of a state in our write model. By doing so, our model is now in <em>append only</em> mode, technical issues put aside, the only way to fail is a conflict. This allows us to easily detect concurrent operations on a same <em>event stream</em> (the list of the <em>events</em> that were emitted by an <em>aggregate</em>), the version of the <em>event stream</em> is the number of <em>events</em> that composes it: if we try to insert an event with a number that already exists, we&rsquo;re in a conflict.</p>
@@ -1899,13 +1899,13 @@
 <p>Loading several objects in the form of a tree becomes really tricky and it&rsquo;s way better to link aggregates using references (pass an id instead of the object). I would advise you to do this even before considering <em>event-sourcing</em>, but with this architecture you don&rsquo;t really have a choice.</p>
 <p>Finally, <em>event-sourcing</em> doesn&rsquo;t tell us the whole story: unless we treat business errors as <em>events</em>, we will only observe in our <em>events</em> the result of successful commands. When we analyze trends in production, this is something that we need to keep in mind.</p>
 <p><em>CQRS/Event-Sourcing</em> is the most advanced architecture pattern I&rsquo;ve used in production during my career. I love it because it allows me to write reliable and resilient software, but as I&rsquo;ve highlighted it, this is not an easy pattern to use. There are probably some new refinements we could imagine to improve this architecture, but they&rsquo;re out of my current knowledge.</p>
-<h2 id="conclusion">CONCLUSION</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>In this blog post, we&rsquo;ve gone through several architectures by adding improvements. As they grow in capabilities, they also grow in complexity.</p>
 <p>Keep in mind that not all applications need the most advanced <em>CQRS/Event-Sourcing</em> pattern. Choose the architecture that is good enough for the problems you&rsquo;re trying to solve. Even more, we don&rsquo;t have to write an entire software using a single architecture. In a given context, some parts are well defined with clear life-cycles and therefore can be <em>event-sourced</em>. Other parts may be well suited for a simple <em>CRUD</em> approach as they have no life-cycle nor business rules. Mixing these patterns isn&rsquo;t an issue at all.</p>
 <p>I&rsquo;m also aware we&rsquo;ve not explored all architectures that exist out-there. For example, I know about the <em><a href="https://en.wikipedia.org/wiki/Actor_model" target="_blank">actor-model pattern</a></em> or the <em><a href="https://www.jimmybogard.com/vertical-slice-architecture/" target="_blank">vertical slice architecture</a></em> but I chose not to talk about these in this post as I wanted to focus on architectures I&rsquo;ve used in a production context.</p>
 <p>Finally, even if our architectures have increased in complexity, it doesn&rsquo;t mean that the cost of the software is growing with it. Sure, it requires more skilled developers and the initial cost of a new feature may be higher, but we have to consider how the code complexity is contained over time, how costly it is to run and maintain the software in production, etc. Increased initial development cost can result in lower maintenance, production and evolution costs. That&rsquo;s why only looking at the development costs to drive a technical choice doesn&rsquo;t make sense to me. This is also the reason why I don’t think these advanced architectures are necessarily more expensive.</p>
 <hr>
-<h2 id="comments">COMMENTS</h2>
+<h2 id="comments">Comments</h2>
 <!--Add your comment here-->
 <p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
 

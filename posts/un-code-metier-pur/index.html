@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>UN CODE MÉTIER PUR · Romain Berthon</title>
+<title>Un code métier pur · Romain Berthon</title>
 
 
 
@@ -30,14 +30,14 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>UN CODE MÉTIER PUR</h1>
+                <h1>Un code métier pur</h1>
             </div>
             <div class="date"><h5>Feb 04, 2020</h5></div>
         </div>
         <article class="content">
             <p>Il y a quelques jours, au cours d’une discussion, on m’a demandé quelles sont les pratiques que je pousse dans une équipe dans le but d’améliorer la qualité de code. Bon nombre de pratiques comme TDD, clean code ou encore DDD et ses bounded-contexts ayant déjà été cités, j’ai donc répondu : un code métier pur, parfois appelé <a href="https://thinkbeforecoding.com/post/2018/01/25/functional-core" target="_blank">functional core</a>.</p>
 <p>Dans cet article, je pars du principe que vous faite une distinction et séparation forte entre le code métier qui répond à une logique business, et le code infra qui répond aux problématiques techniques.</p>
-<h2 id="quels-intérêtsnbsp">QUELS INTÉRÊTS ?</h2>
+<h2 id="quels-intérêtsnbsp">Quels intérêts ?</h2>
 <p>Un code que l’on peut qualifier de pur a deux caractéristiques :</p>
 <ul>
 <li>Celui-ci retourne toujours le même résultat pour les mêmes entrées. Il ne dépend donc d’aucun état interne ni d’appels à des dépendances (base de données, heure système, etc.)</li>
@@ -52,10 +52,10 @@
 <li>Ma réservation est acceptée pour les dates.</li>
 </ul>
 <p>Si l’on peut parfois considérer les problèmes de charge comme inhérents au métier, on a tout de même envie de les traiter comme des problématiques techniques. Gérer l’accès à un état partagé sur lequel on souhaite écrire se révèle vite complexe (usage de lock, de transactions par exemple) et empêche un code scaler. Nous ne voulons donc pas polluer de la logique métier avec ce genre de problématiques : garder le code pur est une façon simple de s’en assurer.</p>
-<h2 id="la-raison-dêtre-dun-logiciel">LA RAISON D’ÊTRE D’UN LOGICIEL</h2>
+<h2 id="la-raison-dêtre-dun-logiciel">La raison d’être d’un logiciel</h2>
 <p>Cependant, si nous écrivons des logiciels, c’est souvent pour produire ce que nous qualifions jusqu’à maintenant d’effet de bords : écrire en base de données, envoyer un mail, une notification, etc. Nous devons donc être capable de passer d’un code pur à impure et inversement.</p>
 <p>Une façon (peut-être simpliste) de voir un logiciel est une succession de transformations de données. Je veux lire une donnée sur mon disque dur (imprédictible), puis la transformer (prédictible) et enfin écrire le résultat sur mon disque (imprédictible).</p>
-<h2 id="comment-faire-vivre-les-deuxnbsp">COMMENT FAIRE VIVRE LES DEUX ?</h2>
+<h2 id="comment-faire-vivre-les-deuxnbsp">Comment faire vivre les deux ?</h2>
 <p>Nous avons vu jusqu’ici qu’il doit y avoir une distinction claire entre, le code métier que l’on veut pure, et le code infra qui lui est nécessairement impure puisque sa responsabilité est de traiter avec des appels réseaux et système.</p>
 <p>Pour faire cohabiter ces deux mondes, il nous faut donc un bout de code dont la seule responsabilité est :</p>
 <ol>
@@ -123,10 +123,10 @@
 </span></span><span style="display:flex;"><span><span style="color:#75af00">main</span> <span style="color:#f92672">=</span> <span style="color:#111">readInput</span> <span style="color:#f92672">&lt;&amp;&gt;</span> <span style="color:#111">toUpperString</span> <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#111">writeOutput</span>
 </span></span></code></pre></div><p>La transition du monde de l’<code>IO</code> vers du code pur se fait grâce à une fonction appelée <code>fmap</code>, ici appelée via l’opérateur <code>&lt;&amp;&gt;</code>. <code>fmap</code> prend une fonction pure et l’applique un contenu d’une <code>IO</code> pour produire une nouvelle <code>IO</code>. On obtient ici un <code>IO Uppercase</code>.</p>
 <p>Enfin, pour écrire le résultat, on applique la fonction <code>writeOutput</code> via la méthode <code>bind</code> (opérateur <code>&gt;&gt;=</code>). <code>bind</code> nous permet d’appliquer une fonction retournant une <code>IO</code> au contenu d’une <code>IO</code>.</p>
-<h2 id="out-of-the-tar-pit">OUT OF THE TAR PIT</h2>
+<h2 id="out-of-the-tar-pit">Out of the tar pit</h2>
 <p>Si cet article vu a plu et que vous souhaitez approfondir le sujet, je vous encourage à lire le papier <a href="https://curtclifton.net/papers/MoseleyMarks06a.pdf" target="_blank">Out of the Tar Pit</a> qui traite de la complexité logiciel, et qui propose un découpage similaire du code. J’ai découvert ce papier grâce à un <a href="https://www.youtube.com/watch?v=lFiB-a3aqbE" target="_blank">talk</a> explicatif de <a href="https://twitter.com/malk_zameth" target="_blank">Romeu Moura</a>.</p>
 <hr>
-<h2 id="commentaires">COMMENTAIRES</h2>
+<h2 id="commentaires">Commentaires</h2>
 <!--Ajoutez votre commentaire ici-->
 <p>Envie de commenter ? S’il vous plaît, ajoutez votre commentaire en m&rsquo;<a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">envoyant une pull request</a>.</p>
 

@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>STATE-BASED AND EVENT-BASED APPROACHES · Romain Berthon</title>
+<title>State-based and event-based approaches · Romain Berthon</title>
 
 
 
@@ -30,14 +30,14 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>STATE-BASED AND EVENT-BASED APPROACHES</h1>
+                <h1>State-based and event-based approaches</h1>
             </div>
             <div class="date"><h5>Nov 20, 2024</h5></div>
         </div>
         <article class="content">
             <p>I&rsquo;ve recently gave a <a href="%22/posts/cqrs-es-nos-heuristiques-apres-plusieurs-annees-de-production%22">talk</a> with my friend <a href="https://bsky.app/profile/boudoux.fr" target="_blank">Aurélien</a> about the heuristics we&rsquo;ve developed after using CQRS/ES for several years.</p>
 <p>After our talk, we had a chat with some developers. We concluded that choosing a <em>state-based</em> oriented approach (like <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="_blank">CRUD</a>) seems to be the default solution, such choice seems to remain unchallenged. On the opposite side, choosing an <em>event-based</em> systems (event sourced or event driven) will very often be heavily challenged.</p>
-<h2 id="thinking-in-events">THINKING IN EVENTS</h2>
+<h2 id="thinking-in-events">Thinking in events</h2>
 <p>In a <a href="/posts/2016-12-20/">previous post</a>, I&rsquo;ve expressed some kind of thought experiment to highlight how natural events can be:</p>
 <blockquote>
 <p><em>Me</em>: &ldquo;Where do you live?&rdquo;<br>
@@ -50,28 +50,28 @@
 <p>So we&rsquo;re able to formulate how things change over time. We can also indicate which event caused the change, such as your address changed because you moved to another location.</p>
 <p>Another thing to note is our ability to identify the causality effect: you had a newborn, so your flat became too small, so you decided to move to a bigger place.</p>
 <p>This looks like our thoughts can be arranged as some kind of <em>event-based</em> representation.</p>
-<h2 id="thinking-in-states">THINKING IN STATES</h2>
+<h2 id="thinking-in-states">Thinking in states</h2>
 <p>This representation of the human memory seemed rather natural to me until my colleague Mickael gave me a counter-argument : sometimes you know something has changed, you can express the change over time, but you&rsquo;re just unable to explain what caused this change.</p>
 <p>We could argue that in such cases, we memorize that &ldquo;well, something changed&rdquo; but it doesn&rsquo;t sound natural.</p>
 <p>Also, I realized that for accessing some information in my memory, often I don&rsquo;t have to recall everything that happened to me. I can access this information immediately because I just know it (this kind of fast thinking is prone to huge biases).</p>
 <p>But this is not always true, sometimes I have to do some intense thinking to retrieve information. In these cases I correlate events with states until I&rsquo;ve achieved my goal (or gave up).</p>
 <p>I am not a neurologist or cognition scientist, but I&rsquo;m making an easy assumption here: we&rsquo;re memorizing states and events, and we&rsquo;re able to make causality relation between them. However, sometimes we&rsquo;re only remembering partial information. To fill the gaps, we are forced to infer states or events in our lives.</p>
 <p>So, our thinking and memory aren&rsquo;t fully <em>state-based</em> neither fully <em>event-based</em>. Both concepts should be natural for us.</p>
-<h2 id="software-complexity">SOFTWARE COMPLEXITY</h2>
+<h2 id="software-complexity">Software complexity</h2>
 <p>Back to software development! Most of us have worked on <em>state-based</em> applications like CRUD, this is probably one of the most common architecture pattern. These concepts are actually quite easy to grasp and understand.</p>
 <p>On the other side, I believe a lot of developers had never worked with event sourced (or event driven) applications. These patterns are considered complex and indeed, as a seasoned CQRS/ES pattern architecture developer, I can attest they are. But it also provides a huge benefit: you append and save events (rather easy, it can only fail if you encounter a conflict because someone else added new events), then you apply these events to your system. If it fails while applying, you can retry, fix the code, etc. No impact on your business because you didn&rsquo;t lose any data.</p>
 <p>From my point of view, the missing separation between making/saving decision then applying it is the biggest weakness for CRUD applications.</p>
 <p>Indeed, you must apply all your business rules (making decision and applying it) in a single point in time. But what happens if your code had a bug? Or if you&rsquo;ve made decision on stalled information? You may have corrupted or lost some data and users will be mad at you. To prevent this kind of scenario, we&rsquo;re using defensive patterns like pessimistic locks or some questionable versioning implementations. These add a lot of complexity to our software.</p>
 <p>That&rsquo;s why I&rsquo;m arguing that <em>state-based</em> isn&rsquo;t that simple when you have to implement it.</p>
 <p>In defense of CRUD pattern, I believe there&rsquo;s one scenario where it shines: you store data as you received it <strong>without</strong> applying any form business rule, exception made for rules that can reject new inputs. If I rephrase this: when receiving an input, you can <strong>C</strong>reate, <strong>U</strong>pdate or <strong>D</strong>elete an entry in the database or reject the input. If you need to <strong>R</strong>ead data to make a decision, CRUD can put you in troubles.</p>
-<h2 id="habits">HABITS</h2>
+<h2 id="habits">Habits</h2>
 <p>The thing is, I&rsquo;m biased. I don&rsquo;t know how much, I just know I am.</p>
 <p>I&rsquo;ve been mostly working on <em>Event Sourced</em> system over the last four years. So when designing software, this <em>event-based</em> thinking is probably way more natural to me now than for most developers.</p>
 <p>And this is probably the point: if you do something a lot, it turns easier and more natural for you.<br>
 Software has been built with <em>state-based</em> approach for decades now. We&rsquo;re so used to them that they are considered as normality. So normal that we&rsquo;re almost unable to see and recognize their flaws.</p>
 <p>In this blog post, I’m not making an argument against CRUD, I’m just trying to challenge the false belief that CRUD is simple.</p>
 <hr>
-<h2 id="comments">COMMENTS</h2>
+<h2 id="comments">Comments</h2>
 <!--Add your comment here-->
 <p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
 

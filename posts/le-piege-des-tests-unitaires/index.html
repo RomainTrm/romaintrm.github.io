@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LE PIÈGE DES TESTS UNITAIRES · Romain Berthon</title>
+<title>Le piège des tests unitaires · Romain Berthon</title>
 
 
 
@@ -30,7 +30,7 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>LE PIÈGE DES TESTS UNITAIRES</h1>
+                <h1>Le piège des tests unitaires</h1>
             </div>
             <div class="date"><h5>Jun 04, 2020</h5></div>
         </div>
@@ -45,24 +45,24 @@
 <p>Modifier mon code est donc une capacité permise grâce aux tests et que je souhaite conserver tout au long d’un projet : je peux améliorer son design pour le garder constamment adapté aux problèmes métier que je veux résoudre.</p>
 <p>Avec le temps, je réalise qu’écrire des tests est une discipline difficile et que certaines pratiques peuvent être dommageables. Les tests unitaires “figent” le code et m’empêchent de le modifier facilement, ce qui peut sembler paradoxal puisqu’ils sont censés au contraire me le permettre.</p>
 <p>Dans cet article, je vais essayer de mettre en lumière les raisons de cette dérive. Attention, mon propos ne sera pas focalisé sur la pratique du TDD mais sur les tests unitaires (TU) et la manière dont ils influencent notre capacité à modifier du code.</p>
-<h2 id="écris-une-classe-écris-une-classe-de-tests">ÉCRIS UNE CLASSE, ÉCRIS UNE CLASSE DE TESTS</h2>
+<h2 id="écris-une-classe-écris-une-classe-de-tests">Écris une classe, écris une classe de tests</h2>
 <p>À chaque classe, chaque méthode son ou ses tests : C’est une définition du TU qui semble très répandue, je la rencontre beaucoup au cours de discussions avec d’autres développeurs, sur twitter, dans des articles de blog, etc. C’est même de cette manière que l’on m’a initié au TDD.</p>
 <p>Il est vrai que c’est une façon simple d’écrire un test. Le périmètre que l’on souhaite tester est petit, avec un nombre de dépendances normalement raisonnable. C’est une approche vers laquelle on peut facilement se tourner lorsque l’on n’est pas à l’aise avec la rédaction de TU.</p>
 <p>Cette pratique est souvent associée à l’injection de dépendance pour fonctionner. C’est à ce moment-là que l’on commence à introduire des mocks, on peut ainsi spécifier le comportement d’une dépendance sans dépendre de sa véritable implémentation. Notre classe/méthode reste donc bien isolée du reste du système lors du test.</p>
 <p>Mon point doit peut-être vous déranger : pourquoi vouloir absolument tester en isolement une classe qui de toute façon dépend d’autres classes ? Le comportement de la dépendance correspondra-t-il à celui que j’ai spécifié avec mon mock ?</p>
 <p>Certains vous répondront qu’il vous faut également des tests d’intégrations. Afin de vérifier que les différents éléments du système interagissent de la bonne manière, et que le logiciel retourne le résultat attendu.</p>
-<h2 id="vous-avez-déjà-perdu">VOUS AVEZ DÉJÀ PERDU</h2>
+<h2 id="vous-avez-déjà-perdu">Vous avez déjà perdu</h2>
 <p>Si vous adoptez cette stratégie, vous allez surement souffrir, ou souffrez déjà, d’une forte adhérence entre votre code et vos tests. En effet, il existe une contrainte forte pour chaque élément de votre système : des tests.</p>
 <p>Cela signifie qu’à chaque signature de méthode que l’on veut changer, en plus du code l’appelant, il va falloir corriger les tests et les mocks qui lui sont associés. Nous avons donc perdu notre capacité à facilement modifier/refactorer notre code. J’ai encore le souvenir (douloureux) de journées complètes à “réparer les tests” suite à des modifications.</p>
 <p>Ajoutez à cela un biais dont nous souffrons tous : celui des coûts irrécupérables. Alors qu’un test ne fait peut-être plus sens, nous avons tendance (consciemment ou non) à vouloir le conserver et le modifier, ceci uniquement parce qu’il est déjà écrit.</p>
 <p>Vous l’avez compris, aligner de manière aussi systématique ses tests avec son implémentation génère un couplage important contre lequel vous luttez à chaque modification que vous souhaitez apporter.</p>
-<h2 id="du-coup-comment-fait-onnbsp">DU COUP, COMMENT FAIT-ON ?</h2>
+<h2 id="du-coup-comment-fait-onnbsp">Du coup, comment fait-on ?</h2>
 <p>Les TU impliquent obligatoirement un couplage avec le code. Même s’il existe des techniques pour le limiter, la première question qu’il faut se poser est : à quoi veut-on se coupler ?</p>
 <p>De manière caricaturale, si vous travaillez sur des logiciels business, ce que l’on attend de vous est de développer des use cases. Ceux-ci sont des comportements que l’on attend de l’application, et il fait sens de vouloir les tester. Ces use cases peuvent être implémentés en une seule classe, ou en plusieurs. Ce sont des choix de design qui vous reviennent, mais aussi des détails d’implémentation que l’on veut pouvoir facilement changer et qu’un observateur externe du système doit ignorer.</p>
 <p>Clairement, la stratégie que l’on vient d’explorer s’attache beaucoup à ces détails d’implémentation. Unitaire ne doit donc pas définir la taille de la portion de code que l’on veut tester.</p>
 <p>Je vous propose maintenant la définition que j’ai en tête quand je parle de TU: un test que l’on peut exécuter en isolation et dont le comportement est répétable et constant.</p>
 <p>Son résultat ne dépend donc pas du résultat d’autres tests ni de l’état de dépendances externes au système (appel à une web API, à une base de données). Notez que je ne définis pas la taille du périmètre testé.</p>
-<h2 id="des-tests-de-comportement">DES TESTS DE COMPORTEMENT</h2>
+<h2 id="des-tests-de-comportement">Des tests de comportement</h2>
 <p>Aujourd’hui, j’adopte autant que possible une stratégie qui me permet de conserver ma capacité à modifier le code.</p>
 <p>J’écris mes tests de sorte qu’ils dépendent uniquement des contrats entre mon système et le monde extérieur (endpoint REST, base de données, bus de données, etc.). Tout le reste est une boîte noire inaccessible.</p>
 <p>Ainsi, un test se présente typiquement de la façon suivante :</p>
@@ -81,7 +81,7 @@
 <li>Des erreurs parfois plus dures à analyser.</li>
 <li>Il reste un couplage à certaines couches applicatives.</li>
 </ul>
-<h2 id="créer-des-abstractions">CRÉER DES ABSTRACTIONS</h2>
+<h2 id="créer-des-abstractions">Créer des abstractions</h2>
 <p>Il est tout de même nécessaire d’aller un peu plus loin pour réduire l’adhérence avec les tests. En effet, si nous avons réduit aux interfaces publiques la surface à laquelle nous sommes couplés, celles-ci deviennent encore plus critiques en cas de modification.</p>
 <p>Par expérience, un bon moyen de mesurer le couplage à un contrat est de compter le nombre d’endroits où celui-ci est instancié.</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Every time I delay the creation of builders to populate data structures in my tests it comes back to bite me in the ass, forcing me to refactor many testes as my data structures evolve. My tests should not rely on their constructors and only care about the data they need.</p>&mdash; Sandro Mancuso (@sandromancuso) <a href="https://twitter.com/sandromancuso/status/1138172904347246592?ref_src=twsrc%5Etfw">June 10, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -100,7 +100,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Then</span>
 </span></span><span style="display:flex;"><span><span style="color:#111">VerifyAssertion</span><span style="color:#111">(</span><span style="color:#111">result</span><span style="color:#111">);</span>
 </span></span><span style="display:flex;"><span><span style="color:#111">app</span><span style="color:#111">.</span><span style="color:#111">VerifyOnHistory</span><span style="color:#111">(</span><span style="color:#111">myAssertion</span><span style="color:#111">);</span>
-</span></span></code></pre></div><h2 id="pour-conclure">POUR CONCLURE</h2>
+</span></span></code></pre></div><h2 id="pour-conclure">Pour conclure</h2>
 <p>Il m’est arrivé plusieurs fois de rencontrer des gens qui ont tenté de mettre en place des tests unitaires ou du TDD sur leur projet, et qui y ont finalement renoncé après quelque temps parce que “ça ne marche pas”. Je pense que le problème que j’ai évoqué au cours de cet article est la principale raison de ces abandons.</p>
 <p>Attention également aux dogmes ! Si je me montre critique envers les tests unitaires “petite maille”, ceux-ci peuvent se révéler utiles et parfois plus simples qu’un test “boîte noire”. De la même manière, il est parfois plus simple d’utiliser un mock plutôt que de définir l’état du système dans sa globalité. Il est ici question de compromis, de choix qui doivent être faits en connaissance de cause.</p>
 <p>Si cet article vous a plu, je vous recommande de regarder la conférence <a href="https://www.youtube.com/watch?v=EZ05e7EMOLM" target="_blank">DevTernity 2017: Ian Cooper – TDD, Where Did It All Go Wrong</a>.</p>
@@ -111,7 +111,7 @@
 <li>Si les tests « petite maille » ne sont pas idéals sur le long terme, ils peuvent être très utiles comme « échaffaudage » pour implémenter progressivement un scénario plus vaste. À condition de les supprimer une fois les conditions d’un test « grosse maille » remplies.</li>
 </ul>
 <hr>
-<h2 id="commentaires">COMMENTAIRES</h2>
+<h2 id="commentaires">Commentaires</h2>
 <!--Ajoutez votre commentaire ici-->
 <p>Envie de commenter ? S’il vous plaît, ajoutez votre commentaire en m&rsquo;<a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">envoyant une pull request</a>.</p>
 

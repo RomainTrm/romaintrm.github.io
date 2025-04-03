@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ZERO DOWNTIME DATABASE MIGRATION · Romain Berthon</title>
+<title>Zero downtime database migration · Romain Berthon</title>
 
 
 
@@ -30,14 +30,14 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>ZERO DOWNTIME DATABASE MIGRATION</h1>
+                <h1>Zero downtime database migration</h1>
             </div>
             <div class="date"><h5>Dec 04, 2024</h5></div>
         </div>
         <article class="content">
             <p>Nowadays, most of the services we&rsquo;re using are online and available 24/7. If, like me, you&rsquo;re working on a company that provide this kind of service, you&rsquo;re probably aiming for such availability. As I&rsquo;ve already <a href="/posts/2022-09-01/">highlighted it</a>, it has a huge influence on how you should code and deploy your software. Indeed, to maximize availability, you&rsquo;re probably aiming for a zero downtime deployment.</p>
 <p>Zero downtime deployment includes several topics. Today I want to focus on how to achieve a database migration without service interruption.</p>
-<h2 id="requirements">REQUIREMENTS</h2>
+<h2 id="requirements">Requirements</h2>
 <p>First, be aware that database schema migration isn&rsquo;t the first topic you&rsquo;ll have to address to achieve zero downtime migrations.</p>
 <p>As a requirement, you need to step up a deployment pipeline with at least a couple instances of your service and a proxy/load-balancer to route traffic on them. As we&rsquo;ll need to do several deployments, for your own safety and sanity it&rsquo;s better to fully automate this process.</p>
 
@@ -465,10 +465,10 @@ When deploying a new version, you need to proceed a rolling update. The first st
   
 </div>
 <p>Now we&rsquo;re able to migrate our database without any service interruption.</p>
-<h2 id="migration">MIGRATION</h2>
+<h2 id="migration">Migration</h2>
 <p>Let&rsquo;s details steps for a zero downtime migration. The core idea is to always have a database schema supported by versions <em>N</em> and <em>N+1</em> of your software. Furthermore, it allows you to rollback the latest software deployment at any time if you detect a blocking issue.</p>
 <p>Note: it&rsquo;s important to respect these steps, you cannot skip or reorder any of them.</p>
-<h3 id="step-1-first-schema-migration">STEP 1: FIRST SCHEMA MIGRATION</h3>
+<h3 id="step-1-first-schema-migration">Step 1: first schema migration</h3>
 <p>To begin, we have to deploy a first schema migration, but there is some constraints. For now, we&rsquo;re aiming for a schema that supports both old and new data format. We&rsquo;re not migrating the data yet.</p>
 <p>It&rsquo;s already a tricky step because we don&rsquo;t want to accidentally lock a table for a long period of time. Long locks have an impact on our service: it can be perceived as slower by the users and some queries may timeout. This requires some knowledge about database behavior to avoid these.</p>
 <p>We have to adopt different strategies depending of what type of migration we&rsquo;re targeting:</p>
@@ -490,7 +490,7 @@ When deploying a new version, you need to proceed a rolling update. The first st
 </tr>
 </tbody>
 </table>
-<h3 id="step-2-first-software-migration">STEP 2: FIRST SOFTWARE MIGRATION</h3>
+<h3 id="step-2-first-software-migration">Step 2: first software migration</h3>
 <p>Time for the second deployment, now it&rsquo;s a software update. In this version, the shipped code must:</p>
 <table>
 <thead>
@@ -516,13 +516,13 @@ When deploying a new version, you need to proceed a rolling update. The first st
 </table>
 <p>By doing so, we&rsquo;re maintaining the old schema and starting to fill the new one without exposing ourselves to the unpopulated data.</p>
 <p>If you&rsquo;re using an <a href="https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping" target="_blank">ORM</a> like Entity Framework to generate your requests, be very careful with the columns it accesses in its queries.</p>
-<h3 id="step-3-migrate-data">STEP 3: MIGRATE DATA</h3>
+<h3 id="step-3-migrate-data">Step 3: migrate data</h3>
 <p>If we&rsquo;re only removing a column, we can skip this step. Otherwise, it&rsquo;s time to populate the new column.</p>
 <p>To do so, we have to write and apply a script that fills unpopulated rows. As in <em>step 1</em>, we must avoid locking tables. The best strategy is probably to update a small number of lines in dedicated transactions and loop until the table is fully filled.</p>
 <blockquote>
 <p>Tip: once this is done, you can wait a bit to make sure you haven&rsquo;t forgotten to update a write request. In such case, new rows with empty values should appear.</p>
 </blockquote>
-<h3 id="step-4-second-software-migration">STEP 4: SECOND SOFTWARE MIGRATION</h3>
+<h3 id="step-4-second-software-migration">Step 4: second software migration</h3>
 <p>Now we can migrate our software to our final target.</p>
 <table>
 <thead>
@@ -546,7 +546,7 @@ When deploying a new version, you need to proceed a rolling update. The first st
 </tr>
 </tbody>
 </table>
-<h3 id="step-5-second-schema-migration">STEP 5: SECOND SCHEMA MIGRATION</h3>
+<h3 id="step-5-second-schema-migration">Step 5: second schema migration</h3>
 <p>And finally, we have to cleanup the database.</p>
 <table>
 <thead>
@@ -571,7 +571,7 @@ When deploying a new version, you need to proceed a rolling update. The first st
 </tbody>
 </table>
 <p>In this step, we&rsquo;re not worried by locks because rows are filled: the application of these constraints does not trigger update of the rows.</p>
-<h2 id="conclusion">CONCLUSION</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>As we&rsquo;ve seen, this is not a straightforward procedure. It requires more work, the ability to manage intermediate versions and some continuous deployment culture from the team. However, it gives you a lot of freedom for deployment, you can ship a new version at any time. It can be beneficial if your clients are other businesses with high availability constraints, you will not be stuck maintaining several versions of your software because they don&rsquo;t want to stop their service for an update.</p>
 <p>This migration process isn&rsquo;t always necessary (unless if you want to ensure backward compatibility). Well-isolated asynchronous processes can be updated with a service interruption, they will catch up when the process is resumed.</p>
 <p>If you have full control of your deployment pipeline and you can ensure you are fully updating your database before starting to deploy the new software version, then this process can be optimized:</p>
@@ -579,10 +579,10 @@ When deploying a new version, you need to proceed a rolling update. The first st
 <li>merge <em>step 1</em> with <em>step 2</em></li>
 <li>merge <em>step 3</em> with <em>step 4</em>, but as I mentioned it, waiting after <em>step 3</em> can increase your confidence in your migration</li>
 </ul>
-<h2 id="more-on-this-topic">MORE ON THIS TOPIC</h2>
+<h2 id="more-on-this-topic">More on this topic</h2>
 <p>I recommend for my French readers this <a href="https://youtu.be/pIkA-aPtkNs" target="_blank">talk</a> that is way more detailed than this blog post.</p>
 <hr>
-<h2 id="comments">COMMENTS</h2>
+<h2 id="comments">Comments</h2>
 <!--Add your comment here-->
 <p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
 

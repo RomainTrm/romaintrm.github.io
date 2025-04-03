@@ -2,7 +2,7 @@
 <html><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DESIGNING WITH TYPES · Romain Berthon</title>
+<title>Designing with types · Romain Berthon</title>
 
 
 
@@ -30,7 +30,7 @@
     <div class="post">
         <div class="title-group">
             <div class="title">
-                <h1>DESIGNING WITH TYPES</h1>
+                <h1>Designing with types</h1>
             </div>
             <div class="date"><h5>Apr 02, 2025</h5></div>
         </div>
@@ -38,7 +38,7 @@
             <p>When writing software, we&rsquo;re using types to represent the information we&rsquo;re manipulating. Values are express through primitive types like <code>bool</code>, <code>int</code> or <code>string</code>. We&rsquo;re building complex data representation by composing these types. This composition is done by defining our own types, usually with classes or tuples.</p>
 <p>Even if there are several ways to store and represent the same information, these ways are not all equivalent. Some are too permissive and allows states that should be considered as illegal regarding our business rules. Others are well defined and only represent legal states, meaning we don&rsquo;t have to write code to defend ourselves against malformed data.</p>
 <p>Did you know there&rsquo;s a mathematical way to compute the number of possible states of your model? We can then compare this number to the number of possible combinations for a business case and determine if our model allows illegal states or not.</p>
-<h2 id="types-cardinality-the-number-of-possible-states">TYPE&rsquo;S CARDINALITY: THE NUMBER OF POSSIBLE STATES</h2>
+<h2 id="types-cardinality-the-number-of-possible-states">Type&rsquo;s cardinality: the number of possible states</h2>
 <p>Every type we&rsquo;re using has a <a href="https://en.wikipedia.org/wiki/Cardinality" target="_blank">cardinality</a>. This is the number of possible states it allows.</p>
 <p>For example, a <code>bool</code> has a cardinality of 2 (<code>true</code> or <code>false</code>), a <code>byte</code> has a cardinality of 2<sup>8</sup> (256 values from 0 to 255) and a <code>string</code> has virtually an infinity of values possible (in reality there&rsquo;s a hard limit defined by the available memory).</p>
 <p>As I&rsquo;ve mentioned it, we&rsquo;re able to compose these types, so we should be able to compute the number of values possible.</p>
@@ -53,20 +53,20 @@
 <p>Though one limitation remains: the compiler is unaware of the number of possible types. Even if the implementation of new types is restricted, there&rsquo;s theoretically an infinity of possible extensions of the base type. The only solution I&rsquo;ve found and used to avoid this issue is to implement the <a href="https://refactoring.guru/design-patterns/visitor" target="_blank">visitor pattern</a>. But this is an extremely verbose solution.</p>
 </blockquote>
 <p>We&rsquo;re now able to compute the number of possible states for our model.</p>
-<h2 id="use-case-the-tennis-kata">USE CASE: THE TENNIS KATA</h2>
+<h2 id="use-case-the-tennis-kata">Use case: the tennis kata</h2>
 <p>We will use the <a href="https://sammancoaching.org/kata_descriptions/tennis.html" target="_blank">Tennis Kata</a> to highlight the use of the cardinality. We will compute the total number of states of our model and ensure we can&rsquo;t produce an invalid state. Our goal is to compute the new score of a &ldquo;game&rdquo;.</p>
-<h3 id="the-rules-to-implement">THE RULES TO IMPLEMENT</h3>
+<h3 id="the-rules-to-implement">The rules to implement</h3>
 <p>There are two players: the &ldquo;serving player&rdquo; and his opponent. Each mark points: &ldquo;love&rdquo; (0 points), 15, 30 and then 40 points.</p>
 <p>A score is expressed as a pair of points, like &ldquo;15-30&rdquo; or &ldquo;40-love&rdquo;. By convention, the point of the serving player is always the first.</p>
 <p>To win the game, a player must mark a new point when his score is 40. In the case of a &ldquo;deuce&rdquo; (40-40), the player who marks gets an &ldquo;advantage&rdquo;, if he marks again then he wins, otherwise the score goes back to &ldquo;deuce&rdquo;.</p>
-<h3 id="the-number-of-possible-states">THE NUMBER OF POSSIBLE STATES</h3>
+<h3 id="the-number-of-possible-states">The number of possible states</h3>
 <p>Now let&rsquo;s compute the number of possible states. We&rsquo;ve got two players, each of them can have 4 possible points values (&ldquo;love&rdquo;, 15, 30, 40). Each player can gain the advantage (2 possible values) and win the game (2 possible values).</p>
 <p>So our cardinality is:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>4 points * 4 points + 2 combinations of advantage + 2 combinations of games won
 </span></span><span style="display:flex;"><span>4 * 4 + 2 + 2
 </span></span><span style="display:flex;"><span>20
 </span></span></code></pre></div><p>Our model should have a cardinality of 20 possible states.</p>
-<h3 id="naive-implementation">NAIVE IMPLEMENTATION</h3>
+<h3 id="naive-implementation">Naive implementation</h3>
 <p>The naive (and tempting?) way to implement the score is a pair of numbers (let says <code>byte</code>).</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Score</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">byte</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">byte</span>
 </span></span></code></pre></div><p>So our cardinality is:</p>
@@ -74,7 +74,7 @@
 </span></span><span style="display:flex;"><span>256 * 256
 </span></span><span style="display:flex;"><span>65536
 </span></span></code></pre></div><p>Few illegal states here&hellip;</p>
-<h3 id="correct-implementation">CORRECT IMPLEMENTATION</h3>
+<h3 id="correct-implementation">Correct implementation</h3>
 <p>Let try another model.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Player</span> <span style="color:#f92672">=</span> <span style="color:#111">Serving</span> <span style="color:#f92672">|</span> <span style="color:#111">Opponent</span>
 </span></span><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Point</span> <span style="color:#f92672">=</span> <span style="color:#111">Love</span> <span style="color:#f92672">|</span> <span style="color:#111">Fifteen</span> <span style="color:#f92672">|</span> <span style="color:#111">Thrity</span> <span style="color:#f92672">|</span> <span style="color:#111">Forty</span>
@@ -121,7 +121,7 @@
 <p>Tip: This ability to detect incomplete <code>match</code> and to suggest missing cases is a cool feature from the F# compiler. In the company I&rsquo;m working at, we turned this warning as a compilation error for <code>release</code> builds to avoid runtime errors in our production environment. Keeping it as a warning for <code>debug</code> builds is more convenient while developing features.</p>
 </blockquote>
 <p>We could keep this model and eliminate this warning by removing the <code>addPoint</code> function and getting a more exhaustive pattern in the main <code>match</code>. Though, the <code>Forty</code> value remains a special case.</p>
-<h3 id="final-implementation">FINAL IMPLEMENTATION</h3>
+<h3 id="final-implementation">Final implementation</h3>
 <p>Another possibility is to remove <code>Forty</code> from our <code>Point</code> type and introduce new cases to the <code>Score</code> type. We have to make a difference between the &ldquo;40-40&rdquo; aka &ldquo;Deuce&rdquo; and the other combinations. Our new model is now:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Player</span> <span style="color:#f92672">=</span> <span style="color:#111">Serving</span> <span style="color:#f92672">|</span> <span style="color:#111">Opponent</span>
 </span></span><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Point</span> <span style="color:#f92672">=</span> <span style="color:#111">Love</span> <span style="color:#f92672">|</span> <span style="color:#111">Fifteen</span> <span style="color:#f92672">|</span> <span style="color:#111">Thrity</span>
@@ -179,7 +179,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Advantage</span> <span style="color:#f92672">_,</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">Deuce</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Game</span> <span style="color:#111">player</span><span style="color:#f92672">,</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">Game</span> <span style="color:#111">player</span>
 </span></span></code></pre></div><p>The complete code for this implementation is available <a href="tennis-kata-solution-2.fsx">here</a>.</p>
-<h2 id="compare-infinites">COMPARE INFINITES</h2>
+<h2 id="compare-infinites">Compare infinites</h2>
 <p>Right now, you may think: &ldquo;That&rsquo;s great, but I can&rsquo;t use it for my software. I&rsquo;m using strings and large numbers. The cardinality will always be infinite.&rdquo; And you&rsquo;re right!</p>
 <p>Keep in mind that computing cardinality is useful for an algorithm. There is just no point to compute this value for our whole software. Instead, we have to consider only relevant values in our data. The tennis kata is somehow a special case: the whole model is used by our <code>computeScore</code> function to make a decision. But most of the time, a model carries a lot of data, and only a fraction of it is used by the algorithm.</p>
 <p>So, to avoid this infinite issue, I use two tricks to reduce the cardinality to a manageable number:</p>
@@ -219,7 +219,7 @@
 </span></span><span style="display:flex;"><span>ValueA = 1
 </span></span><span style="display:flex;"><span>ValueB = 1
 </span></span><span style="display:flex;"><span>type MyType = 2 * 1 * 1 = 2
-</span></span></code></pre></div><h2 id="conclusion">CONCLUSION</h2>
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>In this post, we&rsquo;ve learned how to compute the number of possible states for our model. Then we saw how it can drive the implementation. Finally, I&rsquo;ve suggested some tricks to help us compute cardinality for models that are embedding types with a large number of possible values.</p>
 <p>Aiming to tackle illegal states is great, though it can also introduce complexity to the code:</p>
 <ul>
@@ -228,7 +228,7 @@
 </ul>
 <p>To conclude, type cardinality helps us gain confidence in our model and identify unhandled use cases. If you have an opportunity to remove illegal states, go for it. But keep in mind that allowing some illegal states in order to simplify the development and model manipulation is OK as long as these cases are properly identified and handled.</p>
 <hr>
-<h2 id="comments">COMMENTS</h2>
+<h2 id="comments">Comments</h2>
 <!--Add your comment here-->
 <p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
 
