@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Romain Berthon</title>
-    <link>https://romaintrm.github.io/tags/</link>
+    <link>https://berthon.dev/tags/</link>
     <description>Recent content in Tags on Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Apr 2025 09:00:00 +0200</lastBuildDate>
-    <atom:link href="https://romaintrm.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Apr 2025 09:00:00 +0200</lastBuildDate>
+    <atom:link href="https://berthon.dev/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>En</title>
-      <link>https://romaintrm.github.io/tags/en/</link>
+      <link>https://berthon.dev/tags/en/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://romaintrm.github.io/tags/en/</guid>
+      <guid>https://berthon.dev/tags/en/</guid>
       <description></description>
     </item>
     <item>
       <title>Post</title>
-      <link>https://romaintrm.github.io/tags/post/</link>
+      <link>https://berthon.dev/tags/post/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://romaintrm.github.io/tags/post/</guid>
+      <guid>https://berthon.dev/tags/post/</guid>
       <description></description>
     </item>
     <item>
       <title>Fr</title>
-      <link>https://romaintrm.github.io/tags/fr/</link>
+      <link>https://berthon.dev/tags/fr/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://romaintrm.github.io/tags/fr/</guid>
+      <guid>https://berthon.dev/tags/fr/</guid>
       <description></description>
     </item>
     <item>
       <title>Talk</title>
-      <link>https://romaintrm.github.io/tags/talk/</link>
+      <link>https://berthon.dev/tags/talk/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://romaintrm.github.io/tags/talk/</guid>
+      <guid>https://berthon.dev/tags/talk/</guid>
       <description></description>
     </item>
   </channel>
