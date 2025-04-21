@@ -2,73 +2,80 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>En on Romain Berthon</title>
-    <link>https://romaintrm.github.io/tags/en/</link>
+    <link>https://berthon.dev/tags/en/</link>
     <description>Recent content in En on Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Apr 2025 09:00:00 +0200</lastBuildDate>
-    <atom:link href="https://romaintrm.github.io/tags/en/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Apr 2025 09:00:00 +0200</lastBuildDate>
+    <atom:link href="https://berthon.dev/tags/en/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>From a state-based to an event-sourced codebase</title>
+      <link>https://berthon.dev/posts/from-a-state-based-to-an-event-sourced-codebase/</link>
+      <pubDate>Wed, 23 Apr 2025 09:00:00 +0200</pubDate>
+      <guid>https://berthon.dev/posts/from-a-state-based-to-an-event-sourced-codebase/</guid>
+      <description>A few weeks ago, I&amp;rsquo;ve published a post where I described improvements for various architectures, following a logical path from a CRUD architecture to a CQRS/ES implementation.&#xA;Since then, I participated in Lyon Craft 2025, a local conference focusing on the software craftsmanship mindset and practices. For this edition, we had the pleasure to invite Jérémie Chassaing for an event-sourcing workshop. I had the opportunity to discuss with him and attend his workshop.</description>
+    </item>
     <item>
       <title>Designing with types</title>
-      <link>https://romaintrm.github.io/posts/designing-with-types/</link>
+      <link>https://berthon.dev/posts/designing-with-types/</link>
       <pubDate>Wed, 02 Apr 2025 09:00:00 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/designing-with-types/</guid>
+      <guid>https://berthon.dev/posts/designing-with-types/</guid>
       <description>When writing software, we&amp;rsquo;re using types to represent the information we&amp;rsquo;re manipulating. Values are express through primitive types like bool, int or string. We&amp;rsquo;re building complex data representation by composing these types. This composition is done by defining our own types, usually with classes or tuples.&#xA;Even if there are several ways to store and represent the same information, these ways are not all equivalent. Some are too permissive and allows states that should be considered as illegal regarding our business rules.</description>
     </item>
     <item>
       <title>Refining software architectures</title>
-      <link>https://romaintrm.github.io/posts/refining-software-architectures/</link>
+      <link>https://berthon.dev/posts/refining-software-architectures/</link>
       <pubDate>Wed, 12 Mar 2025 09:00:24 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/refining-software-architectures/</guid>
+      <guid>https://berthon.dev/posts/refining-software-architectures/</guid>
       <description>To develop software, as developers we have to choose between several architectures. Our choice must be based on various constraints like the type of problem we&amp;rsquo;re trying to solve, but also the load or the level of reliability and resiliency targeted. We also have to consider the available skills in the team.&#xA;In this blog post, I want to iterate through several back-end architectures I&amp;rsquo;ve encountered and used during my career.</description>
     </item>
     <item>
       <title>The &#34;technological adulthood&#34;</title>
-      <link>https://romaintrm.github.io/posts/the-technological-adulthood/</link>
+      <link>https://berthon.dev/posts/the-technological-adulthood/</link>
       <pubDate>Wed, 19 Feb 2025 09:00:00 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/the-technological-adulthood/</guid>
+      <guid>https://berthon.dev/posts/the-technological-adulthood/</guid>
       <description>Few months ago, I&amp;rsquo;ve read this article: How We Built a Self-Healing System to Survive a Terrifying Concurrency Bug At Netflix.&#xA;What I loved is how unconventional the solution was. However, unconventional doesn&amp;rsquo;t mean irrelevant, their solution kept the software running during the weekend, and this without any human intervention. The solution wasn&amp;rsquo;t perfect, but it was &amp;ldquo;good enough&amp;rdquo; and even more, respectful of people&amp;rsquo;s time.&#xA;By the end, it concludes with a concept that somehow inspired me: &amp;ldquo;technological adulthood&amp;rdquo;.</description>
     </item>
     <item>
       <title>Applying the &#39;/ai manifesto&#39;</title>
-      <link>https://romaintrm.github.io/posts/applying-the-ai-manifesto/</link>
+      <link>https://berthon.dev/posts/applying-the-ai-manifesto/</link>
       <pubDate>Wed, 05 Feb 2025 09:00:00 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/applying-the-ai-manifesto/</guid>
+      <guid>https://berthon.dev/posts/applying-the-ai-manifesto/</guid>
       <description>Recently, Antoine Caron published a blog post about his AI usage. Thanks to him, I&amp;rsquo;ve discovered the /ai &amp;lsquo;manifesto&amp;rsquo; and I want to do the same here. Maybe you&amp;rsquo;ve reached this post by typing /ai in the URL.&#xA;My posts All the posts in this blog are written by myself, I don&amp;rsquo;t use any generative AI to produce content.&#xA;Creating a blog post is an interesting activity, it requires me to challenge and organize my thoughts before trying to write on a topic.</description>
     </item>
     <item>
       <title>Using processes for better resilience</title>
-      <link>https://romaintrm.github.io/posts/using-processes-for-better-resilience/</link>
+      <link>https://berthon.dev/posts/using-processes-for-better-resilience/</link>
       <pubDate>Wed, 08 Jan 2025 09:00:00 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/using-processes-for-better-resilience/</guid>
+      <guid>https://berthon.dev/posts/using-processes-for-better-resilience/</guid>
       <description>In early 2020, I&amp;rsquo;ve read the book Programming Elixir 1.6. At that time I had one goal: to have an introduction to the actor model with a language that supports it by design, in this case Elixir. I think it was a good read and I achieved my goal, even though I didn&amp;rsquo;t feel able to design a complete system using this pattern.&#xA;However, I realized I&amp;rsquo;m using some actor model concepts for a few years now.</description>
     </item>
     <item>
       <title>CQRS/ES: How to achieve a good event granularity?</title>
-      <link>https://romaintrm.github.io/posts/cqrs-es-how-to-achieve-a-good-event-granularity/</link>
+      <link>https://berthon.dev/posts/cqrs-es-how-to-achieve-a-good-event-granularity/</link>
       <pubDate>Wed, 18 Dec 2024 09:00:00 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/cqrs-es-how-to-achieve-a-good-event-granularity/</guid>
+      <guid>https://berthon.dev/posts/cqrs-es-how-to-achieve-a-good-event-granularity/</guid>
       <description>If you&amp;rsquo;ve already developed a software using the event sourcing pattern, you&amp;rsquo;ve probably faced difficulty: How-to design good events? What is a good event granularity?&#xA;Indeed it&amp;rsquo;s difficult to produce good events that will not harm our design. As a seasoned developer with event sourcing, I&amp;rsquo;m still struggling with this, even if I&amp;rsquo;ve developed several heuristics over time.&#xA;In this blog post, I will share with you these heuristics. But keep in mind this is not some kind of best practices.</description>
     </item>
     <item>
       <title>Zero downtime database migration</title>
-      <link>https://romaintrm.github.io/posts/zero-downtime-database-migration/</link>
+      <link>https://berthon.dev/posts/zero-downtime-database-migration/</link>
       <pubDate>Wed, 04 Dec 2024 09:13:43 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/zero-downtime-database-migration/</guid>
+      <guid>https://berthon.dev/posts/zero-downtime-database-migration/</guid>
       <description>Nowadays, most of the services we&amp;rsquo;re using are online and available 24/7. If, like me, you&amp;rsquo;re working on a company that provide this kind of service, you&amp;rsquo;re probably aiming for such availability. As I&amp;rsquo;ve already highlighted it, it has a huge influence on how you should code and deploy your software. Indeed, to maximize availability, you&amp;rsquo;re probably aiming for a zero downtime deployment.&#xA;Zero downtime deployment includes several topics. Today I want to focus on how to achieve a database migration without service interruption.</description>
     </item>
     <item>
       <title>State-based and event-based approaches</title>
-      <link>https://romaintrm.github.io/posts/state-based-and-event-based-approaches/</link>
+      <link>https://berthon.dev/posts/state-based-and-event-based-approaches/</link>
       <pubDate>Wed, 20 Nov 2024 13:02:48 +0100</pubDate>
-      <guid>https://romaintrm.github.io/posts/state-based-and-event-based-approaches/</guid>
+      <guid>https://berthon.dev/posts/state-based-and-event-based-approaches/</guid>
       <description>I&amp;rsquo;ve recently gave a talk with my friend Aurélien about the heuristics we&amp;rsquo;ve developed after using CQRS/ES for several years.&#xA;After our talk, we had a chat with some developers. We concluded that choosing a state-based oriented approach (like CRUD) seems to be the default solution, such choice seems to remain unchallenged. On the opposite side, choosing an event-based systems (event sourced or event driven) will very often be heavily challenged.</description>
     </item>
     <item>
       <title>An enjoyable mission: return of experience</title>
-      <link>https://romaintrm.github.io/posts/an-enjoyable-mission-return-of-experience/</link>
+      <link>https://berthon.dev/posts/an-enjoyable-mission-return-of-experience/</link>
       <pubDate>Thu, 01 Sep 2022 20:53:08 +0200</pubDate>
-      <guid>https://romaintrm.github.io/posts/an-enjoyable-mission-return-of-experience/</guid>
+      <guid>https://berthon.dev/posts/an-enjoyable-mission-return-of-experience/</guid>
       <description>I had the chance to work few months in Agicap, an enterprise producing a cashflow management SAAS for businesses.&#xA;It was a great mission, my team worked a way that I consider to be, so far, the most efficient and pleasant in my career. We managed to produce value at a constant speed while keeping a full control of our code, not allowing any kind of quality depreciation over time.</description>
     </item>
   </channel>
