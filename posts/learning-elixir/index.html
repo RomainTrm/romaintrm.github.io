@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Learning Elixir · Romain Berthon</title>
+
+
+
+<link rel="stylesheet" href="/css/rocinante.css" />
+<link rel="shortcut icon" href="favicon.ico">
+
+
+<body>
+    <header><nav>
+  
+    <a class="home" href="https://berthon.dev/">‹ Home</a>
+  
+  <div></div>
+  <div>
+    <a href="https://berthon.dev//tags/post">Posts</a>
+    <a href="https://berthon.dev//tags/talk">Talks</a>
+    
+      <a href="https://berthon.dev//about">About</a>
+    
+  </div>
+</nav>
+</header>
+    <main>
+
+    <div class="post">
+        <div class="title-group">
+            <div class="title">
+                <h1>Learning Elixir</h1>
+            </div>
+            <div class="date"><h5>Jun 20, 2025</h5></div>
+        </div>
+        <article class="content">
+            <p>In a previous <a href="../using-processes-for-better-resilience/">post</a>, I&rsquo;ve mentioned I&rsquo;ve read the book <a href="https://pragprog.com/titles/elixir16/programming-elixir-1-6/" target="_blank">Programming Elixir 1.6</a>.</p>
+<p>As I was planning to read <a href="https://pragprog.com/titles/khpes/real-world-event-sourcing/" target="_blank">Real-World Event Sourcing</a>, I chose to conduct a second reading because my limited knowledge and skills with Elixir were eroded over time. I took time to take many notes which are available on a dedicated <a href="https://github.com/RomainTrm/Book-ElixirExercices" target="_blank">repository</a>.</p>
+<p>In this post, I want to present to you the Elixir language, the Erlang VM and give you a taste of why you should learn it even if you will not use it in production.</p>
+<h2 id="elixir-lang">Elixir lang</h2>
+<p>Elixir is a functional language that runs on the Erlang VM, it has been created by <a href="https://bsky.app/profile/josevalim.bsky.social" target="_blank">José Valim</a>. The syntax is highly inspired by the Ruby syntax. With Elixir comes <a href="https://hexdocs.pm/iex/1.12/IEx.html" target="_blank">IEx</a>, a REPL that highly facilitate exploration and experimentation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span> <span style="color:#111">iex</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Erlang</span><span style="color:#f92672">/</span><span style="color:#75af00">OTP</span> <span style="color:#ae81ff">27</span> <span style="color:#111">[</span><span style="color:#111">erts</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15.2</span><span style="color:#f92672">.</span><span style="color:#ae81ff">5</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#111">source</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#ae81ff">64</span><span style="color:#f92672">-</span><span style="color:#111">bit</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#111">smp</span><span style="color:#111">:</span><span style="color:#ae81ff">8</span><span style="color:#111">:</span><span style="color:#ae81ff">8</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#111">ds</span><span style="color:#111">:</span><span style="color:#ae81ff">8</span><span style="color:#111">:</span><span style="color:#ae81ff">8</span><span style="color:#111">:</span><span style="color:#ae81ff">10</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#111">async</span><span style="color:#f92672">-</span><span style="color:#111">threads</span><span style="color:#111">:</span><span style="color:#ae81ff">1</span><span style="color:#111">]</span> <span style="color:#111">[</span><span style="color:#111">jit</span><span style="color:#d88200">:ns</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Interactive</span> <span style="color:#75af00">Elixir</span> <span style="color:#111">(</span><span style="color:#ae81ff">1.18</span><span style="color:#f92672">.</span><span style="color:#ae81ff">3</span><span style="color:#111">)</span> <span style="color:#f92672">-</span> <span style="color:#111">press</span> <span style="color:#75af00">Ctrl</span><span style="color:#f92672">+</span><span style="color:#75af00">C</span> <span style="color:#111">to</span> <span style="color:#111">exit</span> <span style="color:#111">(</span><span style="color:#111">type</span> <span style="color:#111">h</span><span style="color:#111">()</span> <span style="color:#75af00">ENTER</span> <span style="color:#00a8c8">for</span> <span style="color:#111">help</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">IO</span><span style="color:#f92672">.</span><span style="color:#111">puts</span> <span style="color:#d88200">&#34;Hello Elixir&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Hello</span> <span style="color:#75af00">Elixir</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span></code></pre></div><p>It also provides access to APIs&rsquo; documentation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#111">h</span><span style="color:#111">(</span><span style="color:#75af00">Enum</span><span style="color:#f92672">.</span><span style="color:#111">map</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#00a8c8">def</span> <span style="color:#111">map</span><span style="color:#111">(</span><span style="color:#111">enumerable</span><span style="color:#111">,</span> <span style="color:#111">fun</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75af00">@spec</span> <span style="color:#111">map</span><span style="color:#111">(</span><span style="color:#111">t</span><span style="color:#111">(),</span> <span style="color:#111">(</span><span style="color:#111">element</span><span style="color:#111">()</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">any</span><span style="color:#111">()))</span> <span style="color:#f92672">::</span> <span style="color:#111">list</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Returns</span> <span style="color:#111">a</span> <span style="color:#111">list</span> <span style="color:#111">where</span> <span style="color:#111">each</span> <span style="color:#111">element</span> <span style="color:#111">is</span> <span style="color:#111">the</span> <span style="color:#111">result</span> <span style="color:#111">of</span> <span style="color:#111">invoking</span> <span style="color:#111">fun</span> <span style="color:#111">on</span> <span style="color:#111">each</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">corresponding</span> <span style="color:#111">element</span> <span style="color:#111">of</span> <span style="color:#111">enumerable</span><span style="color:#f92672">.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">For</span> <span style="color:#111">maps</span><span style="color:#111">,</span> <span style="color:#111">the</span> <span style="color:#111">function</span> <span style="color:#111">expects</span> <span style="color:#111">a</span> <span style="color:#111">key</span><span style="color:#f92672">-</span><span style="color:#111">value</span> <span style="color:#111">tuple</span><span style="color:#f92672">.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Examples</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Enum</span><span style="color:#f92672">.</span><span style="color:#111">map</span><span style="color:#111">([</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">],</span> <span style="color:#00a8c8">fn</span> <span style="color:#111">x</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">x</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span> <span style="color:#00a8c8">end</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">[</span><span style="color:#ae81ff">2</span><span style="color:#111">,</span> <span style="color:#ae81ff">4</span><span style="color:#111">,</span> <span style="color:#ae81ff">6</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Enum</span><span style="color:#f92672">.</span><span style="color:#111">map</span><span style="color:#111">([</span><span style="color:#d88200">a</span><span style="color:#111">:</span> <span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#d88200">b</span><span style="color:#111">:</span> <span style="color:#ae81ff">2</span><span style="color:#111">],</span> <span style="color:#00a8c8">fn</span> <span style="color:#111">{</span><span style="color:#111">k</span><span style="color:#111">,</span> <span style="color:#111">v</span><span style="color:#111">}</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">{</span><span style="color:#111">k</span><span style="color:#111">,</span> <span style="color:#f92672">-</span><span style="color:#111">v</span><span style="color:#111">}</span> <span style="color:#00a8c8">end</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">[</span><span style="color:#d88200">a</span><span style="color:#111">:</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#d88200">b</span><span style="color:#111">:</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">2</span><span style="color:#111">]</span>
+</span></span></code></pre></div><p>Elixir also benefits from <a href="https://hexdocs.pm/mix/1.12/Mix.html" target="_blank"><code>mix</code></a>, a complete build tool (like <code>npm</code> or <code>dotnet</code>) that provides project creation, compiling, testing, dependencies management and many more capabilities.</p>
+<h3 id="a-functional-langage">A functional langage</h3>
+<p>With this language, everything is patterns and expressions, no mutation is involved.<br>
+Nothing special here for a seasoned F# developer like me. But if you&rsquo;re unfamiliar with pattern matching, we reason in terms of equality instead of affectation:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">a</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#75715e"># We declare a value &#34;a&#34; which value is equal to 1 </span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">a</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">=</span> <span style="color:#111">a</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">=</span> <span style="color:#111">a</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">**</span> <span style="color:#111">(</span><span style="color:#75af00">MatchError</span><span style="color:#111">)</span> <span style="color:#111">no</span> <span style="color:#111">match</span> <span style="color:#111">of</span> <span style="color:#111">right</span> <span style="color:#111">hand</span> <span style="color:#111">side</span> <span style="color:#d88200">value</span><span style="color:#111">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#111">b</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span> <span style="color:#f92672">=</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span> <span style="color:#75715e"># We declare a value &#34;b&#34; wich value is equal to the second element of the three elements list</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">b</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">[</span><span style="color:#111">c</span><span style="color:#111">,</span> <span style="color:#111">c</span><span style="color:#111">]</span> <span style="color:#f92672">=</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">]</span> <span style="color:#75715e"># We expect a list of two elements that are equal</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">[</span><span style="color:#111">c</span><span style="color:#111">,</span> <span style="color:#111">c</span><span style="color:#111">]</span> <span style="color:#f92672">=</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">]</span> <span style="color:#75715e"># Value &#34;c&#34; cannot be equal to 1 and 2 at the same time</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">**</span> <span style="color:#111">(</span><span style="color:#75af00">MatchError</span><span style="color:#111">)</span> <span style="color:#111">no</span> <span style="color:#111">match</span> <span style="color:#111">of</span> <span style="color:#111">right</span> <span style="color:#111">hand</span> <span style="color:#111">side</span> <span style="color:#d88200">value</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">]</span>
+</span></span></code></pre></div><p>Pattern matching is also available for functions signatures:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#75715e"># A function `nextState` defined with 3 distinct patterns</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#111">nextState</span><span style="color:#111">(</span><span style="color:#111">_current</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">),</span> <span style="color:#d88200">do</span><span style="color:#111">:</span> <span style="color:#d88200">:alive</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#111">nextState</span><span style="color:#111">(</span><span style="color:#d88200">:alive</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">),</span> <span style="color:#d88200">do</span><span style="color:#111">:</span> <span style="color:#d88200">:alive</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#111">nextState</span><span style="color:#111">(</span><span style="color:#111">_current</span><span style="color:#111">,</span> <span style="color:#111">_nb_living_surrounding</span><span style="color:#111">),</span> <span style="color:#d88200">do</span><span style="color:#111">:</span> <span style="color:#d88200">:dead</span>
+</span></span></code></pre></div><p>As a functional language, Elixir isn&rsquo;t as strict as some languages like Haskell (sorry for the functional purists) but it&rsquo;s designed in a way that incites you to write code in a functional way: Mostly pure functions (some IO is still possible). As I&rsquo;m writing this, I realize I don&rsquo;t know how to mutate an existing value and I don&rsquo;t even know if this is something possible. However we have the ability to store states with OTP (more on this later).</p>
+<h3 id="type-system">Type system</h3>
+<p>Elixir is a dynamically typed language. This is a voluntary choice made by José, and it makes perfect sense: As Elixir is running on the Erlang VM, it provides the hot-upgrade capability. Because of this, it would be impossible for an old piece of code to interact at runtime with an upgraded code that defines new unknown types.</p>
+<p>At runtime, though, we have many types and structures available to represent our data: primitives, lists, maps (dictionaries), structs, etc. This has the consequence of forcing developers to be very explicit about the data structures they are handling, which leads to verbose code in my opinion (unless we declare specific <a href="https://hexdocs.pm/elixir/main/structs.html" target="_blank">structure definitions</a>).</p>
+<p>We also have some tooling to check the validity of our code: A compiler that is able to spot missing or invalid function signatures and some static analysis tools like <a href="https://www.erlang.org/doc/apps/dialyzer/dialyzer.html" target="_blank">dialyzer</a>. These analyzers use annotations added to the code by developers to check consistency across functions declarations and invocations (note these annotations are optional):</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#00a8c8">defmodule</span> <span style="color:#75af00">Simple</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75af00">@type</span> <span style="color:#111">atom_list</span> <span style="color:#f92672">::</span> <span style="color:#111">list</span><span style="color:#111">(</span><span style="color:#111">atom</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75af00">@spec</span> <span style="color:#111">count_atoms</span><span style="color:#111">(</span><span style="color:#111">atom_list</span><span style="color:#111">)</span> <span style="color:#f92672">::</span> <span style="color:#111">non_neg_integer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">count_atoms</span><span style="color:#111">(</span><span style="color:#111">list</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">length</span> <span style="color:#111">list</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>More details on the typespecs <a href="https://hexdocs.pm/elixir/typespecs.html" target="_blank">documentation</a>.</p>
+<h4 id="atoms">Atoms</h4>
+<p>I would like to focus on a specific kind of data that exist on the Erlang VM: Atoms.</p>
+<p>Atoms are constants that only carries their name as information, for example <code>:ok</code>, <code>:apple</code> or <code>:&quot;my atom&quot;</code>.<br>
+This might sound kinda useless but they appear to be extremely powerful. For instance, they are constantly used with pattern matching:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#111">handle_event</span><span style="color:#111">({</span><span style="color:#d88200">:order_created</span><span style="color:#111">,</span> <span style="color:#111">data</span><span style="color:#111">})</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># do something...</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#111">handle_event</span><span style="color:#111">({</span><span style="color:#d88200">:order_issued</span><span style="color:#111">,</span> <span style="color:#111">data</span><span style="color:#111">})</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># do something else...</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>In a dynamically typed environment, they&rsquo;re also a good way to communicate across an evolving codebase: We can compile two codebases and then connect them at runtime, they will be able to communicate as long as they use the same atoms.</p>
+<p>Anyway, under the hood, almost everything is implemented using atoms in the Erlang VM.</p>
+<h3 id="homoiconicity">Homoiconicity</h3>
+<p>As a final point about Elixir itself, I want to highlight that it is an homoiconic language. You may never have heard of this property as almost all our modern languages do not have it.<br>
+Here&rsquo;s a definition: A language is homoiconic if a program written in it can be manipulated as data using the language. The most famous homoiconic language is probably Lisp.</p>
+<p>With Elixir, a simple expression like <code>1 + 2</code> can be decomposed in as an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank">abstract syntax tree (AST)</a> and then interpreted:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#00a8c8">quote</span> <span style="color:#d88200">do</span><span style="color:#111">:</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:+</span><span style="color:#111">,</span> <span style="color:#111">[</span><span style="color:#d88200">context</span><span style="color:#111">:</span> <span style="color:#75af00">Elixir</span><span style="color:#111">,</span> <span style="color:#d88200">imports</span><span style="color:#111">:</span> <span style="color:#111">[{</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#75af00">Kernel</span><span style="color:#111">},</span> <span style="color:#111">{</span><span style="color:#ae81ff">2</span><span style="color:#111">,</span> <span style="color:#75af00">Kernel</span><span style="color:#111">}]],</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">]}</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#{function name, metadata, arguments list}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Code</span><span style="color:#f92672">.</span><span style="color:#111">eval_quoted</span> <span style="color:#111">{</span><span style="color:#d88200">:+</span><span style="color:#111">,</span> <span style="color:#111">[],</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">]}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#ae81ff">3</span><span style="color:#111">,</span> <span style="color:#111">[]}</span>
+</span></span></code></pre></div><p>Such property enables metaprogramming like macros, allowing developers to (re)define code, functions and behaviors at runtime.</p>
+<h2 id="the-erlang-vm">The Erlang VM</h2>
+<p>Elixir runs on the Erlang VM and benefits from these capabilities.</p>
+<h3 id="actor-model">Actor model</h3>
+<p>First of all, this environment is fully designed to be used with the <a href="https://en.wikipedia.org/wiki/Actor_model" target="_blank">actor model</a>. With this pattern, we use processes as the basic building bloc. A process run some code logic, store an internal state, send messages to other processes to communicate, can spawn new processes, etc.</p>
+<p>As an example, the following code implements an in-memory stack. Once initiated, it waits for messages to add or return values. Internal state is stored by using recursion on the <code>loop</code> function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#00a8c8">defmodule</span> <span style="color:#75af00">Stack</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">init</span><span style="color:#111">()</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">loop</span><span style="color:#111">([])</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">loop</span><span style="color:#111">(</span><span style="color:#111">values</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">receive</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#d88200">:pop</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">case</span> <span style="color:#111">values</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#111">[]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75af00">IO</span><span style="color:#f92672">.</span><span style="color:#111">puts</span><span style="color:#111">(</span><span style="color:#d88200">&#34;Stack is empty&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">loop</span><span style="color:#111">(</span><span style="color:#111">values</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#111">[</span><span style="color:#111">head</span><span style="color:#f92672">|</span><span style="color:#111">tail</span><span style="color:#111">]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75af00">IO</span><span style="color:#f92672">.</span><span style="color:#111">puts</span><span style="color:#111">(</span><span style="color:#d88200">&#34;Pop: </span><span style="color:#d88200">#{</span><span style="color:#111">head</span><span style="color:#d88200">}</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">loop</span><span style="color:#111">(</span><span style="color:#111">tail</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">{</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#111">value</span><span style="color:#111">}</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">loop</span><span style="color:#111">([</span><span style="color:#111">value</span><span style="color:#f92672">|</span><span style="color:#111">values</span><span style="color:#111">])</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>We spawn a <code>Stack</code> instance in a dedicated process (here <code>#PID&lt;0.110.0&gt;</code>) then we send messages:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">stack</span> <span style="color:#f92672">=</span> <span style="color:#111">spawn</span><span style="color:#111">(</span><span style="color:#00a8c8">fn</span> <span style="color:#f92672">-&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">init</span><span style="color:#111">()</span> <span style="color:#00a8c8">end</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#PID&lt;0.110.0&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#d88200">:pop</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Stack</span> <span style="color:#111">is</span> <span style="color:#111">empty</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:pop</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#111">{</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:stack</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#111">{</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:stack</span><span style="color:#111">,</span> <span style="color:#ae81ff">2</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#111">{</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:stack</span><span style="color:#111">,</span> <span style="color:#ae81ff">3</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#d88200">:pop</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">Pop</span><span style="color:#111">:</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:pop</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#111">send</span><span style="color:#111">(</span><span style="color:#111">stack</span><span style="color:#111">,</span> <span style="color:#d88200">:pop</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">Pop</span><span style="color:#111">:</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:pop</span>
+</span></span></code></pre></div><p>Even though we can manipulate these processes with few functions from Elixir, this example is a &ldquo;low-level&rdquo; implementation. Processes are rarely managed this way.</p>
+<p>Most of the use cases seems to be handled with modules <a href="https://hexdocs.pm/elixir/1.12/Task.html" target="_blank"><code>Task</code></a> and <a href="https://hexdocs.pm/elixir/1.12/Agent.html" target="_blank"><code>Agent</code></a> or with high-level libraries like <a href="https://hexdocs.pm/elixir/1.12/GenServer.html" target="_blank"><code>GenServer</code></a> or <a href="https://hexdocs.pm/gen_stage/GenStage.html" target="_blank"><code>GenStage</code></a>. For the following code examples, I will use <code>GenServer</code>.</p>
+<h4 id="server">Server</h4>
+<p>With <a href="https://hexdocs.pm/elixir/GenServer.html" target="_blank"><code>GenServer</code></a>, the main building bloc is a server. This is a process dedicated to a specific work. The following example is the same <code>Stack</code> as before:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#00a8c8">defmodule</span> <span style="color:#75af00">Stack</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">use</span> <span style="color:#75af00">GenServer</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">### Public API</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">start_link</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">initial_stack</span> <span style="color:#f92672">=</span> <span style="color:#111">[]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75af00">GenServer</span><span style="color:#f92672">.</span><span style="color:#111">start_link</span><span style="color:#111">(</span><span style="color:#111">__MODULE__</span><span style="color:#111">,</span> <span style="color:#111">initial_stack</span><span style="color:#111">,</span> <span style="color:#d88200">name</span><span style="color:#111">:</span> <span style="color:#111">__MODULE__</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">push</span><span style="color:#111">(</span><span style="color:#111">item</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75af00">GenServer</span><span style="color:#f92672">.</span><span style="color:#111">cast</span><span style="color:#111">(</span><span style="color:#111">__MODULE__</span><span style="color:#111">,</span> <span style="color:#111">{</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#111">item</span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">pop</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">response</span> <span style="color:#f92672">=</span> <span style="color:#75af00">GenServer</span><span style="color:#f92672">.</span><span style="color:#111">call</span><span style="color:#111">(</span><span style="color:#111">__MODULE__</span><span style="color:#111">,</span> <span style="color:#d88200">:pop</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75af00">IO</span><span style="color:#f92672">.</span><span style="color:#111">puts</span><span style="color:#111">(</span><span style="color:#111">response</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">### Process logic</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">init</span><span style="color:#111">(</span><span style="color:#111">initial_stack</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span><span style="color:#d88200">:ok</span><span style="color:#111">,</span> <span style="color:#111">initial_stack</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">handle_cast</span><span style="color:#111">({</span><span style="color:#d88200">:push</span><span style="color:#111">,</span> <span style="color:#111">item</span><span style="color:#111">},</span> <span style="color:#111">stack_content</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span><span style="color:#d88200">:noreply</span><span style="color:#111">,</span> <span style="color:#111">[</span><span style="color:#111">item</span><span style="color:#f92672">|</span><span style="color:#111">stack_content</span><span style="color:#111">]}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">handle_call</span><span style="color:#111">(</span><span style="color:#d88200">:pop</span><span style="color:#111">,</span> <span style="color:#111">_from</span><span style="color:#111">,</span> <span style="color:#111">[])</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span><span style="color:#d88200">:reply</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;Stack is empty&#34;</span><span style="color:#111">,</span> <span style="color:#111">[]}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">handle_call</span><span style="color:#111">(</span><span style="color:#d88200">:pop</span><span style="color:#111">,</span> <span style="color:#111">_from</span><span style="color:#111">,</span> <span style="color:#111">[</span><span style="color:#111">head</span><span style="color:#f92672">|</span><span style="color:#111">tail</span><span style="color:#111">])</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span><span style="color:#d88200">:reply</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;Pop: </span><span style="color:#d88200">#{</span><span style="color:#111">head</span><span style="color:#d88200">}</span><span style="color:#d88200">&#34;</span><span style="color:#111">,</span> <span style="color:#111">tail</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Behavior remains the same. However we don&rsquo;t have to specify the <code>PID</code> as it is managed by the public api (the <code>:name</code> parameter of the <code>start_link</code> function). With this specific implementation, we can only instantiate one <code>Stack</code> process.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">start_link</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:ok</span><span style="color:#111">,</span> <span style="color:#75715e">#PID&lt;0.110.0&gt;}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">start_link</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">{</span><span style="color:#d88200">:error</span><span style="color:#111">,</span> <span style="color:#111">{</span><span style="color:#d88200">:already_started</span><span style="color:#111">,</span> <span style="color:#75715e">#PID&lt;0.110.0&gt;}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">pop</span>
+</span></span><span style="display:flex;"><span><span style="color:#75af00">Stack</span> <span style="color:#111">is</span> <span style="color:#111">empty</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">push</span><span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">push</span><span style="color:#111">(</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">push</span><span style="color:#111">(</span><span style="color:#ae81ff">3</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">pop</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">Pop</span><span style="color:#111">:</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Stack</span><span style="color:#f92672">.</span><span style="color:#111">pop</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">Pop</span><span style="color:#111">:</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:ok</span>
+</span></span></code></pre></div><p>Though, this example needs some explanations:</p>
+<p>The code is split in two sections <code>Public API</code> and <code>Process logic</code>. <code>Public API</code> exposes all the available behaviors to the outside world and send messages to the <code>Stack</code> process using <code>GenServer</code>. <code>Process logic</code> implement <code>GenServer</code>&rsquo;s handlers with business logic and state management.</p>
+<p>First we spawn a new process with the public api <code>GenServer.start_link</code>, it calls the <code>init</code> function that only returns to <code>GenServer</code> the initial state of our process.</p>
+<p>Then we have the <code>push</code> function that pushes a new item into our <code>Stack</code> by using the <code>GenServer.cast</code> function. This sends a message to our process without expecting a response, <code>handle_cast</code> is an asynchronous operation.</p>
+<p>Finally, we have the <code>pop</code> function that runs synchronously with the <code>GenServer.call</code> function. This also sends a message to the process but waits for a response. Note we&rsquo;re using pattern matching for our <code>handle_call(:pop, _from, ...</code> as our behavior depends on the state of the process.</p>
+<h4 id="no-concurrency">No concurrency</h4>
+<p>You may wonder what happens if our <code>Stack</code> is called by multiple processes at the same time?<br>
+I think it&rsquo;s worth mentioning that concurrency is handled by design with this messaging system. Every process has their own mailbox, processing one message at the time.</p>
+<h4 id="supervisor">Supervisor</h4>
+<p>Sometimes, though, processes face (un)recoverable errors and crashes. When this happens, we have to decide how to handle this situation: Should we restart the process or not? When restarting, should we only restart the crashed process or should we also include some linked processes? Once restarted, should we resume the last known state or have a new state?</p>
+<p>These responsibilities belong to a specific kind of process called supervisors (see <a href="https://hexdocs.pm/elixir/Supervisor.html" target="_blank"><code>Supervisor</code></a>). Thanks to them, we are able to build resilient/self-healing systems.</p>
+<h3 id="nodes">Nodes</h3>
+<p>The Erlang VM allows connecting several nodes in a fairly easy way, providing a high level of abstraction in the code. Each node is a running Erlang VM instance, these can be running and connected from the same hardware or over a network.<br>
+This is a great feature as this allows high scalability and load balancing across several instances.</p>
+<p>As an example, in the following code we connect two nodes together, then from one node we launch some code execution on the second node:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#75715e"># Window 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">...</span><span style="color:#f92672">&gt;</span> <span style="color:#111">iex</span> <span style="color:#f92672">--</span><span style="color:#111">sname</span> <span style="color:#111">one</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">one</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Window 2</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">...</span><span style="color:#f92672">&gt;</span> <span style="color:#111">iex</span> <span style="color:#f92672">--</span><span style="color:#111">sname</span> <span style="color:#111">two</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">two</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Node</span><span style="color:#f92672">.</span><span style="color:#111">connect</span> <span style="color:#d88200">:&#34;one@machine-name&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Window 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">node_one</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#111">func</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">fn</span> <span style="color:#f92672">-&gt;</span> <span style="color:#75af00">IO</span><span style="color:#f92672">.</span><span style="color:#111">inspect</span> <span style="color:#75af00">Node</span><span style="color:#f92672">.</span><span style="color:#111">self</span> <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#Function&lt;43.81571850/0 in :erl_eval.expr/6&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># =&gt; Prints information about the Node that runs the function</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">node_one</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#111">spawn</span><span style="color:#111">(</span><span style="color:#111">func</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:&#34;node_one@machine-name&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># =&gt; Runs on node one</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">node_one</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Node</span><span style="color:#f92672">.</span><span style="color:#111">spawn</span> <span style="color:#d88200">:&#34;node_one@machine-name&#34;</span><span style="color:#111">,</span> <span style="color:#111">func</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:&#34;node_one@machine-name&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#PID&lt;0.116.0&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># =&gt; Runs on node one</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">iex</span><span style="color:#111">(</span><span style="color:#111">node_one</span><span style="color:#75af00">@machine</span><span style="color:#f92672">-</span><span style="color:#111">name</span><span style="color:#111">)</span><span style="color:#f92672">&gt;</span> <span style="color:#75af00">Node</span><span style="color:#f92672">.</span><span style="color:#111">spawn</span> <span style="color:#d88200">:&#34;node_two@machine-name&#34;</span><span style="color:#111">,</span> <span style="color:#111">func</span>
+</span></span><span style="display:flex;"><span><span style="color:#d88200">:&#34;node_two@machine-name&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#PID&lt;13771.116.0&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># =&gt; Runs on node two</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Note 1: first field of the return PID isn&#39;t zero, meaning we are not running the code on the local node</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Note 2: As `func` has been defined on node one, it uses IO of node one to print information</span>
+</span></span></code></pre></div><h3 id="hot-upgrades">Hot-upgrades</h3>
+<p>I have already mentioned it, the Erlang VM provides the hot-upgrade capability. This means developers can update code behaviors and data structure stored in the memory without stopping the application.</p>
+<p>To do so, there are some nice and simple APIs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-elixir" data-lang="elixir"><span style="display:flex;"><span><span style="color:#00a8c8">defmodule</span> <span style="color:#75af00">MyModule</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Code for updating state&#39;s data structure of the process</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#111">code_change</span><span style="color:#111">(</span><span style="color:#111">_old_vsn</span><span style="color:#111">,</span> <span style="color:#111">value</span><span style="color:#111">,</span> <span style="color:#111">_extra</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">{</span><span style="color:#d88200">:ok</span><span style="color:#111">,</span> <span style="color:#111">[</span><span style="color:#111">value</span><span style="color:#111">]}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>I will not go too deep in this topic, I think this is a nice feature but maybe not as useful as it may sound now that we&rsquo;re used to run our applications with several instances and to perform rolling updates.<br>
+Furthermore, it seems these upgrades were supported by <code>mix</code> with the help of some packages, but it doesn&rsquo;t seem to work anymore with the latest versions of OTP without some manual configuration from the developers.</p>
+<p>Despite my best efforts, I didn&rsquo;t manage to achieve one of these updates successfully with <a href="https://hexdocs.pm/distillery/home.html" target="_blank"><code>distillery</code></a> or <a href="https://hex.pm/packages/castle" target="_blank"><code>castle</code></a>. But I am pretty sure these tools work and the issue comes from my environment and/or my skills.</p>
+<hr>
+<h2 id="comments">Comments</h2>
+<!--Add your comment here-->
+<p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
+
+        </article>
+        
+            <div class="tags">
+                <span title="Tags">🏷</span>
+                <div class="horizontal-links links">
+                    <a href="/tags/post/">Post</a><a href="/tags/en/">En</a>
+                </div>
+            </div>
+        
+    </article>
+
+
+    </main>
+    <footer>
+  <div class="content-container">
+    <div class="content"><div class="about">
+  <h2>Romain Berthon</h2>
+  Software developer, *DD and F# enthusiast
+
+  
+    <p class="horizontal-links"><a href="https://github.com/RomainTrm"
+         target="_blank" 
+        
+        >Github</a><a href="https://bsky.app/profile/romaintrm.bsky.social"
+         target="_blank" 
+        
+        >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
+         target="_blank" 
+        
+        >LinkedIn</a></p>
+  
+</div>
+</div>
+  </div>
+</footer>
+    
+    <script>
+      const emailId = atob("");
+    </script></body>
+</html>
