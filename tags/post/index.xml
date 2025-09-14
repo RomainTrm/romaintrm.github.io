@@ -6,12 +6,12 @@
     <description>Recent content in Post on Romain Berthon</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Jun 2025 09:00:00 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 20 Aug 2025 09:00:00 +0200</lastBuildDate>
     <atom:link href="https://berthon.dev/tags/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Learning Elixir</title>
       <link>https://berthon.dev/posts/learning-elixir/</link>
-      <pubDate>Fri, 20 Jun 2025 09:00:00 +0200</pubDate>
+      <pubDate>Wed, 20 Aug 2025 09:00:00 +0200</pubDate>
       <guid>https://berthon.dev/posts/learning-elixir/</guid>
       <description>In a previous post, I&amp;rsquo;ve mentioned I&amp;rsquo;ve read the book Programming Elixir 1.6.&#xA;As I was planning to read Real-World Event Sourcing, I chose to conduct a second reading because my limited knowledge and skills with Elixir were eroded over time. I took time to take many notes which are available on a dedicated repository.&#xA;In this post, I want to present to you the Elixir language, the Erlang VM and give you a taste of why you should learn it even if you will not use it in production.</description>
     </item>
