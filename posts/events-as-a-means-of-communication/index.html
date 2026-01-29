@@ -100,7 +100,7 @@ In a way, we&rsquo;ve imported external <em>events</em>, but we kept control of 
 </ul>
 <p>However, I must confess, this solution can necessitate a lot of extra work and introduce some complexity, but it can be really beneficial in the long run.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p><em>Events</em> are a natural communication means, but we should distinguish between interal and external uses.</p>
+<p><em>Events</em> are a natural communication means, but we should distinguish between internal and external uses.</p>
 <p>For internal uses, <em>events</em> are primarily persistence contracts, so we have full control of their structure and how they evolve.<br>
 For external uses, <em>events</em> act like any API contracts, so they should have their own versioning strategy and we should communicate about it.</p>
 <p>As I tried to highlight it, sharing internal <em>events</em> (as a producer or a consumer) with other applications have some strong impacts on application execution, teams organization and communication, deployment constraints. This solution may be a good tradeoff in your context.<br>
