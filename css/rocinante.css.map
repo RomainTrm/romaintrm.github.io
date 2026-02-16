@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "rocinante.css",
-	"sourceRoot": "E:/Workspace/Blog",
+	"sourceRoot": "C:/Workspace/Blog",
 	"sources": [
 		"themes/rocinante/assets/css/rocinante.scss",
 		"themes/rocinante/assets/css/includes.scss"
