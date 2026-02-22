@@ -1,719 +1,154 @@
-<!DOCTYPE html>
-<html><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'self' 'sha256-hevimW2qBMcsaZR62OkETyNJKvnMSjRYOz6kIyvEFtg='; img-src 'self'; connect-src 'self'; base-uri 'self'; manifest-src 'self'; media-src 'self'">
-<meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>From a state-based to an event-sourced codebase · Romain Berthon</title>
-
-
-
-<link rel="stylesheet" href="/css/rocinante.css" />
-<link rel="shortcut icon" href="https://berthon.dev//favicon.ico">
-
-
-<body>
-    <header><nav>
-  
-    <a class="home" href="https://berthon.dev/">‹ Home</a>
-  
-  <div></div>
-  <div>
-    <a href="https://berthon.dev//tags/post">Posts</a>
-    <a href="https://berthon.dev//tags/talk">Talks</a>
-    
-    <a href="https://berthon.dev//about">About</a>
-    
-  </div>
-</nav>
-</header>
-    <main>
-
-    <div class="post">
-        <div class="title-group">
-            <div class="title">
-                <h1>From a state-based to an event-sourced codebase</h1>
-            </div>
-            <div class="date"><h5>Apr 23, 2025</h5></div>
-        </div>
-        <article class="content">
-            <p>A few weeks ago, I&rsquo;ve published a <a href="/posts/refining-software-architectures">post</a> where I described improvements for various architectures, following a logical path from a CRUD architecture to a CQRS/ES implementation.</p>
-<p>Since then, I participated in <a href="https://lyon-craft.fr/" target="_blank">Lyon Craft</a> 2025, a local conference focusing on the software craftsmanship mindset and practices. For this edition, we had the pleasure to invite <a href="https://thinkbeforecoding.com/" target="_blank">Jérémie Chassaing</a> for an <em>event-sourcing</em> workshop. I had the opportunity to discuss with him and attend his workshop.</p>
-<p>During this, he described his <code>Decider</code> pattern: I will not detail the pattern here but I encourage you to read Jérémie&rsquo;s <a href="https://thinkbeforecoding.com/post/2021/12/17/functional-event-sourcing-decider" target="_blank">dedicated post</a> on this topic. I already knew about it and about <em>event-sourcing</em> in general so I didn&rsquo;t learn anything new, but it wasn&rsquo;t why I decided to attend this workshop anyway.</p>
-<p>What I was looking for is how Jérémie introduces <em>event-sourcing</em> to newcomers and how he refactors a <em>state-based</em> codebase to an <em>event-sourcing</em> implementation, and I loved what I found! Jérémie&rsquo;s approach reminds me <a href="/posts/refining-software-architectures">mine</a> except he uses tiny steps I didn&rsquo;t think of. In this post I want to explain these in order to avoid another Big Bang refactoring.</p>
-<h2 id="initial-architecture-manipulating-states">Initial architecture: manipulating states</h2>
-<p>Let&rsquo;s start with a simple feature implemented with the <a href="https://kennethlange.com/functional-core-imperative-shell/" target="_blank"><em>Functional core, Imperative shell</em></a> pattern and in a <em>state-based</em> fashion.</p>
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 640 217"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 40,0 L 344,0' fill='none' stroke='currentColor'></path>
-<path d='M 72,32 L 312,32' fill='none' stroke='currentColor'></path>
-<path d='M 120,64 L 128,64' fill='none' stroke='currentColor'></path>
-<path d='M 136,64 L 144,64' fill='none' stroke='currentColor'></path>
-<path d='M 152,64 L 160,64' fill='none' stroke='currentColor'></path>
-<path d='M 168,64 L 176,64' fill='none' stroke='currentColor'></path>
-<path d='M 184,64 L 192,64' fill='none' stroke='currentColor'></path>
-<path d='M 200,64 L 208,64' fill='none' stroke='currentColor'></path>
-<path d='M 216,64 L 224,64' fill='none' stroke='currentColor'></path>
-<path d='M 232,64 L 240,64' fill='none' stroke='currentColor'></path>
-<path d='M 248,64 L 256,64' fill='none' stroke='currentColor'></path>
-<path d='M 264,64 L 272,64' fill='none' stroke='currentColor'></path>
-<path d='M 8,96 L 376,96' fill='none' stroke='currentColor'></path>
-<path d='M 120,128 L 128,128' fill='none' stroke='currentColor'></path>
-<path d='M 136,128 L 144,128' fill='none' stroke='currentColor'></path>
-<path d='M 152,128 L 160,128' fill='none' stroke='currentColor'></path>
-<path d='M 168,128 L 176,128' fill='none' stroke='currentColor'></path>
-<path d='M 184,128 L 192,128' fill='none' stroke='currentColor'></path>
-<path d='M 200,128 L 208,128' fill='none' stroke='currentColor'></path>
-<path d='M 216,128 L 224,128' fill='none' stroke='currentColor'></path>
-<path d='M 232,128 L 240,128' fill='none' stroke='currentColor'></path>
-<path d='M 248,128 L 256,128' fill='none' stroke='currentColor'></path>
-<path d='M 264,128 L 272,128' fill='none' stroke='currentColor'></path>
-<path d='M 72,144 L 312,144' fill='none' stroke='currentColor'></path>
-<path d='M 40,160 L 344,160' fill='none' stroke='currentColor'></path>
-<path d='M 0,192 L 24,192' fill='none' stroke='currentColor'></path>
-<path d='M 24,16 L 24,64' fill='none' stroke='currentColor'></path>
-<path d='M 24,112 L 24,144' fill='none' stroke='currentColor'></path>
-<path d='M 56,48 L 56,64' fill='none' stroke='currentColor'></path>
-<path d='M 56,112 L 56,128' fill='none' stroke='currentColor'></path>
-<path d='M 328,48 L 328,80' fill='none' stroke='currentColor'></path>
-<path d='M 328,112 L 328,128' fill='none' stroke='currentColor'></path>
-<path d='M 360,16 L 360,80' fill='none' stroke='currentColor'></path>
-<path d='M 360,112 L 360,144' fill='none' stroke='currentColor'></path>
-<path d='M 24,104 L 24,112' fill='none' stroke='currentColor'></path>
-<path d='M 56,104 L 56,112' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 88,88' fill='none' stroke='currentColor'></path>
-<path d='M 88,104 L 88,112' fill='none' stroke='currentColor'></path>
-<path d='M 296,80 L 296,88' fill='none' stroke='currentColor'></path>
-<path d='M 296,104 L 296,112' fill='none' stroke='currentColor'></path>
-<path d='M 328,80 L 328,88' fill='none' stroke='currentColor'></path>
-<path d='M 328,104 L 328,112' fill='none' stroke='currentColor'></path>
-<path d='M 360,80 L 360,88' fill='none' stroke='currentColor'></path>
-<path d='M 360,104 L 360,112' fill='none' stroke='currentColor'></path>
-<polygon points='32.000000,192.000000 20.000000,186.399994 20.000000,197.600006' fill='currentColor' transform='rotate(0.000000, 24.000000, 192.000000)'></polygon>
-<polygon points='384.000000,96.000000 372.000000,90.400002 372.000000,101.599998' fill='currentColor' transform='rotate(0.000000, 376.000000, 96.000000)'></polygon>
-<path d='M 40,0 A 16,16 0 0,0 24,16' fill='none' stroke='currentColor'></path>
-<path d='M 344,0 A 16,16 0 0,1 360,16' fill='none' stroke='currentColor'></path>
-<path d='M 72,32 A 16,16 0 0,0 56,48' fill='none' stroke='currentColor'></path>
-<path d='M 312,32 A 16,16 0 0,1 328,48' fill='none' stroke='currentColor'></path>
-<path d='M 104,64 A 16,16 0 0,0 88,80' fill='none' stroke='currentColor'></path>
-<path d='M 280,64 A 16,16 0 0,1 296,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,112 A 16,16 0 0,0 104,128' fill='none' stroke='currentColor'></path>
-<path d='M 296,112 A 16,16 0 0,1 280,128' fill='none' stroke='currentColor'></path>
-<path d='M 56,128 A 16,16 0 0,0 72,144' fill='none' stroke='currentColor'></path>
-<path d='M 328,128 A 16,16 0 0,1 312,144' fill='none' stroke='currentColor'></path>
-<path d='M 24,144 A 16,16 0 0,0 40,160' fill='none' stroke='currentColor'></path>
-<path d='M 360,144 A 16,16 0 0,1 344,160' fill='none' stroke='currentColor'></path>
-<circle cx='0' cy='192' r='6' stroke='currentColor' fill='#fff'></circle>
-<circle cx='8' cy='96' r='6' stroke='currentColor' fill='#fff'></circle>
-<text text-anchor='middle' x='16' y='84' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='24' y='84' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='32' y='84' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='40' y='84' fill='currentColor' style='font-size:1em'>k</text>
-<text text-anchor='middle' x='40' y='196' fill='currentColor' style='font-size:1em'>W</text>
-<text text-anchor='middle' x='48' y='84' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='48' y='196' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='56' y='84' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='56' y='196' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='64' y='20' fill='currentColor' style='font-size:1em'>A</text>
-<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='64' y='196' fill='currentColor' style='font-size:1em'>k</text>
-<text text-anchor='middle' x='72' y='20' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='72' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='72' y='196' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='80' y='20' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='80' y='52' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='80' y='196' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='88' y='20' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='88' y='52' fill='currentColor' style='font-size:1em'>m</text>
-<text text-anchor='middle' x='88' y='196' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='96' y='20' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='96' y='52' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='96' y='196' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='104' y='20' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='104' y='52' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='104' y='84' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='112' y='20' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='112' y='52' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='112' y='84' fill='currentColor' style='font-size:1em'>u</text>
-<text text-anchor='middle' x='120' y='20' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='120' y='84' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='128' y='20' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='128' y='52' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='128' y='84' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='136' y='20' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='136' y='52' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='144' y='20' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='144' y='52' fill='currentColor' style='font-size:1em'>y</text>
-<text text-anchor='middle' x='144' y='84' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='152' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='152' y='84' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='160' y='20' fill='currentColor' style='font-size:1em'>&amp;</text>
-<text text-anchor='middle' x='160' y='52' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>g</text>
-<text text-anchor='middle' x='168' y='20' fill='currentColor' style='font-size:1em'>&amp;</text>
-<text text-anchor='middle' x='168' y='84' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='176' y='52' fill='currentColor' style='font-size:1em'>(</text>
-<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='184' y='20' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='184' y='52' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='192' y='20' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='192' y='52' fill='currentColor' style='font-size:1em'>m</text>
-<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>(</text>
-<text text-anchor='middle' x='200' y='20' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='200' y='52' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='200' y='84' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='208' y='20' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='208' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='208' y='84' fill='currentColor' style='font-size:1em'>u</text>
-<text text-anchor='middle' x='216' y='52' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='216' y='84' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='224' y='20' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='224' y='52' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='224' y='84' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='232' y='20' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='232' y='52' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='232' y='84' fill='currentColor' style='font-size:1em'>.</text>
-<text text-anchor='middle' x='240' y='20' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='240' y='52' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='248' y='20' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='248' y='52' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='248' y='84' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='256' y='20' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='256' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='256' y='84' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='264' y='20' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='264' y='84' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='272' y='52' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='272' y='84' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='280' y='20' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='280' y='52' fill='currentColor' style='font-size:1em'>h</text>
-<text text-anchor='middle' x='280' y='84' fill='currentColor' style='font-size:1em'>)</text>
-<text text-anchor='middle' x='288' y='20' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='288' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='296' y='20' fill='currentColor' style='font-size:1em'>y</text>
-<text text-anchor='middle' x='296' y='52' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='304' y='20' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='304' y='52' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='312' y='20' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='312' y='52' fill='currentColor' style='font-size:1em'>)</text>
-<text text-anchor='middle' x='320' y='20' fill='currentColor' style='font-size:1em'>s</text>
-</g>
-
-    </svg>
-  
-</div>
-<p>For this blog post, we will use a codebase that emulates a printer. Users can do two actions: print pages and reload it with paper. If the printer runs out of paper, then it can&rsquo;t print pages anymore. When the remaining paper in the printer allows a maximum of ten pages to be printed, then a flag is raised, asking for a refill.</p>
-<p>Here&rsquo;s the first implementation of the <em>functional core</em> part of the feature:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">PrinterState</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">NumberOfPagesRemaining</span><span style="color:#f92672">:</span> <span style="color:#111">int</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">NeedToBeReloaded</span><span style="color:#f92672">:</span> <span style="color:#00a8c8">bool</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Commands</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Print</span> <span style="color:#00a8c8">of</span> <span style="color:#111">int</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reload</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">decide</span> <span style="color:#f92672">(</span><span style="color:#111">state</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">function</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Print</span> <span style="color:#111">nbOfPagesToPrint</span> <span style="color:#f92672">-&gt;</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">=</span> <span style="color:#111">max</span> <span style="color:#111">0</span> <span style="color:#f92672">(</span><span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">-</span> <span style="color:#111">nbOfPagesToPrint</span><span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> 
-</span></span><span style="display:flex;"><span>            <span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">=</span> <span style="color:#111">nbOfPagesLeft</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">=</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">&lt;=</span> <span style="color:#111">10</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reload</span> <span style="color:#f92672">-&gt;</span> 
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> 
-</span></span><span style="display:flex;"><span>            <span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">=</span> <span style="color:#111">100</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">false</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
-</span></span></code></pre></div><p><em>Imperative shell</em> part can be implemented like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">InfraDependencies</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Load</span><span style="color:#f92672">:</span> <span style="color:#00a8c8">unit</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">PrinterState</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Save</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">unit</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">newState</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#111">newState</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">print</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">nbOfPagesToPrint</span><span style="color:#f92672">:</span> <span style="color:#111">int</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Print</span> <span style="color:#111">nbOfPagesToPrint</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#111">execute</span> <span style="color:#111">deps</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">reload</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Reload</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#111">execute</span> <span style="color:#111">deps</span>
-</span></span></code></pre></div><p>The complete code example is available <a href="0-state-based.fsx">here</a>.</p>
-<p>In this first version of our feature, the <em>imperative shell</em> loads the <code>PrinterState</code>, applies a <code>Command</code> to it, then saves the final <em>state</em> it gets as a result from the <em>functional core</em>. On every step we&rsquo;re manipulating a <em>state</em>, no <em>event</em> involved so far.</p>
-<p>I believe it&rsquo;s worth mentioning that with such a model, we don&rsquo;t know how many pages have been printed for a given <code>Print</code> command, and if anything has been printed at all.</p>
-<h2 id="step-1-events-in-a-black-box">Step 1: Events in a black box</h2>
-<p>Let&rsquo;s proceed to our first move to introduce <em>events</em>. The idea here is to modify our <em>aggregate</em> (inside the <em>functional core</em>) to use <em>events</em> in the way that keeps the <em>imperative shell</em> unaware of the changes. So our commands have to keep consuming and returning <code>PrinterState</code>.</p>
-<p>One possible solution for our <em>events</em>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">Events</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">PagesPrinted</span> <span style="color:#00a8c8">of</span> <span style="color:#111">int</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">LowPaperReserveRaised</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reloaded</span>
-</span></span></code></pre></div><p>Now we have to introduce a new function that apply an <code>Events</code> to a <code>PrinterState</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">evolve</span> <span style="color:#f92672">(</span><span style="color:#111">state</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">function</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">PagesPrinted</span> <span style="color:#111">nbOfPagesToPrint</span> <span style="color:#f92672">-&gt;</span> 
-</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">=</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">-</span> <span style="color:#111">nbOfPagesToPrint</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> <span style="color:#111">state</span> <span style="color:#00a8c8">with</span> <span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">=</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">LowPaperReserveRaised</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> <span style="color:#111">state</span> <span style="color:#00a8c8">with</span> <span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">true</span> <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reloaded</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> <span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">=</span> <span style="color:#111">100</span><span style="color:#f92672">;</span> <span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">false</span> <span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>And finally, we update our <code>decide</code> function. Depending of the command and the current <em>state</em> of our printer, we may decide to return zero, one or two <em>events</em>. This forces us to manipulate an <code>Events list</code>. Then we immediatly apply them to our current <code>state</code> by folding:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">decide</span> <span style="color:#f92672">(</span><span style="color:#111">state</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">function</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Print</span> <span style="color:#111">nbOfPagesToPrint</span> <span style="color:#f92672">-&gt;</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesPrinted</span> <span style="color:#f92672">=</span> <span style="color:#111">min</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#111">nbOfPagesToPrint</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#111">nbOfPagesPrinted</span> <span style="color:#f92672">&lt;&gt;</span> <span style="color:#111">0</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">PagesPrinted</span> <span style="color:#111">nbOfPagesPrinted</span>
-</span></span><span style="display:flex;"><span>            
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">=</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">-</span> <span style="color:#111">nbOfPagesPrinted</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#f92672">not</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">&lt;=</span> <span style="color:#111">10</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">LowPaperReserveRaised</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reload</span> <span style="color:#f92672">-&gt;</span> 
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">&lt;&gt;</span> <span style="color:#111">100</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">Reloaded</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">state</span>
-</span></span></code></pre></div><p>I&rsquo;m fully aware that this code implementation already contains some early optimizations: conditions on <code>PagesPrinted</code> and <code>Reloaded</code> events are not mandatory as raising them or not doesn&rsquo;t change behavior for an external observer. I chose to do it anyway to make future changes easier.</p>
-<p>The rest of the code (the <em>imperative shell</em>) remains the same, you can check it <a href="1-events-in-a-black-box.fsx">here</a>.</p>
-<h2 id="step-2-retrieve-events-from-the-functional-core">Step 2: Retrieve events from the <em>functional core</em></h2>
-<p>Second refactor now: we will retrieve events from our <em>functional core</em> and rebuild <em>state</em> into the <em>imperative shell</em> before saving it. This way, we change the interface between these two layers but it doesn&rsquo;t affect our dependencies yet.</p>
-<p>I am used to keeping the <code>evolve</code> function hidden as an internal implementation detail of an <em>aggregate</em>, called through the <code>decide</code> function. But as I&rsquo;m following Jérémie&rsquo;s technique here, we will keep these two functions separated as it will help us for the upcoming refactoring.</p>
-<p>The code change here is quite simple: we will move the folding from the <em>functional core</em> to the <em>imperative shell</em>.</p>
-<p>First, we remove the folding from the <code>decide</code> function and return an <code>Events list</code> instead of a <code>PrinterState</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">decide</span> <span style="color:#f92672">(</span><span style="color:#111">state</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">function</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Returns Events list instead of PrinterState
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">|</span> <span style="color:#111">Print</span> <span style="color:#111">nbOfPagesToPrint</span> <span style="color:#f92672">-&gt;</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesPrinted</span> <span style="color:#f92672">=</span> <span style="color:#111">min</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#111">nbOfPagesToPrint</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#111">nbOfPagesPrinted</span> <span style="color:#f92672">&lt;&gt;</span> <span style="color:#111">0</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">PagesPrinted</span> <span style="color:#111">nbOfPagesPrinted</span>
-</span></span><span style="display:flex;"><span>            
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">let</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">=</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">-</span> <span style="color:#111">nbOfPagesPrinted</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#f92672">not</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#111">nbOfPagesLeft</span> <span style="color:#f92672">&lt;=</span> <span style="color:#111">10</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">LowPaperReserveRaised</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#111">Reload</span> <span style="color:#f92672">-&gt;</span> 
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#111">state</span><span style="color:#f92672">.</span><span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">&lt;&gt;</span> <span style="color:#111">100</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">then</span> <span style="color:#111">Reloaded</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
-</span></span></code></pre></div><p>Then we apply these <em>events</em> with the <code>evolve</code> function to the <em>state</em> into the <code>execute</code> function:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Retrive events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#00a8c8">let</span> <span style="color:#111">events</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Apply events to the previous state
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#00a8c8">let</span> <span style="color:#111">newState</span> <span style="color:#f92672">=</span> <span style="color:#111">events</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">state</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#111">newState</span>
-</span></span></code></pre></div><p>We don&rsquo;t have to apply any change to our <code>InfraDependencies</code> type, meaning the applicative/infrastructure layer remains unaware of this change. The complete code example is available <a href="2-retrieve-events-from-funcitonal-core.fsx">here</a>.</p>
-<h2 id="step-3-saving-events">Step 3: Saving events</h2>
-<p>For this step, we will not have to modify our <em>functional core</em>. There is only one missing requirement there for an <em>event-sourced</em> implementation that we will introduce in step 4. All the other upcoming changes will impact the <em>imperative shell</em> and the application/infrastructure layer.</p>
-<p>To save our events, first we must change our dependencies to save an <code>Events list</code> with our <code>PrinterState</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">InfraDependencies</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Load</span><span style="color:#f92672">:</span> <span style="color:#00a8c8">unit</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">PrinterState</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Gets the new state and new events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#111">Save</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span> <span style="color:#f92672">*</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">unit</span> 
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>Then we update the code to match this new signature:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">events</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">newState</span> <span style="color:#f92672">=</span> <span style="color:#111">events</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">state</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Pass events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#f92672">(</span><span style="color:#111">newState</span><span style="color:#f92672">,</span> <span style="color:#111">events</span><span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>The complete code example is available <a href="3-saving-events.fsx">here</a>.</p>
-<p>This refactoring looks simple, but keep in mind that for storing our <em>events</em>, we also have to handle serialization in the infrastructure layer that doesn&rsquo;t appear in my code example. This can be a non-trivial topic and we have to come up with a proper strategy.</p>
-<p>Note that now, as our <em>events</em> are exposed outside of the domain layer, we can know if something happened or not in our system: if no <em>event</em> is returned, then we have a proof that no decision has been made.</p>
-<p>Also, keeping <em>states</em> alongside our newly saved <em>events</em> is a very convenient solution: it helps maintain the current model without building new projections (aka <em>readmodels</em>). Business people may be used to go check things in the database, even if <em>events</em> bring new information, <em>states</em> remains more practical to query for them.</p>
-<h2 id="step-4-loading-events-our-first-event-sourced-implementation">Step 4: Loading events, our first <em>event-sourced</em> implementation</h2>
-<p>Now we can implement an <em>event-sourced</em> feature with our next refactoring. To do so we have to load from the infrastructure layer an <code>Events list</code> instead of a <code>PrinterState</code>. Let&rsquo;s modify the dependencies:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">InfraDependencies</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Load events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#111">Load</span><span style="color:#f92672">:</span> <span style="color:#00a8c8">unit</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Save</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span> <span style="color:#f92672">*</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">unit</span> 
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>And then we try to rebuild the <code>PrinterState</code> in our <em>imperative shell</em>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Load printer&#39;s history
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#00a8c8">let</span> <span style="color:#111">history</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Build printer&#39;s state
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">history</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#f92672">??????</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">events</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">newState</span> <span style="color:#f92672">=</span> <span style="color:#111">events</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">state</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#f92672">(</span><span style="color:#111">newState</span><span style="color:#f92672">,</span> <span style="color:#111">events</span><span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>We are runing into an issue here: until now we had a <em>state</em> on which to apply our <em>events</em>, but now we have only <em>events</em>. We are missing an <code>initialState</code> for our printer when nothing has happened yet. I usually define it in the <em>functional core</em>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// A new printer is empty and needs to be loaded
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#00a8c8">let</span> <span style="color:#111">initialState</span> <span style="color:#f92672">:</span> <span style="color:#111">PrinterState</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">NumberOfPagesRemaining</span> <span style="color:#f92672">=</span> <span style="color:#111">0</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">NeedToBeReloaded</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">true</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>And now we can use it to build our <em>state</em> by replacing the <code>??????</code> with <code>initialState</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">history</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">initialState</span>
-</span></span></code></pre></div><p>The complete code example is available <a href="4-loading-events.fsx">here</a>.</p>
-<p>As for step 3, my code example doesn&rsquo;t show the whole story here: I didn&rsquo;t implement the infrastructure layer where we will have to deserialize <em>events</em> once loaded from the database.</p>
-<h2 id="step-5-removing-state-from-the-infrastructure-layer">Step 5: removing <em>state</em> from the infrastructure layer</h2>
-<p>For this final refactoring, we will remove the <code>PrinterState</code> from the infrastructure layer, meaning we will only load and save <code>Events list</code>. This is straightforward as we will only remove code. Note that it is possible to achieve this step before the step 4.</p>
-<p>First, let&rsquo;s change our dependencies:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">InfraDependencies</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Load</span><span style="color:#f92672">:</span> <span style="color:#00a8c8">unit</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Only saves events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#111">Save</span><span style="color:#f92672">:</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">unit</span> 
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>And finally we update our <em>imperative shell</em>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">history</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">history</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">initialState</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">events</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Doesn&#39;t build new state, only pass new events
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#111">events</span>
-</span></span></code></pre></div><p>The final implementation is available <a href="5-removing-state.fsx">here</a>.</p>
-<h2 id="remarks">Remarks</h2>
-<p>Keep in mind though that my code example is a simplified version of what a real implementation looks like, especially in the <em>imperative shell</em> where I&rsquo;ve decided to remove some noise for the seek of the demonstration. Indeed, systems manipulating a single stream of <em>events</em> are rare, we usually have to provide an ID for loading and saving. Also, we often provide the version of the stream we used to make our decision, this allows us to detect potential concurrent executions of <em>command</em>.</p>
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 672 265"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 16,32 L 112,32' fill='none' stroke='currentColor'></path>
-<path d='M 216,32 L 312,32' fill='none' stroke='currentColor'></path>
-<path d='M 424,32 L 520,32' fill='none' stroke='currentColor'></path>
-<path d='M 16,64 L 112,64' fill='none' stroke='currentColor'></path>
-<path d='M 216,64 L 312,64' fill='none' stroke='currentColor'></path>
-<path d='M 424,64 L 520,64' fill='none' stroke='currentColor'></path>
-<path d='M 16,96 L 112,96' fill='none' stroke='currentColor'></path>
-<path d='M 216,96 L 312,96' fill='none' stroke='currentColor'></path>
-<path d='M 424,96 L 520,96' fill='none' stroke='currentColor'></path>
-<path d='M 16,128 L 112,128' fill='none' stroke='currentColor'></path>
-<path d='M 216,128 L 312,128' fill='none' stroke='currentColor'></path>
-<path d='M 424,128 L 520,128' fill='none' stroke='currentColor'></path>
-<path d='M 16,160 L 112,160' fill='none' stroke='currentColor'></path>
-<path d='M 216,160 L 272,160' fill='none' stroke='currentColor'></path>
-<path d='M 272,160 L 312,160' fill='none' stroke='currentColor'></path>
-<path d='M 312,160 L 368,160' fill='none' stroke='currentColor'></path>
-<path d='M 424,160 L 520,160' fill='none' stroke='currentColor'></path>
-<path d='M 560,160 L 656,160' fill='none' stroke='currentColor'></path>
-<path d='M 240,176 L 264,176' fill='none' stroke='currentColor'></path>
-<path d='M 272,192 L 368,192' fill='none' stroke='currentColor'></path>
-<path d='M 424,192 L 520,192' fill='none' stroke='currentColor'></path>
-<path d='M 560,192 L 656,192' fill='none' stroke='currentColor'></path>
-<path d='M 0,224 L 24,224' fill='none' stroke='currentColor'></path>
-<path d='M 16,32 L 16,64' fill='none' stroke='currentColor'></path>
-<path d='M 16,64 L 16,96' fill='none' stroke='currentColor'></path>
-<path d='M 16,96 L 16,128' fill='none' stroke='currentColor'></path>
-<path d='M 16,128 L 16,160' fill='none' stroke='currentColor'></path>
-<path d='M 112,32 L 112,64' fill='none' stroke='currentColor'></path>
-<path d='M 112,64 L 112,96' fill='none' stroke='currentColor'></path>
-<path d='M 112,96 L 112,128' fill='none' stroke='currentColor'></path>
-<path d='M 112,128 L 112,160' fill='none' stroke='currentColor'></path>
-<path d='M 216,32 L 216,64' fill='none' stroke='currentColor'></path>
-<path d='M 216,64 L 216,96' fill='none' stroke='currentColor'></path>
-<path d='M 216,96 L 216,128' fill='none' stroke='currentColor'></path>
-<path d='M 216,128 L 216,160' fill='none' stroke='currentColor'></path>
-<path d='M 272,160 L 272,192' fill='none' stroke='currentColor'></path>
-<path d='M 312,32 L 312,64' fill='none' stroke='currentColor'></path>
-<path d='M 312,64 L 312,96' fill='none' stroke='currentColor'></path>
-<path d='M 312,96 L 312,128' fill='none' stroke='currentColor'></path>
-<path d='M 312,128 L 312,160' fill='none' stroke='currentColor'></path>
-<path d='M 368,160 L 368,192' fill='none' stroke='currentColor'></path>
-<path d='M 424,32 L 424,64' fill='none' stroke='currentColor'></path>
-<path d='M 424,64 L 424,96' fill='none' stroke='currentColor'></path>
-<path d='M 424,96 L 424,128' fill='none' stroke='currentColor'></path>
-<path d='M 424,128 L 424,160' fill='none' stroke='currentColor'></path>
-<path d='M 424,160 L 424,192' fill='none' stroke='currentColor'></path>
-<path d='M 520,32 L 520,64' fill='none' stroke='currentColor'></path>
-<path d='M 520,64 L 520,96' fill='none' stroke='currentColor'></path>
-<path d='M 520,96 L 520,128' fill='none' stroke='currentColor'></path>
-<path d='M 520,128 L 520,160' fill='none' stroke='currentColor'></path>
-<path d='M 520,160 L 520,192' fill='none' stroke='currentColor'></path>
-<path d='M 560,160 L 560,192' fill='none' stroke='currentColor'></path>
-<path d='M 656,160 L 656,192' fill='none' stroke='currentColor'></path>
-<polygon points='8.000000,224.000000 -4.000000,218.399994 -4.000000,229.600006' fill='currentColor' transform='rotate(180.000000, 0.000000, 224.000000)'></polygon>
-<polygon points='8.000000,240.000000 -4.000000,234.399994 -4.000000,245.600006' fill='currentColor' transform='rotate(180.000000, 0.000000, 240.000000)'></polygon>
-<polygon points='248.000000,176.000000 236.000000,170.399994 236.000000,181.600006' fill='currentColor' transform='rotate(180.000000, 240.000000, 176.000000)'></polygon>
-<polygon points='536.000000,176.000000 524.000000,170.399994 524.000000,181.600006' fill='currentColor' transform='rotate(180.000000, 528.000000, 176.000000)'></polygon>
-<text text-anchor='middle' x='0' y='4' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='8' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='8' y='244' fill='currentColor' style='font-size:1em'>-</text>
-<text text-anchor='middle' x='16' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='16' y='244' fill='currentColor' style='font-size:1em'>x</text>
-<text text-anchor='middle' x='24' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='24' y='244' fill='currentColor' style='font-size:1em'>-</text>
-<text text-anchor='middle' x='32' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='40' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='116' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='148' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='228' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='40' y='244' fill='currentColor' style='font-size:1em'>C</text>
-<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='48' y='52' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='48' y='84' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='48' y='116' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='48' y='148' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='48' y='228' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='48' y='244' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='56' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='56' y='84' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='56' y='116' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='56' y='148' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='56' y='228' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='56' y='244' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='64' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='64' y='52' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='64' y='116' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='64' y='148' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='64' y='228' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='64' y='244' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='72' y='4' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='72' y='52' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='72' y='116' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='72' y='148' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='72' y='228' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='72' y='244' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='80' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='80' y='244' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='88' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='88' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='88' y='84' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='88' y='116' fill='currentColor' style='font-size:1em'>…</text>
-<text text-anchor='middle' x='88' y='148' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='88' y='228' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='88' y='244' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='96' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='96' y='228' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='96' y='244' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='104' y='228' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='104' y='244' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='112' y='4' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='112' y='228' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='112' y='244' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='120' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='120' y='228' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='120' y='244' fill='currentColor' style='font-size:1em'>g</text>
-<text text-anchor='middle' x='128' y='4' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='128' y='228' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='136' y='228' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='136' y='244' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='144' y='228' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='144' y='244' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>m</text>
-<text text-anchor='middle' x='152' y='228' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='152' y='244' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='160' y='244' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='168' y='244' fill='currentColor' style='font-size:1em'>r</text>
-<text text-anchor='middle' x='176' y='244' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='184' y='244' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='192' y='244' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='200' y='4' fill='currentColor' style='font-size:1em'>A</text>
-<text text-anchor='middle' x='200' y='244' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='208' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='216' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='232' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='240' y='4' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='240' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='240' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='240' y='116' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='240' y='148' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='248' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='248' y='52' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='248' y='84' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='248' y='116' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='248' y='148' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='256' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='256' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='256' y='84' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='256' y='116' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='256' y='148' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='264' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='264' y='52' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='264' y='84' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='264' y='116' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='264' y='148' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='272' y='4' fill='currentColor' style='font-size:1em'>:</text>
-<text text-anchor='middle' x='272' y='52' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='272' y='84' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='272' y='116' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='272' y='148' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='288' y='4' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='288' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='288' y='84' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='288' y='116' fill='currentColor' style='font-size:1em'>…</text>
-<text text-anchor='middle' x='288' y='148' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='288' y='180' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='296' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='296' y='180' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='304' y='180' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='312' y='4' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='312' y='180' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='320' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='320' y='180' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='328' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='336' y='4' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='336' y='180' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='344' y='4' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='344' y='180' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='352' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='352' y='180' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='360' y='4' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='368' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='408' y='4' fill='currentColor' style='font-size:1em'>A</text>
-<text text-anchor='middle' x='416' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='424' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='440' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='440' y='180' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='448' y='4' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='448' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='448' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='448' y='116' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='448' y='148' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='448' y='180' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='456' y='4' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='456' y='52' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='456' y='84' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='456' y='116' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='456' y='148' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='456' y='180' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='464' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='464' y='52' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='464' y='84' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='464' y='116' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='464' y='148' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='464' y='180' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='472' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='472' y='52' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='472' y='84' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='472' y='116' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='472' y='148' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='472' y='180' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='480' y='4' fill='currentColor' style='font-size:1em'>:</text>
-<text text-anchor='middle' x='480' y='52' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='480' y='84' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='480' y='116' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='480' y='148' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='488' y='180' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='496' y='4' fill='currentColor' style='font-size:1em'>C</text>
-<text text-anchor='middle' x='496' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='496' y='84' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='496' y='116' fill='currentColor' style='font-size:1em'>…</text>
-<text text-anchor='middle' x='496' y='148' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='496' y='180' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='504' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='504' y='180' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='512' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='520' y='4' fill='currentColor' style='font-size:1em'>f</text>
-<text text-anchor='middle' x='528' y='4' fill='currentColor' style='font-size:1em'>l</text>
-<text text-anchor='middle' x='536' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='536' y='180' fill='currentColor' style='font-size:1em'>-</text>
-<text text-anchor='middle' x='544' y='4' fill='currentColor' style='font-size:1em'>c</text>
-<text text-anchor='middle' x='544' y='180' fill='currentColor' style='font-size:1em'>x</text>
-<text text-anchor='middle' x='552' y='4' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='552' y='180' fill='currentColor' style='font-size:1em'>-</text>
-<text text-anchor='middle' x='576' y='180' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='584' y='180' fill='currentColor' style='font-size:1em'>v</text>
-<text text-anchor='middle' x='592' y='180' fill='currentColor' style='font-size:1em'>e</text>
-<text text-anchor='middle' x='600' y='180' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='608' y='180' fill='currentColor' style='font-size:1em'>t</text>
-<text text-anchor='middle' x='624' y='180' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='632' y='180' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='640' y='180' fill='currentColor' style='font-size:1em'>1</text>
-</g>
-
-    </svg>
-  
-</div>
-<p>With these constraints in mind, a more realistic implementation could look like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#00a8c8">type</span> <span style="color:#75af00">InfraDependencies</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Load</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterId</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Save</span><span style="color:#f92672">:</span> <span style="color:#111">SaveParams</span> <span style="color:#f92672">-&gt;</span> <span style="color:#00a8c8">unit</span> 
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">and</span> <span style="color:#111">SaveParams</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">PrinterId</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterId</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Version</span><span style="color:#f92672">:</span> <span style="color:#111">int</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">Events</span><span style="color:#f92672">:</span> <span style="color:#111">Events</span> <span style="color:#00a8c8">list</span>
-</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#00a8c8">let</span> <span style="color:#111">execute</span> <span style="color:#f92672">(</span><span style="color:#111">deps</span><span style="color:#f92672">:</span> <span style="color:#111">InfraDependencies</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">printerId</span><span style="color:#f92672">:</span> <span style="color:#111">PrinterId</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span><span style="color:#111">command</span><span style="color:#f92672">:</span> <span style="color:#111">Commands</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">history</span> <span style="color:#f92672">=</span> <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Load</span> <span style="color:#111">printerId</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">state</span> <span style="color:#f92672">=</span> <span style="color:#111">history</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">fold</span> <span style="color:#111">evolve</span> <span style="color:#111">initialState</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">let</span> <span style="color:#111">events</span> <span style="color:#f92672">=</span> <span style="color:#111">command</span> <span style="color:#f92672">|&gt;</span> <span style="color:#111">decide</span> <span style="color:#111">state</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#111">deps</span><span style="color:#f92672">.</span><span style="color:#111">Save</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#111">PrinterId</span> <span style="color:#f92672">=</span> <span style="color:#111">printerId</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#111">Version</span> <span style="color:#f92672">=</span> <span style="color:#111">List</span><span style="color:#111">.</span><span style="color:#111">length</span> <span style="color:#111">history</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#111">Events</span> <span style="color:#f92672">=</span> <span style="color:#111">events</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
-</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
-<p>In this post, we&rsquo;ve explored how to gradually move from a <em>state-based</em> code base to an <em>event-sourced</em> one. Each of these steps is a valid solution that you can choose to go to production with. Just pick the one that matches your needs and you&rsquo;re comfortable with.</p>
-<p>As I&rsquo;ve already mentioned it in the introduction, Jérémie goes further in his workshop as he also introduces his <code>Decider</code> pattern. If you have an opportunity to participate in this workshop, give it a try because you will learn more from it than with this post.</p>
-<hr>
-<h2 id="comments">Comments</h2>
-<!--Add your comment here-->
-<p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target="_blank">sending me a pull request</a>.</p>
-
-        </article>
-        
-            <div class="tags">
-                <span title="Tags">🏷</span>
-                <div class="horizontal-links links">
-                    <a href="/tags/post/">Post</a><a href="/tags/en/">En</a>
-                </div>
-            </div>
-        
-    </article>
-
-
-    </main>
-    <footer>
-  <div class="content-container">
-    <div class="content"><div class="about">
-  <h2>Romain Berthon</h2>
-  Software developer, *DD and F# enthusiast
-
-  
-    <p class="horizontal-links"><a href="https://github.com/RomainTrm"
-         target="_blank" 
-        
-        >Github</a><a href="https://bsky.app/profile/berthon.dev"
-         target="_blank" 
-        
-        >Bsky</a><a href="https://fr.linkedin.com/in/romain-berthon-254977101"
-         target="_blank" 
-        
-        >LinkedIn</a></p>
-  
-</div>
-</div>
-  </div>
-</footer>
-    </body>
-</html>
+<!doctype html><html><meta charset=utf-8><meta http-equiv=Content-Security-Policy content="default-src 'none'; script-src 'none'; style-src 'self' 'sha256-hevimW2qBMcsaZR62OkETyNJKvnMSjRYOz6kIyvEFtg='; img-src 'self'; connect-src 'self'; base-uri 'self'; manifest-src 'self'; media-src 'self'"><meta http-equiv=Strict-Transport-Security content="max-age=63072000; includeSubDomains; preload"><meta http-equiv=X-Content-Type-Options content="nosniff"><meta http-equiv=Referrer-Policy content="strict-origin-when-cross-origin"><meta name=viewport content="width=device-width,initial-scale=1"><title>From a state-based to an event-sourced codebase · Romain Berthon</title>
+<link rel=stylesheet href=/css/rocinante.css><link rel="shortcut icon" href=https://berthon.dev//favicon.ico><body><header><nav><a class=home href=https://berthon.dev/>‹ Home</a><div></div><div><a href=https://berthon.dev//tags/post>Posts</a>
+<a href=https://berthon.dev//tags/talk>Talks</a>
+<a href=https://berthon.dev//about>About</a></div></nav></header><main><div class=post><div class=title-group><div class=title><h1>From a state-based to an event-sourced codebase</h1></div><div class=date><h5>Apr 23, 2025</h5></div></div><article class=content><p>A few weeks ago, I&rsquo;ve published a <a href=/posts/refining-software-architectures>post</a> where I described improvements for various architectures, following a logical path from a CRUD architecture to a CQRS/ES implementation.</p><p>Since then, I participated in <a href=https://lyon-craft.fr/ target=_blank>Lyon Craft</a> 2025, a local conference focusing on the software craftsmanship mindset and practices. For this edition, we had the pleasure to invite <a href=https://thinkbeforecoding.com/ target=_blank>Jérémie Chassaing</a> for an <em>event-sourcing</em> workshop. I had the opportunity to discuss with him and attend his workshop.</p><p>During this, he described his <code>Decider</code> pattern: I will not detail the pattern here but I encourage you to read Jérémie&rsquo;s <a href=https://thinkbeforecoding.com/post/2021/12/17/functional-event-sourcing-decider target=_blank>dedicated post</a> on this topic. I already knew about it and about <em>event-sourcing</em> in general so I didn&rsquo;t learn anything new, but it wasn&rsquo;t why I decided to attend this workshop anyway.</p><p>What I was looking for is how Jérémie introduces <em>event-sourcing</em> to newcomers and how he refactors a <em>state-based</em> codebase to an <em>event-sourcing</em> implementation, and I loved what I found! Jérémie&rsquo;s approach reminds me <a href=/posts/refining-software-architectures>mine</a> except he uses tiny steps I didn&rsquo;t think of. In this post I want to explain these in order to avoid another Big Bang refactoring.</p><h2 id=initial-architecture-manipulating-states>Initial architecture: manipulating states</h2><p>Let&rsquo;s start with a simple feature implemented with the <a href=https://kennethlange.com/functional-core-imperative-shell/ target=_blank><em>Functional core, Imperative shell</em></a> pattern and in a <em>state-based</em> fashion.</p><div class="goat svg-container"><svg xmlns="http://www.w3.org/2000/svg" font-family="Menlo,Lucida Console,monospace" viewBox="0 0 640 217"><g transform="translate(8,16)"><path d="M40 0H344" fill="none" stroke="currentcolor"/><path d="M72 32H312" fill="none" stroke="currentcolor"/><path d="M120 64h8" fill="none" stroke="currentcolor"/><path d="M136 64h8" fill="none" stroke="currentcolor"/><path d="M152 64h8" fill="none" stroke="currentcolor"/><path d="M168 64h8" fill="none" stroke="currentcolor"/><path d="M184 64h8" fill="none" stroke="currentcolor"/><path d="M2e2 64h8" fill="none" stroke="currentcolor"/><path d="M216 64h8" fill="none" stroke="currentcolor"/><path d="M232 64h8" fill="none" stroke="currentcolor"/><path d="M248 64h8" fill="none" stroke="currentcolor"/><path d="M264 64h8" fill="none" stroke="currentcolor"/><path d="M8 96H376" fill="none" stroke="currentcolor"/><path d="M120 128h8" fill="none" stroke="currentcolor"/><path d="M136 128h8" fill="none" stroke="currentcolor"/><path d="M152 128h8" fill="none" stroke="currentcolor"/><path d="M168 128h8" fill="none" stroke="currentcolor"/><path d="M184 128h8" fill="none" stroke="currentcolor"/><path d="M2e2 128h8" fill="none" stroke="currentcolor"/><path d="M216 128h8" fill="none" stroke="currentcolor"/><path d="M232 128h8" fill="none" stroke="currentcolor"/><path d="M248 128h8" fill="none" stroke="currentcolor"/><path d="M264 128h8" fill="none" stroke="currentcolor"/><path d="M72 144H312" fill="none" stroke="currentcolor"/><path d="M40 160H344" fill="none" stroke="currentcolor"/><path d="M0 192H24" fill="none" stroke="currentcolor"/><path d="M24 16V64" fill="none" stroke="currentcolor"/><path d="M24 112v32" fill="none" stroke="currentcolor"/><path d="M56 48V64" fill="none" stroke="currentcolor"/><path d="M56 112v16" fill="none" stroke="currentcolor"/><path d="M328 48V80" fill="none" stroke="currentcolor"/><path d="M328 112v16" fill="none" stroke="currentcolor"/><path d="M360 16V80" fill="none" stroke="currentcolor"/><path d="M360 112v32" fill="none" stroke="currentcolor"/><path d="M24 104v8" fill="none" stroke="currentcolor"/><path d="M56 104v8" fill="none" stroke="currentcolor"/><path d="M88 80v8" fill="none" stroke="currentcolor"/><path d="M88 104v8" fill="none" stroke="currentcolor"/><path d="M296 80v8" fill="none" stroke="currentcolor"/><path d="M296 104v8" fill="none" stroke="currentcolor"/><path d="M328 80v8" fill="none" stroke="currentcolor"/><path d="M328 104v8" fill="none" stroke="currentcolor"/><path d="M360 80v8" fill="none" stroke="currentcolor"/><path d="M360 104v8" fill="none" stroke="currentcolor"/><polygon points="32.000000,192.000000 20.000000,186.399994 20.000000,197.600006" fill="currentcolor" transform="rotate(0.000000, 24.000000, 192.000000)"/><polygon points="384.000000,96.000000 372.000000,90.400002 372.000000,101.599998" fill="currentcolor" transform="rotate(0.000000, 376.000000, 96.000000)"/><path d="M40 0A16 16 0 0024 16" fill="none" stroke="currentcolor"/><path d="M344 0a16 16 0 0116 16" fill="none" stroke="currentcolor"/><path d="M72 32A16 16 0 0056 48" fill="none" stroke="currentcolor"/><path d="M312 32a16 16 0 0116 16" fill="none" stroke="currentcolor"/><path d="M104 64A16 16 0 0088 80" fill="none" stroke="currentcolor"/><path d="M280 64a16 16 0 0116 16" fill="none" stroke="currentcolor"/><path d="M88 112a16 16 0 0016 16" fill="none" stroke="currentcolor"/><path d="M296 112a16 16 0 01-16 16" fill="none" stroke="currentcolor"/><path d="M56 128a16 16 0 0016 16" fill="none" stroke="currentcolor"/><path d="M328 128a16 16 0 01-16 16" fill="none" stroke="currentcolor"/><path d="M24 144a16 16 0 0016 16" fill="none" stroke="currentcolor"/><path d="M360 144a16 16 0 01-16 16" fill="none" stroke="currentcolor"/><circle cx="0" cy="192" r="6" stroke="currentcolor" fill="#fff"/><circle cx="8" cy="96" r="6" stroke="currentcolor" fill="#fff"/><text text-anchor="middle" x="16" y="84" fill="currentcolor" style="font-size:1em">w</text><text text-anchor="middle" x="24" y="84" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="32" y="84" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="40" y="84" fill="currentcolor" style="font-size:1em">k</text><text text-anchor="middle" x="40" y="196" fill="currentcolor" style="font-size:1em">W</text><text text-anchor="middle" x="48" y="84" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="48" y="196" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="56" y="84" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="56" y="196" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="64" y="20" fill="currentcolor" style="font-size:1em">A</text><text text-anchor="middle" x="64" y="84" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="64" y="196" fill="currentcolor" style="font-size:1em">k</text><text text-anchor="middle" x="72" y="20" fill="currentcolor" style="font-size:1em">p</text><text text-anchor="middle" x="72" y="52" fill="currentcolor" style="font-size:1em">D</text><text text-anchor="middle" x="72" y="84" fill="currentcolor" style="font-size:1em">w</text><text text-anchor="middle" x="72" y="196" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="80" y="20" fill="currentcolor" style="font-size:1em">p</text><text text-anchor="middle" x="80" y="52" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="80" y="196" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="88" y="20" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="88" y="52" fill="currentcolor" style="font-size:1em">m</text><text text-anchor="middle" x="88" y="196" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="96" y="20" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="96" y="52" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="96" y="196" fill="currentcolor" style="font-size:1em">w</text><text text-anchor="middle" x="104" y="20" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="104" y="52" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="104" y="84" fill="currentcolor" style="font-size:1em">P</text><text text-anchor="middle" x="112" y="20" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="112" y="52" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="112" y="84" fill="currentcolor" style="font-size:1em">u</text><text text-anchor="middle" x="120" y="20" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="120" y="84" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="128" y="20" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="128" y="52" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="128" y="84" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="136" y="20" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="136" y="52" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="144" y="20" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="144" y="52" fill="currentcolor" style="font-size:1em">y</text><text text-anchor="middle" x="144" y="84" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="152" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="152" y="84" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="160" y="20" fill="currentcolor" style="font-size:1em">&amp;</text><text text-anchor="middle" x="160" y="52" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="160" y="84" fill="currentcolor" style="font-size:1em">g</text><text text-anchor="middle" x="168" y="20" fill="currentcolor" style="font-size:1em">&amp;</text><text text-anchor="middle" x="168" y="84" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="176" y="52" fill="currentcolor" style="font-size:1em">(</text><text text-anchor="middle" x="176" y="84" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="184" y="20" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="184" y="52" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="192" y="20" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="192" y="52" fill="currentcolor" style="font-size:1em">m</text><text text-anchor="middle" x="192" y="84" fill="currentcolor" style="font-size:1em">(</text><text text-anchor="middle" x="200" y="20" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="200" y="52" fill="currentcolor" style="font-size:1em">p</text><text text-anchor="middle" x="200" y="84" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="208" y="20" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="208" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="208" y="84" fill="currentcolor" style="font-size:1em">u</text><text text-anchor="middle" x="216" y="52" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="216" y="84" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="224" y="20" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="224" y="52" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="224" y="84" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="232" y="20" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="232" y="52" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="232" y="84" fill="currentcolor" style="font-size:1em">.</text><text text-anchor="middle" x="240" y="20" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="240" y="52" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="248" y="20" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="248" y="52" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="248" y="84" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="256" y="20" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="256" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="256" y="84" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="264" y="20" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="264" y="84" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="272" y="52" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="272" y="84" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="280" y="20" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="280" y="52" fill="currentcolor" style="font-size:1em">h</text><text text-anchor="middle" x="280" y="84" fill="currentcolor" style="font-size:1em">)</text><text text-anchor="middle" x="288" y="20" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="288" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="296" y="20" fill="currentcolor" style="font-size:1em">y</text><text text-anchor="middle" x="296" y="52" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="304" y="20" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="304" y="52" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="312" y="20" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="312" y="52" fill="currentcolor" style="font-size:1em">)</text><text text-anchor="middle" x="320" y="20" fill="currentcolor" style="font-size:1em">s</text></g></svg></div><p>For this blog post, we will use a codebase that emulates a printer. Users can do two actions: print pages and reload it with paper. If the printer runs out of paper, then it can&rsquo;t print pages anymore. When the remaining paper in the printer allows a maximum of ten pages to be printed, then a flag is raised, asking for a refill.</p><p>Here&rsquo;s the first implementation of the <em>functional core</em> part of the feature:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>PrinterState</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>NumberOfPagesRemaining</span><span style=color:#f92672>:</span> <span style=color:#111>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>NeedToBeReloaded</span><span style=color:#f92672>:</span> <span style=color:#00a8c8>bool</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>Commands</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Print</span> <span style=color:#00a8c8>of</span> <span style=color:#111>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reload</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>decide</span> <span style=color:#f92672>(</span><span style=color:#111>state</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>function</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Print</span> <span style=color:#111>nbOfPagesToPrint</span> <span style=color:#f92672>-&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>=</span> <span style=color:#111>max</span> <span style=color:#111>0</span> <span style=color:#f92672>(</span><span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>-</span> <span style=color:#111>nbOfPagesToPrint</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>{</span> 
+</span></span><span style=display:flex><span>            <span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>=</span> <span style=color:#111>nbOfPagesLeft</span>
+</span></span><span style=display:flex><span>            <span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>=</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>&lt;=</span> <span style=color:#111>10</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reload</span> <span style=color:#f92672>-&gt;</span> 
+</span></span><span style=display:flex><span>        <span style=color:#f92672>{</span> 
+</span></span><span style=display:flex><span>            <span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>=</span> <span style=color:#111>100</span>
+</span></span><span style=display:flex><span>            <span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>false</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p><em>Imperative shell</em> part can be implemented like this:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>InfraDependencies</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Load</span><span style=color:#f92672>:</span> <span style=color:#00a8c8>unit</span> <span style=color:#f92672>-&gt;</span> <span style=color:#111>PrinterState</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Save</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span> <span style=color:#f92672>-&gt;</span> <span style=color:#00a8c8>unit</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>()</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>newState</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#111>newState</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>print</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>nbOfPagesToPrint</span><span style=color:#f92672>:</span> <span style=color:#111>int</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Print</span> <span style=color:#111>nbOfPagesToPrint</span> 
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|&gt;</span> <span style=color:#111>execute</span> <span style=color:#111>deps</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>reload</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Reload</span> 
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|&gt;</span> <span style=color:#111>execute</span> <span style=color:#111>deps</span>
+</span></span></code></pre></div><p>The complete code example is available <a href=0-state-based.fsx>here</a>.</p><p>In this first version of our feature, the <em>imperative shell</em> loads the <code>PrinterState</code>, applies a <code>Command</code> to it, then saves the final <em>state</em> it gets as a result from the <em>functional core</em>. On every step we&rsquo;re manipulating a <em>state</em>, no <em>event</em> involved so far.</p><p>I believe it&rsquo;s worth mentioning that with such a model, we don&rsquo;t know how many pages have been printed for a given <code>Print</code> command, and if anything has been printed at all.</p><h2 id=step-1-events-in-a-black-box>Step 1: Events in a black box</h2><p>Let&rsquo;s proceed to our first move to introduce <em>events</em>. The idea here is to modify our <em>aggregate</em> (inside the <em>functional core</em>) to use <em>events</em> in the way that keeps the <em>imperative shell</em> unaware of the changes. So our commands have to keep consuming and returning <code>PrinterState</code>.</p><p>One possible solution for our <em>events</em>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>Events</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>PagesPrinted</span> <span style=color:#00a8c8>of</span> <span style=color:#111>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>LowPaperReserveRaised</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reloaded</span>
+</span></span></code></pre></div><p>Now we have to introduce a new function that apply an <code>Events</code> to a <code>PrinterState</code>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>evolve</span> <span style=color:#f92672>(</span><span style=color:#111>state</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>function</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>PagesPrinted</span> <span style=color:#111>nbOfPagesToPrint</span> <span style=color:#f92672>-&gt;</span> 
+</span></span><span style=display:flex><span>        <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>=</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>-</span> <span style=color:#111>nbOfPagesToPrint</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>{</span> <span style=color:#111>state</span> <span style=color:#00a8c8>with</span> <span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>=</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>LowPaperReserveRaised</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span> <span style=color:#111>state</span> <span style=color:#00a8c8>with</span> <span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>true</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reloaded</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span> <span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>=</span> <span style=color:#111>100</span><span style=color:#f92672>;</span> <span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>false</span> <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And finally, we update our <code>decide</code> function. Depending of the command and the current <em>state</em> of our printer, we may decide to return zero, one or two <em>events</em>. This forces us to manipulate an <code>Events list</code>. Then we immediatly apply them to our current <code>state</code> by folding:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>decide</span> <span style=color:#f92672>(</span><span style=color:#111>state</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>function</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Print</span> <span style=color:#111>nbOfPagesToPrint</span> <span style=color:#f92672>-&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesPrinted</span> <span style=color:#f92672>=</span> <span style=color:#111>min</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#111>nbOfPagesToPrint</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#111>nbOfPagesPrinted</span> <span style=color:#f92672>&lt;&gt;</span> <span style=color:#111>0</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>PagesPrinted</span> <span style=color:#111>nbOfPagesPrinted</span>
+</span></span><span style=display:flex><span>            
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>=</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>-</span> <span style=color:#111>nbOfPagesPrinted</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#f92672>not</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>&lt;=</span> <span style=color:#111>10</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>LowPaperReserveRaised</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reload</span> <span style=color:#f92672>-&gt;</span> 
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>&lt;&gt;</span> <span style=color:#111>100</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>Reloaded</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>state</span>
+</span></span></code></pre></div><p>I&rsquo;m fully aware that this code implementation already contains some early optimizations: conditions on <code>PagesPrinted</code> and <code>Reloaded</code> events are not mandatory as raising them or not doesn&rsquo;t change behavior for an external observer. I chose to do it anyway to make future changes easier.</p><p>The rest of the code (the <em>imperative shell</em>) remains the same, you can check it <a href=1-events-in-a-black-box.fsx>here</a>.</p><h2 id=step-2-retrieve-events-from-the-functional-core>Step 2: Retrieve events from the <em>functional core</em></h2><p>Second refactor now: we will retrieve events from our <em>functional core</em> and rebuild <em>state</em> into the <em>imperative shell</em> before saving it. This way, we change the interface between these two layers but it doesn&rsquo;t affect our dependencies yet.</p><p>I am used to keeping the <code>evolve</code> function hidden as an internal implementation detail of an <em>aggregate</em>, called through the <code>decide</code> function. But as I&rsquo;m following Jérémie&rsquo;s technique here, we will keep these two functions separated as it will help us for the upcoming refactoring.</p><p>The code change here is quite simple: we will move the folding from the <em>functional core</em> to the <em>imperative shell</em>.</p><p>First, we remove the folding from the <code>decide</code> function and return an <code>Events list</code> instead of a <code>PrinterState</code>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>decide</span> <span style=color:#f92672>(</span><span style=color:#111>state</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>function</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Returns Events list instead of PrinterState
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#f92672>|</span> <span style=color:#111>Print</span> <span style=color:#111>nbOfPagesToPrint</span> <span style=color:#f92672>-&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesPrinted</span> <span style=color:#f92672>=</span> <span style=color:#111>min</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#111>nbOfPagesToPrint</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#111>nbOfPagesPrinted</span> <span style=color:#f92672>&lt;&gt;</span> <span style=color:#111>0</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>PagesPrinted</span> <span style=color:#111>nbOfPagesPrinted</span>
+</span></span><span style=display:flex><span>            
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>let</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>=</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>-</span> <span style=color:#111>nbOfPagesPrinted</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#f92672>not</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#111>nbOfPagesLeft</span> <span style=color:#f92672>&lt;=</span> <span style=color:#111>10</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>LowPaperReserveRaised</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> <span style=color:#111>Reload</span> <span style=color:#f92672>-&gt;</span> 
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>if</span> <span style=color:#111>state</span><span style=color:#f92672>.</span><span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>&lt;&gt;</span> <span style=color:#111>100</span>
+</span></span><span style=display:flex><span>            <span style=color:#00a8c8>then</span> <span style=color:#111>Reloaded</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>]</span>
+</span></span></code></pre></div><p>Then we apply these <em>events</em> with the <code>evolve</code> function to the <em>state</em> into the <code>execute</code> function:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>()</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Retrive events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#00a8c8>let</span> <span style=color:#111>events</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Apply events to the previous state
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#00a8c8>let</span> <span style=color:#111>newState</span> <span style=color:#f92672>=</span> <span style=color:#111>events</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>state</span> 
+</span></span><span style=display:flex><span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#111>newState</span>
+</span></span></code></pre></div><p>We don&rsquo;t have to apply any change to our <code>InfraDependencies</code> type, meaning the applicative/infrastructure layer remains unaware of this change. The complete code example is available <a href=2-retrieve-events-from-funcitonal-core.fsx>here</a>.</p><h2 id=step-3-saving-events>Step 3: Saving events</h2><p>For this step, we will not have to modify our <em>functional core</em>. There is only one missing requirement there for an <em>event-sourced</em> implementation that we will introduce in step 4. All the other upcoming changes will impact the <em>imperative shell</em> and the application/infrastructure layer.</p><p>To save our events, first we must change our dependencies to save an <code>Events list</code> with our <code>PrinterState</code>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>InfraDependencies</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Load</span><span style=color:#f92672>:</span> <span style=color:#00a8c8>unit</span> <span style=color:#f92672>-&gt;</span> <span style=color:#111>PrinterState</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Gets the new state and new events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#111>Save</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span> <span style=color:#f92672>*</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span> <span style=color:#f92672>-&gt;</span> <span style=color:#00a8c8>unit</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Then we update the code to match this new signature:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>()</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>events</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>newState</span> <span style=color:#f92672>=</span> <span style=color:#111>events</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>state</span> 
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Pass events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#f92672>(</span><span style=color:#111>newState</span><span style=color:#f92672>,</span> <span style=color:#111>events</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>The complete code example is available <a href=3-saving-events.fsx>here</a>.</p><p>This refactoring looks simple, but keep in mind that for storing our <em>events</em>, we also have to handle serialization in the infrastructure layer that doesn&rsquo;t appear in my code example. This can be a non-trivial topic and we have to come up with a proper strategy.</p><p>Note that now, as our <em>events</em> are exposed outside of the domain layer, we can know if something happened or not in our system: if no <em>event</em> is returned, then we have a proof that no decision has been made.</p><p>Also, keeping <em>states</em> alongside our newly saved <em>events</em> is a very convenient solution: it helps maintain the current model without building new projections (aka <em>readmodels</em>). Business people may be used to go check things in the database, even if <em>events</em> bring new information, <em>states</em> remains more practical to query for them.</p><h2 id=step-4-loading-events-our-first-event-sourced-implementation>Step 4: Loading events, our first <em>event-sourced</em> implementation</h2><p>Now we can implement an <em>event-sourced</em> feature with our next refactoring. To do so we have to load from the infrastructure layer an <code>Events list</code> instead of a <code>PrinterState</code>. Let&rsquo;s modify the dependencies:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>InfraDependencies</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Load events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#111>Load</span><span style=color:#f92672>:</span> <span style=color:#00a8c8>unit</span> <span style=color:#f92672>-&gt;</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Save</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span> <span style=color:#f92672>*</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span> <span style=color:#f92672>-&gt;</span> <span style=color:#00a8c8>unit</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And then we try to rebuild the <code>PrinterState</code> in our <em>imperative shell</em>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Load printer&#39;s history
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#00a8c8>let</span> <span style=color:#111>history</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>()</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Build printer&#39;s state
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>history</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#f92672>??????</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>events</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>newState</span> <span style=color:#f92672>=</span> <span style=color:#111>events</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>state</span> 
+</span></span><span style=display:flex><span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#f92672>(</span><span style=color:#111>newState</span><span style=color:#f92672>,</span> <span style=color:#111>events</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>We are runing into an issue here: until now we had a <em>state</em> on which to apply our <em>events</em>, but now we have only <em>events</em>. We are missing an <code>initialState</code> for our printer when nothing has happened yet. I usually define it in the <em>functional core</em>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#75715e>// A new printer is empty and needs to be loaded
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#00a8c8>let</span> <span style=color:#111>initialState</span> <span style=color:#f92672>:</span> <span style=color:#111>PrinterState</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>NumberOfPagesRemaining</span> <span style=color:#f92672>=</span> <span style=color:#111>0</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>NeedToBeReloaded</span> <span style=color:#f92672>=</span> <span style=color:#00a8c8>true</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And now we can use it to build our <em>state</em> by replacing the <code>??????</code> with <code>initialState</code>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>history</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>initialState</span>
+</span></span></code></pre></div><p>The complete code example is available <a href=4-loading-events.fsx>here</a>.</p><p>As for step 3, my code example doesn&rsquo;t show the whole story here: I didn&rsquo;t implement the infrastructure layer where we will have to deserialize <em>events</em> once loaded from the database.</p><h2 id=step-5-removing-state-from-the-infrastructure-layer>Step 5: removing <em>state</em> from the infrastructure layer</h2><p>For this final refactoring, we will remove the <code>PrinterState</code> from the infrastructure layer, meaning we will only load and save <code>Events list</code>. This is straightforward as we will only remove code. Note that it is possible to achieve this step before the step 4.</p><p>First, let&rsquo;s change our dependencies:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>InfraDependencies</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Load</span><span style=color:#f92672>:</span> <span style=color:#00a8c8>unit</span> <span style=color:#f92672>-&gt;</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Only saves events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#111>Save</span><span style=color:#f92672>:</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span> <span style=color:#f92672>-&gt;</span> <span style=color:#00a8c8>unit</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And finally we update our <em>imperative shell</em>:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>history</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>()</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>history</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>initialState</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>events</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Doesn&#39;t build new state, only pass new events
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#111>events</span>
+</span></span></code></pre></div><p>The final implementation is available <a href=5-removing-state.fsx>here</a>.</p><h2 id=remarks>Remarks</h2><p>Keep in mind though that my code example is a simplified version of what a real implementation looks like, especially in the <em>imperative shell</em> where I&rsquo;ve decided to remove some noise for the seek of the demonstration. Indeed, systems manipulating a single stream of <em>events</em> are rare, we usually have to provide an ID for loading and saving. Also, we often provide the version of the stream we used to make our decision, this allows us to detect potential concurrent executions of <em>command</em>.</p><div class="goat svg-container"><svg xmlns="http://www.w3.org/2000/svg" font-family="Menlo,Lucida Console,monospace" viewBox="0 0 672 265"><g transform="translate(8,16)"><path d="M16 32h96" fill="none" stroke="currentcolor"/><path d="M216 32h96" fill="none" stroke="currentcolor"/><path d="M424 32h96" fill="none" stroke="currentcolor"/><path d="M16 64h96" fill="none" stroke="currentcolor"/><path d="M216 64h96" fill="none" stroke="currentcolor"/><path d="M424 64h96" fill="none" stroke="currentcolor"/><path d="M16 96h96" fill="none" stroke="currentcolor"/><path d="M216 96h96" fill="none" stroke="currentcolor"/><path d="M424 96h96" fill="none" stroke="currentcolor"/><path d="M16 128h96" fill="none" stroke="currentcolor"/><path d="M216 128h96" fill="none" stroke="currentcolor"/><path d="M424 128h96" fill="none" stroke="currentcolor"/><path d="M16 160h96" fill="none" stroke="currentcolor"/><path d="M216 160h56" fill="none" stroke="currentcolor"/><path d="M272 160h40" fill="none" stroke="currentcolor"/><path d="M312 160h56" fill="none" stroke="currentcolor"/><path d="M424 160h96" fill="none" stroke="currentcolor"/><path d="M560 160h96" fill="none" stroke="currentcolor"/><path d="M240 176h24" fill="none" stroke="currentcolor"/><path d="M272 192h96" fill="none" stroke="currentcolor"/><path d="M424 192h96" fill="none" stroke="currentcolor"/><path d="M560 192h96" fill="none" stroke="currentcolor"/><path d="M0 224H24" fill="none" stroke="currentcolor"/><path d="M16 32V64" fill="none" stroke="currentcolor"/><path d="M16 64V96" fill="none" stroke="currentcolor"/><path d="M16 96v32" fill="none" stroke="currentcolor"/><path d="M16 128v32" fill="none" stroke="currentcolor"/><path d="M112 32V64" fill="none" stroke="currentcolor"/><path d="M112 64V96" fill="none" stroke="currentcolor"/><path d="M112 96v32" fill="none" stroke="currentcolor"/><path d="M112 128v32" fill="none" stroke="currentcolor"/><path d="M216 32V64" fill="none" stroke="currentcolor"/><path d="M216 64V96" fill="none" stroke="currentcolor"/><path d="M216 96v32" fill="none" stroke="currentcolor"/><path d="M216 128v32" fill="none" stroke="currentcolor"/><path d="M272 160v32" fill="none" stroke="currentcolor"/><path d="M312 32V64" fill="none" stroke="currentcolor"/><path d="M312 64V96" fill="none" stroke="currentcolor"/><path d="M312 96v32" fill="none" stroke="currentcolor"/><path d="M312 128v32" fill="none" stroke="currentcolor"/><path d="M368 160v32" fill="none" stroke="currentcolor"/><path d="M424 32V64" fill="none" stroke="currentcolor"/><path d="M424 64V96" fill="none" stroke="currentcolor"/><path d="M424 96v32" fill="none" stroke="currentcolor"/><path d="M424 128v32" fill="none" stroke="currentcolor"/><path d="M424 160v32" fill="none" stroke="currentcolor"/><path d="M520 32V64" fill="none" stroke="currentcolor"/><path d="M520 64V96" fill="none" stroke="currentcolor"/><path d="M520 96v32" fill="none" stroke="currentcolor"/><path d="M520 128v32" fill="none" stroke="currentcolor"/><path d="M520 160v32" fill="none" stroke="currentcolor"/><path d="M560 160v32" fill="none" stroke="currentcolor"/><path d="M656 160v32" fill="none" stroke="currentcolor"/><polygon points="8.000000,224.000000 -4.000000,218.399994 -4.000000,229.600006" fill="currentcolor" transform="rotate(180.000000, 0.000000, 224.000000)"/><polygon points="8.000000,240.000000 -4.000000,234.399994 -4.000000,245.600006" fill="currentcolor" transform="rotate(180.000000, 0.000000, 240.000000)"/><polygon points="248.000000,176.000000 236.000000,170.399994 236.000000,181.600006" fill="currentcolor" transform="rotate(180.000000, 240.000000, 176.000000)"/><polygon points="536.000000,176.000000 524.000000,170.399994 524.000000,181.600006" fill="currentcolor" transform="rotate(180.000000, 528.000000, 176.000000)"/><text text-anchor="middle" x="0" y="4" fill="currentcolor" style="font-size:1em">I</text><text text-anchor="middle" x="8" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="8" y="244" fill="currentcolor" style="font-size:1em">-</text><text text-anchor="middle" x="16" y="4" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="16" y="244" fill="currentcolor" style="font-size:1em">x</text><text text-anchor="middle" x="24" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="24" y="244" fill="currentcolor" style="font-size:1em">-</text><text text-anchor="middle" x="32" y="4" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="40" y="4" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="40" y="52" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="40" y="84" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="40" y="116" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="40" y="148" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="40" y="228" fill="currentcolor" style="font-size:1em">V</text><text text-anchor="middle" x="40" y="244" fill="currentcolor" style="font-size:1em">C</text><text text-anchor="middle" x="48" y="4" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="48" y="52" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="48" y="84" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="48" y="116" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="48" y="148" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="48" y="228" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="48" y="244" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="56" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="56" y="84" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="56" y="116" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="56" y="148" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="56" y="228" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="56" y="244" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="64" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="64" y="52" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="64" y="84" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="64" y="116" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="64" y="148" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="64" y="228" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="64" y="244" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="72" y="4" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="72" y="52" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="72" y="84" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="72" y="116" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="72" y="148" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="72" y="228" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="72" y="244" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="80" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="80" y="244" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="88" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="88" y="52" fill="currentcolor" style="font-size:1em">1</text><text text-anchor="middle" x="88" y="84" fill="currentcolor" style="font-size:1em">2</text><text text-anchor="middle" x="88" y="116" fill="currentcolor" style="font-size:1em">…</text><text text-anchor="middle" x="88" y="148" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="88" y="228" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="88" y="244" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="96" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="96" y="228" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="96" y="244" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="104" y="228" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="104" y="244" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="112" y="4" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="112" y="228" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="112" y="244" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="120" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="120" y="228" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="120" y="244" fill="currentcolor" style="font-size:1em">g</text><text text-anchor="middle" x="128" y="4" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="128" y="228" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="136" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="136" y="228" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="136" y="244" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="144" y="4" fill="currentcolor" style="font-size:1em">a</text><text text-anchor="middle" x="144" y="228" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="144" y="244" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="152" y="4" fill="currentcolor" style="font-size:1em">m</text><text text-anchor="middle" x="152" y="228" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="152" y="244" fill="currentcolor" style="font-size:1em">s</text><text text-anchor="middle" x="160" y="244" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="168" y="244" fill="currentcolor" style="font-size:1em">r</text><text text-anchor="middle" x="176" y="244" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="184" y="244" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="192" y="244" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="200" y="4" fill="currentcolor" style="font-size:1em">A</text><text text-anchor="middle" x="200" y="244" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="208" y="4" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="216" y="4" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="232" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="240" y="4" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="240" y="52" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="240" y="84" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="240" y="116" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="240" y="148" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="248" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="248" y="52" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="248" y="84" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="248" y="116" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="248" y="148" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="256" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="256" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="256" y="84" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="256" y="116" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="256" y="148" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="264" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="264" y="52" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="264" y="84" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="264" y="116" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="264" y="148" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="272" y="4" fill="currentcolor" style="font-size:1em">:</text><text text-anchor="middle" x="272" y="52" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="272" y="84" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="272" y="116" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="272" y="148" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="288" y="4" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="288" y="52" fill="currentcolor" style="font-size:1em">1</text><text text-anchor="middle" x="288" y="84" fill="currentcolor" style="font-size:1em">2</text><text text-anchor="middle" x="288" y="116" fill="currentcolor" style="font-size:1em">…</text><text text-anchor="middle" x="288" y="148" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="288" y="180" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="296" y="4" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="296" y="180" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="304" y="180" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="312" y="4" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="312" y="180" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="320" y="4" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="320" y="180" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="328" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="336" y="4" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="336" y="180" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="344" y="4" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="344" y="180" fill="currentcolor" style="font-size:1em">+</text><text text-anchor="middle" x="352" y="4" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="352" y="180" fill="currentcolor" style="font-size:1em">1</text><text text-anchor="middle" x="360" y="4" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="368" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="408" y="4" fill="currentcolor" style="font-size:1em">A</text><text text-anchor="middle" x="416" y="4" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="424" y="4" fill="currentcolor" style="font-size:1em">d</text><text text-anchor="middle" x="440" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="440" y="180" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="448" y="4" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="448" y="52" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="448" y="84" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="448" y="116" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="448" y="148" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="448" y="180" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="456" y="4" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="456" y="52" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="456" y="84" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="456" y="116" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="456" y="148" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="456" y="180" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="464" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="464" y="52" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="464" y="84" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="464" y="116" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="464" y="148" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="464" y="180" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="472" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="472" y="52" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="472" y="84" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="472" y="116" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="472" y="148" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="472" y="180" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="480" y="4" fill="currentcolor" style="font-size:1em">:</text><text text-anchor="middle" x="480" y="52" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="480" y="84" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="480" y="116" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="480" y="148" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="488" y="180" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="496" y="4" fill="currentcolor" style="font-size:1em">C</text><text text-anchor="middle" x="496" y="52" fill="currentcolor" style="font-size:1em">1</text><text text-anchor="middle" x="496" y="84" fill="currentcolor" style="font-size:1em">2</text><text text-anchor="middle" x="496" y="116" fill="currentcolor" style="font-size:1em">…</text><text text-anchor="middle" x="496" y="148" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="496" y="180" fill="currentcolor" style="font-size:1em">+</text><text text-anchor="middle" x="504" y="4" fill="currentcolor" style="font-size:1em">o</text><text text-anchor="middle" x="504" y="180" fill="currentcolor" style="font-size:1em">1</text><text text-anchor="middle" x="512" y="4" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="520" y="4" fill="currentcolor" style="font-size:1em">f</text><text text-anchor="middle" x="528" y="4" fill="currentcolor" style="font-size:1em">l</text><text text-anchor="middle" x="536" y="4" fill="currentcolor" style="font-size:1em">i</text><text text-anchor="middle" x="536" y="180" fill="currentcolor" style="font-size:1em">-</text><text text-anchor="middle" x="544" y="4" fill="currentcolor" style="font-size:1em">c</text><text text-anchor="middle" x="544" y="180" fill="currentcolor" style="font-size:1em">x</text><text text-anchor="middle" x="552" y="4" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="552" y="180" fill="currentcolor" style="font-size:1em">-</text><text text-anchor="middle" x="576" y="180" fill="currentcolor" style="font-size:1em">E</text><text text-anchor="middle" x="584" y="180" fill="currentcolor" style="font-size:1em">v</text><text text-anchor="middle" x="592" y="180" fill="currentcolor" style="font-size:1em">e</text><text text-anchor="middle" x="600" y="180" fill="currentcolor" style="font-size:1em">n</text><text text-anchor="middle" x="608" y="180" fill="currentcolor" style="font-size:1em">t</text><text text-anchor="middle" x="624" y="180" fill="currentcolor" style="font-size:1em">N</text><text text-anchor="middle" x="632" y="180" fill="currentcolor" style="font-size:1em">+</text><text text-anchor="middle" x="640" y="180" fill="currentcolor" style="font-size:1em">1</text></g></svg></div><p>With these constraints in mind, a more realistic implementation could look like this:</p><div class=highlight><pre tabindex=0 style=color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#00a8c8>type</span> <span style=color:#75af00>InfraDependencies</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Load</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterId</span> <span style=color:#f92672>-&gt;</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Save</span><span style=color:#f92672>:</span> <span style=color:#111>SaveParams</span> <span style=color:#f92672>-&gt;</span> <span style=color:#00a8c8>unit</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>and</span> <span style=color:#111>SaveParams</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>PrinterId</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterId</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Version</span><span style=color:#f92672>:</span> <span style=color:#111>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>Events</span><span style=color:#f92672>:</span> <span style=color:#111>Events</span> <span style=color:#00a8c8>list</span>
+</span></span><span style=display:flex><span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00a8c8>let</span> <span style=color:#111>execute</span> <span style=color:#f92672>(</span><span style=color:#111>deps</span><span style=color:#f92672>:</span> <span style=color:#111>InfraDependencies</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>printerId</span><span style=color:#f92672>:</span> <span style=color:#111>PrinterId</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span><span style=color:#111>command</span><span style=color:#f92672>:</span> <span style=color:#111>Commands</span><span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>history</span> <span style=color:#f92672>=</span> <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Load</span> <span style=color:#111>printerId</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>state</span> <span style=color:#f92672>=</span> <span style=color:#111>history</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>fold</span> <span style=color:#111>evolve</span> <span style=color:#111>initialState</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a8c8>let</span> <span style=color:#111>events</span> <span style=color:#f92672>=</span> <span style=color:#111>command</span> <span style=color:#f92672>|&gt;</span> <span style=color:#111>decide</span> <span style=color:#111>state</span>
+</span></span><span style=display:flex><span>    <span style=color:#111>deps</span><span style=color:#f92672>.</span><span style=color:#111>Save</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#111>PrinterId</span> <span style=color:#f92672>=</span> <span style=color:#111>printerId</span>
+</span></span><span style=display:flex><span>        <span style=color:#111>Version</span> <span style=color:#f92672>=</span> <span style=color:#111>List</span><span style=color:#111>.</span><span style=color:#111>length</span> <span style=color:#111>history</span>
+</span></span><span style=display:flex><span>        <span style=color:#111>Events</span> <span style=color:#f92672>=</span> <span style=color:#111>events</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span></code></pre></div><h2 id=conclusion>Conclusion</h2><p>In this post, we&rsquo;ve explored how to gradually move from a <em>state-based</em> code base to an <em>event-sourced</em> one. Each of these steps is a valid solution that you can choose to go to production with. Just pick the one that matches your needs and you&rsquo;re comfortable with.</p><p>As I&rsquo;ve already mentioned it in the introduction, Jérémie goes further in his workshop as he also introduces his <code>Decider</code> pattern. If you have an opportunity to participate in this workshop, give it a try because you will learn more from it than with this post.</p><hr><h2 id=comments>Comments</h2><p>Wish to comment? Please, add your comment by <a href="https://github.com/RomainTrm/Blog?tab=readme-ov-file#how-to-comment" target=_blank>sending me a pull request</a>.</p></article><div class=tags><span title=Tags>🏷</span><div class="horizontal-links links"><a href=/tags/post/>Post</a><a href=/tags/en/>En</a></div></div></article></main><footer><div class=content-container><div class=content><div class=about><h2>Romain Berthon</h2>Software developer, *DD and F# enthusiast<p class=horizontal-links><a href=https://github.com/RomainTrm target=_blank>Github</a><a href=https://bsky.app/profile/berthon.dev target=_blank>Bsky</a><a href=https://fr.linkedin.com/in/romain-berthon-254977101 target=_blank>LinkedIn</a></p></div></div></div></footer></body></html>
